@@ -1,0 +1,36 @@
+User-agent: *
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /email/verify
+Disallow: /verify-email
+Disallow: /logout
+
+# Panel / áreas privadas (ajusta a tus prefijos reales)
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /panel
+Disallow: /profile
+Disallow: /settings
+
+# Checkout / pasarela (evitas que indexe success/cancel/callbacks)
+Disallow: /checkout
+Disallow: /checkout/
+Disallow: /checkout/success
+Disallow: /checkout/cancel
+Disallow: /checkout/status
+Disallow: /checkout/stripe
+Disallow: /checkout/stripe/webhook
+
+# APIs / endpoints internos
+Disallow: /api
+Disallow: /api/
+
+# Archivos que no quieres indexar como contenido
+Disallow: /storage
+Disallow: /storage/
+Disallow: /vendor
+
+# Sitemap
+Sitemap: https://nuveexpress.com.mx/sitemap.xml
