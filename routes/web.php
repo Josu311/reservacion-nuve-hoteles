@@ -21,13 +21,17 @@ Route::get('/', function () {
     return Inertia::render('Home');
 })->name('index');
 
-Route::get('/nosotros', function () {
+Route::get('/quienes-somos', function () {
     return Inertia::render('AboutUs');
 })->name('about-us');
 
-Route::get('/hoteles', function () {
+Route::get('/nuestros-hoteles', function () {
     return Inertia::render('Hotels');
 })->name('hotels');
+
+Route::get('/experiencias', function () {
+    return Inertia::render('Experiences');
+})->name('experiences');
 
 Route::prefix('disponibilidad')->group(function () {
     Route::get('/', [ReservaController::class, 'index'])->name('disponibilidad.index');

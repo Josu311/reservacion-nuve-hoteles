@@ -1,218 +1,327 @@
 <template>
-    <section class="h-screen">
+    <Head>
+        <title>Nuve Express | Hoteles en Torreón, Coahuila</title>
+        <meta name="description" content="Hospédate en Nuve Express en Torreón, Coahuila: cómodo y accesible. Reserva en línea en minutos y elige la mejor opción para viajes de trabajo o estancias largas.">
+        
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Nuve Express">
+        <meta property="og:title" content="Reserva en Nuve Express | Hoteles en Torreón, Coahuila"/>
+        <meta property="og:description" content="Hospedaje cómodo y accesible en Torreón. Reserva en línea en minutos y elige la mejor opción para viajes de trabajo o estancias largas."/>
+        <meta property="og:image" content="https://nuveexpress.com.mx/img/nuve-express-og-image.png"/>
+        <meta property="og:url" content="https://nuveexpress.com.mx/"/>
 
-        <Head>
-            <title>Nuve Express | Hoteles en Torreón, Coahuila</title>
-            <meta name="description" content="Hospédate en Nuve Express en Torreón, Coahuila: cómodo y accesible. Reserva en línea en minutos y elige la mejor opción para viajes de trabajo o estancias largas.">
-            
-            <meta property="og:type" content="website" />
-            <meta property="og:site_name" content="Nuve Express">
-            <meta property="og:title" content="Reserva en Nuve Express | Hoteles en Torreón, Coahuila"/>
-            <meta property="og:description" content="Hospedaje cómodo y accesible en Torreón. Reserva en línea en minutos y elige la mejor opción para viajes de trabajo o estancias largas."/>
-            <meta property="og:image" content="https://nuveexpress.com.mx/img/nuve-express-og-image.png"/>
-            <meta property="og:url" content="https://nuveexpress.com.mx/"/>
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Reserva en Nuve Express | Hoteles en Torreón, Coahuila">
+        <meta name="twitter:description" content="Hoteles con ubicación estratégica en Torreón. Reserva tu estancia en línea en minutos.">
+        <meta property="twitter:image" content="https://nuveexpress.com.mx/img/nuve-express-og-image.png"/>
 
-            <meta name="twitter:card" content="summary_large_image">
-            <meta name="twitter:title" content="Reserva en Nuve Express | Hoteles en Torreón, Coahuila">
-            <meta name="twitter:description" content="Hoteles con ubicación estratégica en Torreón. Reserva tu estancia en línea en minutos.">
-            <meta property="twitter:image" content="https://nuveexpress.com.mx/img/nuve-express-og-image.png"/>
+        <link rel="canonical" href="https://nuveexpress.com.mx/" />
+    </Head>
+    <Header />
+    <section class="min-h-screen flex flex-col">
 
-            <link rel="canonical" href="https://nuveexpress.com.mx/" />
-        </Head>
-        <Header />
-        <section class="flex flex-col h-[500px]" id="reservar">
-            <div class=" relative h-[500px] md:h-screen w-full">
-                <img class="w-full h-[500px] object-cover object-top" src="/img/fachada-1.webp" alt="">
-                <div class="absolute inset-0 bg-black/60 pointer-events-none"></div>
-                <div
-                    class="h-[500px] flex flex-col items-center justify-end gap-5 absolute inset-0 z-10 my-auto text-white px-7">
-                    <h2 class="text-4xl md:text-6xl text-center font-semibold leading-[1] uppercase">Hospédate en
-                        Torreón</h2>
-                    <p class="text-xl md:text-3xl font-semibold text-center">con el mejor precio y comodidad</p>
-                    <div class="w-full max-w-[1440px] bg-white p-5 ml-7 mr-7 rounded-2xl -mb-28 shadow-md">
-                        <h4 class="text-3xl text-center text-nuve-express-orange font-semibold">Reservar ahora</h4>
-                        <el-form class="mt-4" :model="form" v-if="isInProduction">
-                            <div class="w-full grid grid-cols-1 grid-rows-4 md:grid-cols-4 md:grid-rows-1 gap-2">
-                                <el-form-item class="w-full mi-input-custom" style="margin-bottom: 0px;">
-                                    <el-date-picker
-                                    v-model="fullDate" 
-                                    type="daterange" 
-                                    range-separator="To"
-                                    start-placeholder="Checkin"
-                                    end-placeholder="Checkout"    
-                                    popper-class="dp-mobile"
-                                    :popper-options="popperOptions"
-                                    :teleported="!isMobile"
-                                    :disabled-date="disabledBeforeToday" style="width: 100%;" />
-                                </el-form-item>
-                                <!-- <el-form-item class="w-full mi-input-custom" style="margin-bottom: 0px;">
-                                    <el-date-picker v-model="form.dateFin" type="date" placeholder="Fecha de salida"
-                                        :disabled-date="disabledBeforeStart" style="width: 100%;" />
-                                </el-form-item> -->
-                                <el-form-item class="w-full mi-input-custom" style="margin-bottom: 0px;">
-                                    <el-input-number v-model="form.numHabs" :min="1" placeholder="Habitaciones"
-                                        style="width: 100%;" />
-                                </el-form-item>
-                                <el-form-item class="w-full mi-input-custom" style="margin-bottom: 0px;">
-                                    <el-input-number v-model="form.adults" :min="1" placeholder="Adultos"
-                                        style="width: 100%;" />
-                                </el-form-item>
-                                <el-button class="col-span-1 nuve-btn" :disabled="enabledButton"
-                                    :loading="isLoading" type="warning" @click="searchHabs()"
-                                    size="large">Buscar</el-button>
-                            </div>
-                        </el-form>
+
+        <main class="flex-1">
+            <section class="relative h-[700px] bg-[url(/img/home-1.webp)] bg-cover bg-center md:bg-bottom bg-fixed flex flex-col items-center justify-center gap-5 text-white px-2" id="reservar">
+                <div class="absolute inset-0 bg-[#172a3a]/50"></div>
+                <div class="max-w-xl mx-auto flex flex-col items-center justify-center text-center md:pt-32 z-[1]">
+                    <h2 class="uppercase font-bold text-2xl md:text-5xl">Bienvenido a <br>Nuve Hotel</h2>
+                    <span>Representamos la hospitalidad de la Comarca Lagunera haciendo de su estancia una experiencia única.</span>
+                </div>
+                <div class="w-full max-w-6xl bg-transparent p-5 rounded-2xl shadow-md backdrop-blur-sm backdrop-brightness-50 z-[1]">
+                    <h4 class="text-3xl text-center text-nuve-hoteles-blue font-semibold">Reservar ahora</h4>
+                    <el-form class="mt-4" :model="form" v-if="isInProduction">
+                        <div class="w-full grid grid-cols-1 grid-rows-4 md:grid-cols-4 md:grid-rows-1 gap-2">
+                            <el-form-item class="w-full mi-input-custom" style="margin-bottom: 0px;">
+                                <el-date-picker
+                                v-model="fullDate" 
+                                type="daterange" 
+                                range-separator="To"
+                                start-placeholder="Checkin"
+                                end-placeholder="Checkout"    
+                                popper-class="dp-mobile"
+                                :popper-options="popperOptions"
+                                :teleported="!isMobile"
+                                :disabled-date="disabledBeforeToday" style="width: 100%;" />
+                            </el-form-item>
+                            <!-- <el-form-item class="w-full mi-input-custom" style="margin-bottom: 0px;">
+                                <el-date-picker v-model="form.dateFin" type="date" placeholder="Fecha de salida"
+                                    :disabled-date="disabledBeforeStart" style="width: 100%;" />
+                            </el-form-item> -->
+                            <el-form-item class="w-full mi-input-custom" style="margin-bottom: 0px;">
+                                <el-input-number v-model="form.numHabs" :min="1" placeholder="Habitaciones"
+                                    style="width: 100%;" />
+                            </el-form-item>
+                            <el-form-item class="w-full mi-input-custom" style="margin-bottom: 0px;">
+                                <el-input-number v-model="form.adults" :min="1" placeholder="Adultos"
+                                    style="width: 100%;" />
+                            </el-form-item>
+                            <el-button class="col-span-1 nuve-btn" :disabled="enabledButton"
+                                :loading="isLoading" type="warning" @click="searchHabs()"
+                                size="large">Buscar</el-button>
+                        </div>
+                    </el-form>
+                </div>
+            </section>
+
+            <section class="max-w-6xl mx-auto mt-24 px-2">
+                <div class="flex flex-col-reverse md:flex-row gap-10 text-center md:text-left">
+                    <img class="w-full md:w-96 h-auto" src="/img/home-2.webp" alt="">
+                    <div class="flex flex-col justify-around items-center md:items-start">
+                        <span class="text-xs text-nuve-hoteles-blue font-semibold">Hotel Nuve</span>
+                        <h2 class="uppercase font-semibold text-2xl md:text-5xl">El descanso que mereces</h2>
+                        <p class="text-sm pt-3">Contamos con habitaciones donde encontrarás los mejores espacios y nuestros excelentes servicios disponibles para ti. Disfruta de la mejor ubicación en habitación preferencial con una cama, amenidades y servicios orientados a tu descanso.</p>
+                        <a href="/nuestros-hoteles" class="w-fit text-white bg-nuve-hoteles-blue font-semibold px-10 py-2 mt-3">Nuestros hoteles</a>
                     </div>
                 </div>
-            </div>
-        </section>
-        <section class="w-full p-3 md:p-8 mt-32 md:mt-28">
-            <div class="max-w-[1600px] flex flex-col-reverse lg:flex-row items-center gap-5 mx-auto">
-                <img class="w-full lg:w-[50%] h-[500px] object-cover" src="/img/fachada-2.webp" alt="">
-                <div class="w-full lg:w-[50%] flex flex-col items-start justify-center gap-5 text-[22px]">
-                    <div class="w-full flex flex-col gap-1">
-                        <span class="text-nuve-express-orange text-lg font-semibold text-center md:text-start">Nuve
-                            Express</span>
-                        <h2 class="text-2xl md:text-4xl font-semibold uppercase text-center md:text-start">Más que un
-                            hotel, tu
-                            <br>aliado en
-                            Torreón
-                        </h2>
-                    </div>
+            </section>
 
-                    <p class="text-center md:text-start">Nuve Express es una cadena de hoteles ubicados en el centro de
-                        la ciudad de
-                        Torreón,
-                        Coahuila.
-                    </p>
-                    <p class="text-center md:text-start">Nuestra misión es brindar el mejor trato y servicio a todos
-                        nuestros
-                        huéspedes.</p>
-                    <p class="text-center md:text-start">Ven y compruébalo, somos tu mejor opción en la ciudad.</p>
+            <section class="max-w-6xl mx-auto text-center mt-24 px-2">
+                <div class="flex flex-col justify-around">
+                    <span class="text-xs text-nuve-hoteles-blue font-semibold">Nuestros Servicios</span>
+                    <h2 class="text-2xl md:text-5xl uppercase font-semibold pt-5">Siéntete como en casa</h2>
+                    <p class="text-sm pt-3">Hospédate con nosotros y disfruta de todos los servicios con los que contamos.</p>
 
-                </div>
-            </div>
-        </section>
-        <section class="w-full flex flex-col gap-5 bg-nuve-express-orange p-6 md:p-12">
-            <div class="flex flex-col items-center">
-                <span class="text-sm font-semibold uppercase">Nuestros servicios</span>
-                <h2 class="text-2xl text-white font-semibold uppercase text-center">Comodidad en cada detalle</h2>
-            </div>
-            <div class="grid grid-cols-2 grid-rows-4 md:grid-cols-4 md:grid-rows-2 gap-5">
-                <div class="text-white">
-                    <FolderOpenSvg :width="32" :height="32" />
-                    <p class="font-semibold">Convenios mensuales</p>
-                    <p class="text-sm">para empresas</p>
-                </div>
-                <div class="text-white">
-                    <SparklesSvg :width="32" :height="32" />
-                    <p class="font-semibold">Habitaciones equipadas</p>
-                    <p class="text-sm">con refrigerador, microondas y escritorio</p>
-                </div>
-                <div class="text-white">
-                    <WifiSvg :width="32" :height="32" />
-                    <p class="font-semibold">Wi-Fi</p>
-                    <p class="text-sm">de alta velocidad incluído</p>
-                </div>
-                <div class="text-white">
-                    <HouseUserSvg :width="32" :height="32" />
-                    <p class="text-sm">Perfecto para</p>
-                    <p class="font-semibold">Largas estancias</p>
-                </div>
-                <div class="text-white">
-                    <CreditCardSvg :width="32" :height="32" />
-                    <p class="font-semibold">Facturación</p>
-                    <p class="text-sm">fácil y rápido</p>
-                </div>
-                <div class="text-white">
-                    <SuitcaseSvg :width="32" :height="32" />
-                    <p class="font-semibold">Guarda equipaje</p>
-                    <p class="text-sm hidden"></p>
-                </div>
-                <div class="text-white">
-                    <HappyFaceSvg :width="32" :height="32" />
-                    <p class="font-semibold">Habitaciones cómodas</p>
-                    <p class="text-sm">diseñadas para tu descanso</p>
-                </div>
-                <div class="text-white">
-                    <ClockSvg :width="32" :height="32" />
-                    <p class="font-semibold">Early check-in / Late check-out</p>
-                    <p class="text-sm">(según disponibilidad)</p>
-                </div>
-            </div>
-        </section>
-        <section class="mt-16">
-            <div class="flex flex-col items-center">
-                <span class="text-nuve-express-orange uppercase font-semibold">Nuve Express</span>
-                <h2 class="text-2xl uppercase font-semibold text-center">Donde tu empresa nos necesita</h2>
-            </div>
-            <div
-                class="max-w-[500px] grid grid-cols-1 grid-rows-1 gap-16 md:gap-0 place-content-center mx-auto mt-10">
-                <article class="w-[90%] shadow-lg mx-auto">
-                    <img class="w-full h-[300px] object-cover" src="/img/nuve-express-corregidora.png" height="300"
-                        alt="">
-                    <div class="flex flex-col items-center px-11 pt-5">
-                        <p class="text-center text-sm font-semibold">Nuve Express <br>Corregidora</p>
-                        <div class="flex items-center gap-2 mt-4 mb-6">
-                            <PinAddressFilledSvg :width="20" :height="20" :fill="'#000000'" />
-                            <p class="text-xs text-center">Calle Corregidora #130, entre González Ortega y Degollados
-                            </p>
+                    <div class="max-w-[1200px] w-full mx-auto grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-5 [&>div]:transition [&>div]:ease-in-out [&>div:hover]:bg-gray-200 [&>div]:hover:select-none mt-10 md:px-0">
+                        <div class="flex flex-col justify-center items-center border border-gray-200 px-5 py-2 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" id="svg12" width="50" height="50" preserveAspectRatio="xMidYMid meet" fill="#64afdd" viewBox="0 0 512 512"><g id="g10" stroke="none" transform="matrix(.1 0 0 -.1 0 512)"><path id="path2" d="M1430 4733c-8-3-25-15-37-26-44-40-22-189 39-273 13-17 37-50 55-73 69-91 62-205-19-298-23-27-52-72-66-101-25-56-39-152-28-196 8-33 58-59 97-51 38 9 57 39 69 110 9 56 22 81 90 169 49 63 73 140 73 231 0 100-27 174-90 252-49 59-73 109-73 146 0 49-22 89-56 103-18 8-35 14-36 13-2 0-10-3-18-6"/><path id="path4" d="M1935 4731c-46-19-58-46-53-118 6-81 34-151 87-213 59-70 75-107 75-175s-13-98-80-184c-53-68-84-151-84-223 1-75 40-116 100-103 40 9 59 35 69 96 13 75 23 97 70 154 133 160 131 365-4 525-44 52-65 97-65 139 0 50-18 81-55 96-19 8-36 15-37 14-2 0-12-4-23-8"/><path id="path6" d="M2443 4730c-87-34-63-202 50-348 90-116 90-211-2-321-57-67-92-150-99-227-4-60-3-64 26-93 39-40 74-40 113-2 21 22 29 39 29 66 0 49 21 95 74 163 61 78 87 140 93 227 7 92-21 194-72 257-61 76-86 126-94 183-11 79-59 118-118 95"/><path id="path8" d="M985 3451c-87-21-127-81-133-198-3-63-8-83-17-79-41 15-189 28-269 23-152-11-264-58-354-150C77 2909 16 2722 4 2405q-24-618 321-834c118-74 296-95 488-56 48 9 89 16 91 14 1-2 15-34 30-71 51-122 152-256 265-351l45-37H879c-219 0-379-4-401-10-50-14-97-55-119-105-24-52-26-237-4-313 31-104 131-194 260-235l70-22h2045c1958 0 2048 1 2105 18 123 39 207 103 252 195 25 51 28 69 32 181 2 74-1 140-8 162-14 46-77 104-128 118-23 7-156 11-333 11h-295l85 46c158 85 316 225 409 366 34 50 41 69 41 110 0 27-7 62-15 78-15 29-14 32 50 142 110 192 164 357 185 563 14 132 8 355-11 420-11 41-87 125-113 125-8 0-24 43-44 121-61 233-148 372-254 404-60 17-95 12-171-28-120-63-157-148-165-374l-5-153-43-21c-59-28-113-93-147-176-15-37-34-77-42-87-14-19-16-18-73 7-93 42-117 38-371-59-124-48-241-95-258-106-22-13-44-42-69-93l-37-74-31 13-31 12-5 520c-4 384-8 525-17 540-20 34-70 72-111 84-43 11-2078 13-2127 1m2085-615v-454l-47-7c-27-4-56-11-65-16-13-7-30 8-87 79-134 169-206 217-321 216-178-3-265-117-239-312 11-78 64-244 105-324 24-47 24-49 8-81-27-51-23-135 10-192 72-131 256-345 370-432l39-29-59-47c-77-62-199-122-298-147-72-18-113-20-432-20-385 0-437 5-563 58-129 54-250 155-333 275-51 75-82 144-110 243-22 78-22 90-26 848-2 423-1 775 2 782 5 12 176 14 1026 14h1020zm1598 421c40-43 136-296 119-314-6-5-180-22-236-23h-34l5 128c6 142 21 192 67 217 37 20 54 18 79-8M795 3008l50-13 3-92 3-91-63 20c-44 14-92 21-158 22-84 1-100-2-138-24-50-28-96-93-117-163-39-131-44-452-9-582 32-122 92-206 169-235 42-16 163-13 240 6 36 9 68 15 70 12 2-2 7-40 11-85l7-81-40-11c-66-18-215-29-273-21-258 37-396 304-377 729 8 162 20 240 53 340 47 143 142 242 264 276 63 17 223 14 305-7m4136-255c11-12 14-58 14-197 0-194-12-282-52-406-25-76-111-260-122-260-3 0-31 42-63 93-100 163-251 337-410 472l-46 40 47 98c27 54 54 105 62 112 24 25 295 61 475 64 65 1 84-2 95-16m-4210-79c30-9 71-25 92-37l37-21-2-280-3-280-49-19c-56-20-161-33-199-23-76 19-113 363-62 581 22 95 66 114 186 79m1898-213c26-17 171-186 171-200 0-5-6-11-12-14-7-3-56-37-108-76s-97-71-100-71c-8 0-54 116-75 192-19 67-22 153-5 173 23 27 84 26 129-4m1400-25c150-76 313-225 454-414 71-95 181-276 228-374 28-59 23-70-73-173-166-177-462-330-750-386-157-30-418-22-447 15-5 6-16 52-24 101-32 177-40 295-34 499 4 167 9 219 30 306 25 107 76 251 100 284 12 17 403 174 435 176 7 0 43-16 81-34m-878-266c46-22 89-40 97-40 11 0 13-8 9-32-3-18-13-71-22-118-27-148-36-339-25-497 5-80 13-156 16-170 6-23 5-25-17-18-98 30-249 118-343 199-115 99-276 308-276 359 0 28 32 60 155 153 106 81 293 204 310 204 8 0 51-18 96-40m28-1044c136-50 123-56-114-56h-206l58 48c32 27 64 56 71 65 12 14 18 13 60-6 26-11 85-35 131-51m1769-235c11-6 13-32 10-107-4-124-20-152-117-198l-66-31-1985-3c-1369-2-2007 1-2054 8-81 12-158 51-189 94-18 26-23 48-25 130-3 75-1 101 10 107 17 11 4399 11 4416 0"/></g></svg>
+                            <span class="text-sm">Desayuno a la carta</span>
+                        </div>
+                        <div class="flex flex-col justify-center items-center border border-gray-200 px-5 py-2 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" id="svg18" width="50" height="50" preserveAspectRatio="xMidYMid meet" fill="#64afdd" viewBox="0 0 512 512"><g id="g16" stroke="none" transform="matrix(.1 0 0 -.1 0 512)"><path id="path2" d="M773 5109c-297-35-568-258-658-541-65-206-49-422 46-611 28-55 90-144 314-452 126-172 150-220 185-360 37-150 55-182 120-215 92-48 215-13 263 75 6 11 23 72 39 135 15 63 39 137 52 165 14 27 108 165 210 305 217 300 241 337 277 439 89 252 51 515-106 736-165 232-454 358-742 324m237-160c80-15 225-89 292-149 78-69 151-182 184-283 23-69 28-100 28-197 1-201-25-256-290-620-102-140-203-290-224-333s-48-122-61-175c-28-126-32-134-72-130l-32 3-30 120c-16 66-44 150-62 185-17 36-120 187-228 335-205 284-244 349-271 455-22 86-22 236 0 319 72 269 289 450 581 484 37 5 112-1 185-14"/><path id="path4" d="M724 4716c-74-27-105-49-167-115-151-161-144-425 15-584 247-246 663-108 720 239 18 104-20 260-67 278-32 12-62 6-83-17-26-28-27-51-6-124 38-129-21-259-146-324-69-36-176-33-248 6-95 52-142 132-142 242 0 162 113 272 278 273 64 0 76 3 97 25 14 13 25 36 25 50s-11 37-25 50c-22 23-32 25-107 24-61 0-99-6-144-23"/><path id="path6" d="M4038 5110c-139-25-263-88-368-187-84-79-114-127-104-167 8-31 23-44 61-52 28-5 38 2 119 83 64 63 108 97 155 120 184 90 392 80 559-28 167-107 260-280 260-479 0-142-35-237-139-379-34-47-61-95-61-108 0-33 42-73 78-73 33 0 57 23 125 121 104 148 147 278 147 443 0 119-18 201-64 299-88 190-264 339-461 392-71 19-240 28-307 15"/><path id="path8" d="M2335 4820c-214-16-498-77-543-115-47-40-23-125 36-125 14 0 82 14 153 32 71 17 131 29 134 27 3-3-11-45-30-92-67-167-160-530-191-749-3-27-8-48-10-48-32 0-247-33-267-42-51-20-61-70-23-115l24-27 121 15 121 15v-26c-1-14-7-81-14-150s-10-134-6-145c12-31 37-48 72-47 57 1 67 23 83 183 22 207 18 197 73 206 61 10 815 10 864 0 27-6 39-14 43-30 17-74 50-511 61-789l7-178H1950l7 193c6 190 6 194-15 215-32 32-85 29-111-4-17-22-21-41-21-109 0-45-3-130-7-188l-6-107h-757v50c0 37-5 55-20 70-53 53-130 9-130-76v-44H367l6 98c8 119 38 289 72 405 32 110 32 130-1 156s-65 27-93 4c-36-30-96-267-121-478-14-115-14-404 0-520 63-523 285-980 655-1350 302-302 645-498 1050-600 191-48 350-67 560-67 241 0 422 24 641 87 123 36 334 121 361 147 31 29 30 72-2 104-14 14-25 29-25 35 0 5-11 21-25 34-43 44-68 34-164-60-82-80-92-86-167-109-100-30-234-60-240-54-2 3 7 29 20 59 39 90 102 295 139 460 53 231 53 234 23 264-32 32-75 33-103 2-14-14-27-53-38-107-46-238-115-467-187-621l-40-86-106-5c-59-3-145-3-192 1l-85 6-37 75c-70 140-152 417-198 670-11 63-22 122-24 131-3 15 26 16 338 12 187-3 392-1 455 5 100 8 117 12 133 32 24 29 23 69-3 96l-20 22-332-5c-290-4-578 5-593 20-16 16-57 499-69 820l-7 167h624c614 0 625 0 646 20 30 29 29 82-2 112-23 22-24 29-35 293-10 238-23 405-47 636l-6 66 98-13c186-26 551-102 595-125 9-5 19-19 21-31 46-211 69-328 77-398 16-122 18-128 51-145 37-19 76-11 97 22 14 21 15 36 4 123-7 54-25 160-40 235l-28 136 25-6c83-21 317-126 449-203l61-35 25-101c14-56 30-135 36-176 7-41 14-90 17-108 6-38 39-72 70-72 12 0 33 9 48 21 33 26 34 71 6 225-167 922-876 1649-1787 1833-188 38-437 55-618 41m301-150h51l41-87c74-162 154-435 197-678 8-49 18-99 20-110 4-20-1-20-449-20h-453l19 105c52 292 146 608 220 743l23 42 75 6c41 4 104 5 140 3s88-4 116-4m324-45c36-8 104-27 153-42 86-26 89-28 171-113 187-194 340-439 451-724 24-61 42-112 41-114-2-1-51 9-110 23-113 27-331 66-476 85l-85 11-23 132c-45 255-126 555-188 696-13 29-24 55-24 57 0 7 24 4 90-11m747-327c230-158 448-386 597-628 57-92 146-262 146-280 0-6-17-2-37 9-77 39-241 106-348 142l-110 36-37 106c-79 228-174 424-292 600-36 55-66 101-66 104 0 6 59-30 147-89M894 2348c9-165 33-354 66-518 15-74 26-137 24-139-12-14-354 137-471 207l-61 37-21 87c-32 129-50 241-58 351l-6 97h520zm910-35c10-243 26-484 41-637 20-185 20-184-7-180-234 36-318 50-448 79-243 54-226 47-244 108-45 156-89 441-102 665l-7 122h761zm-904-754 135-47 52-143c68-187 183-418 276-558 41-61 72-111 70-111-3 0-49 28-102 63-315 207-567 489-738 825-29 58-53 108-53 113 0 4 51-16 113-44 61-28 173-72 247-98m422-123c124-29 292-60 447-81 63-8 116-16 117-18 0-1 11-58 23-127 45-257 111-506 176-668 19-47 33-87 30-90-6-6-147 26-239 55-69 22-89 33-144 87-161 154-339 420-441 661-39 93-81 205-76 205 2 0 50-11 107-24"/><path id="path10" d="M4041 4744c-134-47-208-147-151-204 31-31 75-26 122 15 53 45 96 58 169 53 47-3 66-10 96-35 103-82 120-192 46-299-48-71-25-134 48-134 30 0 43 6 65 33 72 84 100 216 70 323-46 162-180 264-346 263-41 0-95-7-119-15"/><path id="path12" d="M3860 2701c-367-80-664-376-748-745-25-112-22-328 7-441 39-156 75-202 138-176 51 21 57 51 28 142-36 114-48 210-42 314 14 199 84 363 217 507 106 115 204 179 352 229 80 28 111 33 223 37 109 3 144 1 220-17 300-72 537-305 616-606 43-166 23-385-51-542-36-77-43-89-310-458-119-165-229-320-243-345-40-68-76-173-103-295-26-118-50-155-98-155-47 0-63 28-99 177-22 90-50 173-75 225-51 105-434 635-468 648-27 11-63 0-84-24-33-40-19-66 182-343 108-149 213-302 233-342 22-44 47-121 66-199 36-153 52-194 95-231 75-67 182-77 268-27 68 40 91 84 125 236 21 93 43 160 70 215 24 47 139 217 280 410 253 347 312 446 350 585 143 524-151 1049-674 1206-122 36-345 44-475 15"/><path id="path14" d="M3960 2249c-63-12-178-71-233-119-178-157-223-431-104-639 46-81 136-165 222-206 197-95 414-60 576 92 106 100 159 223 159 368 0 327-295 567-620 504m257-174c74-32 153-110 185-182 18-38 22-67 22-143 1-84-2-102-28-157-31-68-98-138-162-171-218-110-479 22-523 264-33 182 89 368 273 415 61 16 167 4 233-26"/></g></svg>
+                            <span class="text-sm">Business Center</span>
+                        </div>
+                        <div class="flex flex-col justify-center items-center border border-gray-200 px-5 py-2 rounded-md">
+                            <svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="50" height="50" fill="#64afdd" viewBox="0 0 512.000000 511.000000" preserveAspectRatio="xMidYMid meet" id="svg12" sodipodi:docname="wifi.svg" inkscape:version="1.1.2 (1:1.1+202202050950+0a00cf5339)"><defs id="defs16"></defs><g transform="translate(0.000000,511.000000) scale(0.100000,-0.100000)" stroke="none" id="g10"><path d="M2185 4434 c-301 -34 -637 -121 -910 -236 -91 -38 -116 -67 -100 -115 6 -15 23 -34 38 -43 25 -14 31 -13 84 7 231 88 293 109 418 143 162 45 359 83 525 101 146 16 502 17 645 1 644 -72 1231 -320 1720 -727 88 -73 305 -284 336 -327 66 -91 6 -231 -109 -254 -73 -15 -98 0 -246 145 -167 163 -268 245 -436 356 -659 438 -1451 583 -2230 409 -522 -117 -980 -369 -1375 -756 -78 -75 -153 -142 -169 -147 -127 -49 -264 87 -216 213 19 52 239 268 408 404 110 87 275 200 390 267 115 66 134 98 89 151 -34 39 -69 34 -173 -27 -238 -139 -482 -327 -680 -524 -162 -162 -189 -209 -189 -330 0 -95 25 -155 90 -220 63 -64 126 -90 215 -90 122 0 153 17 315 174 282 274 542 451 865 589 745 319 1622 284 2340 -95 233 -122 440 -276 658 -487 170 -165 199 -181 322 -181 58 1 86 6 125 25 64 31 124 92 156 155 32 67 34 188 3 256 -59 128 -384 424 -684 624 -459 306 -975 488 -1539 545 -142 14 -540 11 -686 -6z" id="path2"></path><path d="M2273 3464 c-470 -57 -915 -254 -1280 -568 -225 -194 -303 -304 -303 -428 0 -180 130 -318 303 -319 119 -1 154 17 301 160 72 70 159 148 193 174 208 159 466 274 737 329 96 20 142 23 336 23 196 0 240 -3 339 -23 269 -55 526 -170 734 -329 34 -26 121 -104 193 -174 147 -143 182 -161 301 -160 54 0 79 6 130 31 118 58 178 164 171 300 -7 109 -35 157 -176 298 -410 409 -906 638 -1502 697 -58 5 -69 4 -93 -15 -20 -16 -27 -30 -27 -56 0 -34 28 -74 53 -74 6 0 71 -7 142 -15 409 -48 802 -211 1132 -472 108 -85 293 -271 310 -310 33 -80 1 -179 -69 -215 -42 -22 -115 -26 -150 -8 -12 7 -77 65 -143 130 -233 227 -458 366 -746 461 -520 171 -1094 111 -1559 -163 -143 -84 -251 -168 -385 -298 -66 -65 -131 -123 -144 -130 -60 -31 -162 -4 -203 53 -28 40 -36 132 -15 173 20 38 201 220 297 297 246 198 562 355 869 431 131 33 340 65 419 66 24 0 52 40 52 74 0 25 -7 40 -26 55 -30 24 -37 24 -191 5z" id="path4"></path><path d="M2330 2496 c-339 -60 -651 -237 -853 -484 -78 -94 -101 -149 -101 -238 -1 -175 139 -314 314 -314 108 0 159 28 285 155 184 187 356 265 585 265 229 0 401 -78 585 -265 93 -94 120 -116 168 -134 159 -59 325 6 399 156 27 56 32 77 32 137 0 92 -29 155 -117 258 -192 223 -470 385 -777 453 -101 23 -417 29 -520 11z m535 -170 c161 -42 277 -93 401 -177 152 -102 303 -258 324 -334 37 -132 -111 -251 -233 -189 -18 9 -67 55 -111 101 -93 99 -172 157 -287 213 -140 67 -219 83 -399 83 -180 0 -259 -16 -399 -83 -115 -56 -194 -114 -287 -213 -88 -94 -124 -117 -184 -117 -108 0 -189 103 -160 205 29 104 265 318 455 412 205 101 357 134 605 129 149 -3 190 -7 275 -30z" id="path6"></path><path d="M2463 1535 c-168 -37 -308 -177 -344 -346 -53 -249 121 -500 374 -539 352 -55 626 313 473 636 -62 130 -174 220 -313 249 -82 18 -109 18 -190 0z m171 -150 c276 -72 307 -444 48 -563 -195 -89 -422 58 -422 272 0 138 89 255 222 290 69 19 82 19 152 1z" id="path8"></path></g></svg>
+                            <span class="text-sm">Wi-Fi</span>
+                        </div>
+                        <div class="flex flex-col justify-center items-center border border-gray-200 px-5 py-2 rounded-md">
+                            <svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="50" height="50" fill="#64afdd" viewBox="0 0 512.000000 512.000000" preserveAspectRatio="xMidYMid meet" id="svg14" sodipodi:docname="travel-luggage.svg" inkscape:version="1.1.2 (1:1.1+202202050950+0a00cf5339)"><defs id="defs18"></defs><g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)" stroke="none" id="g12"><path d="M3450 5106 c-167 -48 -288 -179 -320 -345 -13 -72 -13 -210 1 -252 16 -47 54 -96 90 -114 l29 -16 0 -204 0 -204 -262 -3 -263 -3 -64 -35 c-41 -22 -78 -52 -102 -83 -66 -83 -69 -105 -69 -509 l0 -358 -240 0 -240 0 0 73 c0 227 -124 374 -325 385 -65 3 -91 0 -137 -18 -74 -28 -146 -93 -183 -166 -26 -52 -30 -71 -34 -166 l-3 -108 -313 0 c-266 0 -321 -3 -365 -17 -68 -22 -140 -87 -171 -155 l-24 -53 -3 -504 c-2 -354 0 -513 8 -532 11 -25 46 -49 74 -49 7 0 25 9 40 21 26 20 26 21 26 160 0 76 1 139 3 139 1 0 24 -7 51 -15 27 -8 80 -15 118 -15 l68 0 0 -39 c0 -33 -4 -41 -27 -50 -34 -12 -54 -28 -76 -61 -25 -37 -24 -174 3 -217 39 -65 51 -68 292 -71 200 -3 220 -2 263 17 64 28 90 85 82 184 -5 82 -24 113 -85 142 -38 18 -42 23 -42 57 l0 38 417 -2 418 -3 3 -35 c3 -32 0 -37 -31 -48 -18 -6 -46 -26 -63 -43 -27 -28 -29 -37 -32 -117 -2 -73 0 -92 17 -119 41 -65 52 -68 296 -71 213 -3 221 -2 264 20 64 33 83 73 79 170 -4 90 -22 123 -86 153 -38 18 -42 23 -42 57 l0 38 78 0 c42 1 95 7 117 15 22 8 41 15 43 15 1 0 2 -390 2 -866 0 -947 3 -905 -58 -949 -26 -20 -45 -20 -992 -23 -904 -2 -967 -1 -999 15 -19 10 -44 31 -55 46 -21 28 -21 40 -24 622 l-3 594 -26 21 c-61 48 -123 4 -123 -88 l0 -39 -74 -6 c-119 -9 -203 -64 -253 -165 l-28 -57 0 -280 0 -280 26 -55 c51 -110 143 -170 260 -170 l67 0 7 -47 c11 -78 43 -140 97 -188 89 -80 28 -76 1139 -73 l984 3 53 30 c85 47 136 120 150 217 6 48 10 53 35 56 26 3 27 2 27 -51 0 -111 43 -188 127 -231 63 -31 166 -14 221 37 45 41 57 77 62 182 l5 100 403 3 402 2 0 -93 c0 -113 22 -165 89 -212 38 -27 51 -30 115 -30 93 0 141 28 180 106 22 45 26 66 26 140 l0 87 113 4 c91 3 121 8 159 26 97 48 161 138 179 254 6 39 8 477 7 1141 l-3 1079 -28 24 c-34 29 -56 30 -91 3 l-26 -20 0 -1092 c0 -620 -4 -1109 -10 -1131 -11 -48 -36 -84 -80 -114 l-33 -22 -761 0 -761 0 3 282 c4 312 0 339 -54 419 l-34 48 -2 1166 -3 1167 -24 19 c-30 25 -76 24 -101 -1 -20 -20 -20 -33 -20 -1150 l0 -1130 -60 0 -59 0 -3 728 -3 727 -31 55 c-36 64 -99 116 -160 132 l-44 12 0 360 0 359 25 43 c16 28 39 49 68 63 43 21 49 21 1023 21 l980 0 44 -22 c54 -28 80 -62 91 -119 4 -24 8 -155 9 -291 l0 -247 26 -20 c35 -27 57 -26 91 3 l28 24 0 284 0 283 -29 62 c-33 72 -94 134 -164 166 -44 20 -65 22 -309 25 l-263 3 0 205 c0 129 4 204 10 204 22 0 90 74 105 115 25 65 17 269 -14 347 -42 109 -139 206 -248 250 -55 21 -72 23 -338 25 -204 1 -292 -2 -325 -11z m638 -171 c59 -32 92 -66 125 -129 17 -33 22 -63 25 -153 4 -111 4 -111 -22 -128 -24 -16 -28 -16 -51 -1 -23 15 -25 22 -25 94 0 102 -14 149 -59 193 -55 55 -90 61 -350 57 -216 -3 -228 -4 -263 -26 -68 -42 -82 -73 -88 -195 -5 -92 -9 -111 -25 -123 -26 -19 -41 -18 -66 7 -20 20 -21 30 -17 124 5 118 25 170 89 234 75 75 106 81 409 78 l265 -2 53 -30z m-116 -227 c13 -10 17 -35 20 -114 3 -112 19 -149 85 -194 l33 -23 0 -203 0 -204 -355 0 -355 0 0 203 0 204 37 24 c61 39 85 95 91 208 3 54 10 99 16 103 20 14 410 9 428 -4z m-2229 -1432 c43 -17 93 -76 106 -123 6 -21 11 -68 11 -105 l0 -68 -190 0 -190 0 0 83 c1 117 26 169 105 210 37 20 115 21 158 3z m-903 -806 l0 -360 -67 0 c-76 0 -119 19 -150 67 -16 24 -18 54 -18 294 0 255 1 269 21 296 31 43 80 63 152 63 l62 0 0 -360z m260 -115 l0 -475 -55 0 -55 0 0 475 0 475 55 0 55 0 0 -475z m988 113 l2 -358 -420 0 -420 0 0 360 0 360 418 -2 417 -3 3 -357z m252 -113 l0 -475 -50 0 -50 0 0 475 0 475 50 0 50 0 0 -475z m321 453 c66 -37 69 -53 69 -340 0 -226 -2 -257 -18 -287 -27 -50 -73 -71 -154 -71 l-68 0 0 360 0 360 66 0 c49 0 76 -6 105 -22z m-1433 -1105 l-3 -28 -177 -3 -178 -2 0 30 0 30 181 0 180 0 -3 -27z m1242 -3 l0 -30 -180 0 -180 0 0 30 0 30 180 0 180 0 0 -30z m-2020 -885 l0 -355 -61 0 c-58 0 -64 2 -99 38 -49 48 -53 80 -48 357 3 189 5 213 23 245 26 44 77 70 138 70 l47 0 0 -355z m2568 335 c18 -11 41 -34 52 -52 18 -31 20 -51 20 -281 0 -276 -5 -302 -62 -337 -23 -14 -50 -20 -90 -20 l-58 0 0 355 0 355 53 0 c34 0 63 -7 85 -20z m182 -883 c0 -91 -8 -107 -51 -107 -42 0 -59 33 -59 111 0 36 3 69 7 72 3 4 28 7 55 7 l48 0 0 -83z m1220 6 c0 -84 -14 -113 -56 -113 -42 0 -54 25 -54 111 l0 79 55 0 55 0 0 -77z" id="path2"></path><path d="M3479 3601 l-24 -19 0 -1352 0 -1352 24 -19 c30 -25 76 -24 101 1 20 20 20 33 20 1370 0 1337 0 1350 -20 1370 -25 25 -71 26 -101 1z" id="path4"></path><path d="M3931 3594 l-21 -27 0 -1337 0 -1337 21 -27 c27 -34 77 -36 107 -3 l22 23 0 1345 0 1346 -23 21 c-33 31 -80 29 -106 -4z" id="path6"></path><path d="M4392 3597 l-22 -23 0 -1345 0 -1346 23 -21 c31 -29 72 -28 102 3 l25 24 0 1339 0 1339 -21 27 c-27 34 -77 36 -107 3z" id="path8"></path><path d="M975 1315 c-42 -20 -59 -35 -84 -75 -20 -34 -21 -46 -21 -365 0 -370 -1 -362 76 -421 l37 -29 661 -3 c441 -2 673 0 697 7 51 15 88 48 110 95 17 37 19 71 19 351 0 350 -3 366 -76 421 l-37 29 -676 2 c-567 2 -681 0 -706 -12z m1343 -431 c2 -238 0 -293 -11 -303 -11 -8 -184 -10 -648 -9 l-634 3 -3 290 c-1 159 0 295 3 302 3 11 135 13 647 11 l643 -3 3 -291z" id="path10"></path></g></svg>
+                            <span class="text-sm">Guarda Equipaje</span>
+                        </div>
+                        <div class="flex flex-col justify-center items-center border border-gray-200 px-5 py-2 rounded-md">
+                            <svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="50" height="50" fill="#64afdd" viewBox="0 0 512.000000 512.000000" preserveAspectRatio="xMidYMid meet" id="svg26" sodipodi:docname="tv-monitor.svg" inkscape:version="1.1.2 (1:1.1+202202050950+0a00cf5339)"><defs id="defs30"></defs><g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)" stroke="none" id="g24"><path d="M154 4641 c-23 -10 -54 -36 -70 -57 l-29 -37 -3 -1474 c-2 -1432 -2 -1474 17 -1511 10 -20 28 -45 39 -55 51 -46 49 -46 935 -47 l837 0 0 -180 0 -180 -140 0 c-130 0 -140 -1 -150 -20 -18 -33 -8 -73 20 -87 31 -16 1853 -19 1894 -3 30 11 43 51 27 86 -10 24 -12 24 -151 24 l-140 0 0 180 0 180 270 0 269 0 3 -367 c3 -420 2 -415 95 -514 181 -195 503 -130 600 121 15 39 17 93 21 403 l3 357 207 0 c261 1 297 12 343 102 18 36 19 84 19 1498 0 1414 -1 1462 -19 1498 -23 46 -46 67 -94 87 -32 13 -295 15 -2399 15 -2286 0 -2364 -1 -2404 -19z m4774 -117 l22 -15 0 -1449 0 -1449 -22 -15 c-19 -13 -58 -16 -225 -16 l-203 0 0 110 0 110 97 0 c76 0 100 4 115 17 17 15 18 67 18 1241 0 1126 -1 1227 -17 1244 -15 17 -82 18 -1737 18 -947 0 -1726 -4 -1732 -8 -6 -4 -17 -18 -24 -31 -10 -20 -9 -27 8 -50 l19 -26 1682 -3 1681 -2 0 -1140 0 -1140 -55 0 -55 0 0 113 c0 97 -3 119 -22 157 -13 25 -38 55 -57 67 -33 22 -41 23 -280 23 -271 -1 -285 -4 -333 -65 -21 -27 -23 -41 -26 -162 l-4 -133 -1634 0 -1634 0 0 1140 0 1140 192 0 c164 0 194 2 210 17 22 20 23 61 1 85 -15 16 -36 18 -251 18 -205 0 -238 -2 -254 -17 -17 -15 -18 -67 -18 -1241 0 -1126 1 -1227 17 -1244 15 -17 81 -18 1695 -18 l1678 0 0 -110 0 -110 -1783 0 c-1597 0 -1785 2 -1805 16 l-22 15 0 1449 0 1449 22 15 c34 24 4702 24 4736 0z m-558 -2383 c6 -13 10 -232 10 -640 l0 -621 -49 0 c-57 0 -81 -18 -81 -60 0 -37 32 -60 82 -60 l37 0 -11 -32 c-6 -17 -30 -51 -54 -74 -71 -72 -181 -91 -268 -48 -57 29 -126 107 -126 144 0 6 38 10 103 10 121 0 147 11 147 65 0 48 -20 55 -149 55 l-111 0 0 633 c0 349 3 637 7 640 3 4 107 7 229 7 211 0 224 -1 234 -19z m-1252 -858 l-3 -178 -555 0 -555 0 -3 178 -2 177 560 0 560 0 -2 -177z" id="path2"></path><path d="M2475 3619 c-242 -35 -427 -194 -511 -439 -25 -73 -26 -270 -2 -346 75 -236 251 -394 491 -440 76 -15 101 -16 178 -6 49 7 100 18 114 24 44 20 45 91 2 107 -13 5 -52 2 -97 -7 -253 -51 -507 114 -575 374 -52 200 39 424 217 537 88 56 134 69 248 74 116 6 187 -11 279 -65 108 -63 205 -201 231 -329 12 -55 9 -176 -6 -235 -12 -53 62 -91 99 -50 26 28 40 126 34 227 -18 298 -238 531 -542 575 -79 11 -78 11 -160 -1z" id="path4"></path><path d="M2442 3288 c-9 -9 -12 -86 -12 -284 0 -271 0 -273 22 -288 12 -9 28 -16 35 -16 21 0 370 267 375 286 2 11 2 27 0 37 -2 10 -82 76 -177 148 -176 130 -212 148 -243 117z m229 -309 c-18 -15 -52 -41 -77 -58 l-44 -32 0 116 0 115 76 -57 76 -57 -31 -27z" id="path6"></path><path d="M2935 2673 c-49 -53 -57 -89 -27 -116 32 -29 66 -21 106 24 54 59 63 83 42 114 -27 42 -68 34 -121 -22z" id="path8"></path><path d="M3970 2020 c-29 -29 -26 -74 7 -100 64 -50 143 29 93 93 -26 33 -71 36 -100 7z" id="path10"></path><path d="M3970 1720 c-29 -29 -26 -74 7 -100 64 -50 143 29 93 93 -26 33 -71 36 -100 7z" id="path12"></path><path d="M4210 1720 c-29 -29 -26 -74 7 -100 64 -50 143 29 93 93 -26 33 -71 36 -100 7z" id="path14"></path><path d="M3970 1480 c-29 -29 -26 -74 7 -100 64 -50 143 29 93 93 -26 33 -71 36 -100 7z" id="path16"></path><path d="M4210 1480 c-29 -29 -26 -74 7 -100 64 -50 143 29 93 93 -26 33 -71 36 -100 7z" id="path18"></path><path d="M3970 1220 c-29 -29 -26 -74 7 -100 64 -50 143 29 93 93 -26 33 -71 36 -100 7z" id="path20"></path><path d="M4210 1220 c-29 -29 -26 -74 7 -100 64 -50 143 29 93 93 -26 33 -71 36 -100 7z" id="path22"></path></g></svg>
+                            <span class="text-sm">TV con Internet</span>
+                        </div>
+                        <div class="flex flex-col justify-center items-center border border-gray-200 px-5 py-2 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" id="svg12" width="50" height="50" fill="#64afdd" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><g id="g10" stroke="none" transform="matrix(.1 0 0 -.1 0 512)"><path id="path2" d="M2618 5104c-30-16-58-61-58-93 0-11 18-55 40-98 84-163 75-238-49-412-41-58-76-148-86-221-18-134 76-389 158-428 62-30 147 22 147 90 0 16-19 68-42 115-35 70-43 98-46 154-5 83 5 111 69 201 63 87 86 134 105 211 22 82 14 189-20 286-61 175-135 241-218 195"/><path id="path4" d="M1741 4659c-40-40-40-80-1-157 36-72 37-99 5-143-95-130-114-188-97-289 21-118 98-230 158-230 57 0 114 55 114 110 0 11-13 46-30 77-42 78-40 119 7 175 20 23 47 67 61 96 20 45 23 65 20 130-10 195-143 325-237 231"/><path id="path6" d="M3449 4661c-42-42-42-90-2-159 38-64 36-110-8-163-68-83-84-124-84-220 0-81 2-91 40-165 47-92 84-120 141-109 20 3 46 17 59 31 38 40 37 71-2 157-23 52-33 87-29 102 3 13 28 53 55 88 57 77 77 141 67 229-7 73-55 177-97 212-44 37-101 36-140-3"/><path id="path8" d="M4983 3938c-17-4-41-20-52-34-21-26-21-37-21-470v-444h-218l-4 158c-3 153-4 159-35 224-75 159-216 250-388 251-107 0-238-53-299-122l-20-22-35 34c-138 130-352 147-516 42-27-18-59-42-69-54l-20-22-35 34c-138 130-352 147-516 42-27-18-59-42-69-54l-20-22-35 34c-138 130-352 147-516 42-27-18-59-42-69-54l-20-22-35 34c-158 149-417 147-577-4l-30-29-25 26c-13 15-41 37-63 51-157 100-366 86-507-35-48-41-114-139-124-182l-6-28-189-4-190-3-32-33-33-32-3-124-4-123-67-5c-40-3-78-12-94-22-36-24-52-76-37-120 15-48 52-68 131-74l67-5 4-123 3-124 33-32 32-33 180-3 180-4V1426c0-644 4-1043 10-1077C687 149 871 0 1080 0c81 0 191 47 283 122l27 22 33-31c70-66 189-113 288-113 90 0 196 44 292 122l27 22 33-31c70-66 189-113 288-113 90 0 196 44 292 122l27 22 33-31c70-66 187-113 283-113 94 0 199 43 297 122l27 22 33-31c70-66 187-113 283-113 94 0 199 43 297 122l27 22 33-31c68-64 187-113 277-113 184 0 350 121 411 298 18 53 19 103 19 1263v1207l178 4c197 3 220 10 241 70 15 43 15 993 0 1036-17 50-69 75-126 60m-3828-547c51-23 101-79 114-128 7-26 11-497 11-1458 0-1356-1-1422-19-1460-37-82-107-128-196-128-98 0-185 71-205 167-7 35-9 505-8 1461l3 1410 22 42c23 43 69 84 113 102 40 16 122 12 165-8m640 0c51-23 101-79 114-128 7-26 11-497 11-1458 0-1356-1-1422-19-1460-37-82-107-128-196-128-98 0-185 71-205 167-7 35-9 505-8 1461l3 1410 22 42c23 43 69 84 113 102 40 16 122 12 165-8m640 0c51-23 101-79 114-128 7-26 11-497 11-1458 0-1356-1-1422-19-1460-37-82-107-128-196-128-98 0-185 71-205 167-7 35-9 505-8 1461l3 1410 22 42c23 43 69 84 113 102 40 16 122 12 165-8m640 0c51-23 101-79 114-128 7-26 11-497 11-1458 0-1356-1-1422-19-1460-76-167-297-173-384-10l-22 40v2880l22 42c23 43 69 84 113 102 40 16 122 12 165-8m640 0c51-23 101-79 114-128 7-26 11-497 11-1458 0-1356-1-1422-19-1460-76-167-297-173-384-10l-22 40v2880l22 42c23 43 69 84 113 102 40 16 122 12 165-8m640 0c51-23 101-79 114-128 7-26 11-497 11-1458 0-1356-1-1422-19-1460-76-167-297-173-384-10l-22 40v2880l22 42c23 43 69 84 113 102 40 16 122 12 165-8M640 2880v-210H430v420h210z"/></g></svg>
+                            <span class="text-sm">Calefacción</span>
+                        </div>
+                        <div class="flex flex-col justify-center items-center border border-gray-200 px-5 py-2 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" id="svg20" width="50" height="50" fill="#64afdd" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><g id="g18" stroke="none" transform="matrix(.1 0 0 -.1 0 512)"><path id="path2" d="M236 4090c-99-39-172-111-213-210-17-42-18-95-18-930v-885l33-67c40-81 110-148 190-180 56-23 64-23 495-26l438-3 29 30c35 35 38 59 9 95l-20 26H690v140h1510c1497 0 1510 0 1530 20 25 25 26 71 1 101l-19 24-1511 3-1511 2v130h3740v-129l-241-3-241-3-24-28c-29-34-30-56-3-91l20-26h489v-140H2920c-1497 0-1510 0-1530-20-25-25-26-71-1-101l19-24h3427l57 23c80 32 150 99 190 180l33 67v1780l-28 57c-37 75-104 143-175 176l-57 27-1837 3-1836 2-21-26c-12-15-21-33-21-40 0-26 23-62 47-73 17-8 526-11 1824-11 1751 0 1801-1 1837-19 20-11 49-32 64-48 60-63 58-24 58-936 0-603-3-843-12-868-18-53-45-87-96-116-43-25-58-28-164-32l-118-3v523l-25 24-24 25H589l-24-25-25-24v-523l-117 4c-97 3-125 8-160 26-46 24-84 69-102 121-8 24-11 271-11 868 0 912-2 873 58 936 58 62 57 62 415 67l329 5 19 24c25 30 24 72-1 99-21 22-24 22-353 22-302-1-336-3-381-20"/><path id="path4" d="M2465 3625c-14-13-25-31-25-39 0-28 22-64 47-75 17-8 238-11 747-11 717 0 724 0 750 21 33 26 36 79 6 109-20 20-33 20-760 20h-741z"/><path id="path6" d="M4232 3627c-29-31-28-72 3-102 23-24 29-25 160-25s137 1 160 25c30 30 32 64 4 99-20 26-21 26-163 26-136 0-144-1-164-23"/><path id="path8" d="M1363 1568c-12-14-23-44-27-76-15-121-80-239-177-324-50-43-59-56-59-84 0-41 30-74 66-74 99 0 272 227 309 405 20 98 19 122-10 150-31 32-75 33-102 3"/><path id="path10" d="M1902 1570c-21-20-22-26-22-270 0-237 1-251 20-270 25-25 71-26 101-1l24 19v504l-24 19c-30 25-72 24-99-1"/><path id="path12" d="M2530 1570c-19-19-20-33-20-270s1-251 20-270c25-25 71-26 101-1l24 19v504l-24 19c-30 25-76 24-101-1"/><path id="path14" d="m3119 1571-24-19v-250c0-232 1-251 19-271 25-27 79-28 106-1 19 19 20 33 20 270 0 244-1 250-22 270-27 25-69 26-99 1"/><path id="path16" d="M3655 1565c-29-28-30-52-10-150 37-178 210-405 309-405 37 0 66 33 66 74 0 29-9 41-59 85-99 86-161 200-177 324-11 91-75 127-129 72"/></g></svg>
+                            <span class="text-sm">Aire Acondicionado</span>
+                        </div>
+                        <div class="flex flex-col justify-center items-center border border-gray-200 px-5 py-2 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="none" stroke="#64afdd" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" class="icon icon-tabler icons-tabler-outline icon-tabler-pool" viewBox="0 0 24 24"><path fill="none" stroke="none" d="M0 0h24v24H0z"/><path d="M2 20a2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1 2.4 2.4 0 0 1 2-1 2.4 2.4 0 0 1 2 1 2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1 2.4 2.4 0 0 1 2-1 2.4 2.4 0 0 1 2 1 2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1M2 16a2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1 2.4 2.4 0 0 1 2-1 2.4 2.4 0 0 1 2 1 2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1 2.4 2.4 0 0 1 2-1 2.4 2.4 0 0 1 2 1 2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1m-7-4V4.5a1.5 1.5 0 0 1 3 0M9 12V4.5a1.5 1.5 0 0 0-3 0m9 .5H9m0 5h6"/></svg>
+                            <span class="text-sm">Amenidades</span>
+                        </div>
+                        <div class="flex flex-col justify-center items-center border border-gray-200 px-5 py-2 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" id="svg22" width="50" height="50" fill="#64afdd" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><g id="g20" stroke="none" transform="matrix(.1 0 0 -.1 0 512)"><path id="path2" d="M3445 4704c-40-20-73-52-93-89-15-26-17-70-17-336 0-288 1-308 19-328 26-29 76-28 104 2 22 23 22 30 22 308 0 156 4 290 8 297 7 10 162 12 743 10l734-3 3-729c1-530-1-733-9-742-16-19-1448-21-1467-2-9 9-12 74-12 231 0 135-4 226-11 238-15 30-57 42-91 28-44-18-50-58-46-299 3-208 4-217 28-260 15-27 41-53 65-67 39-22 47-23 343-23h302v-440c0-356-2-440-13-440-43 0-195 49-271 87-49 24-224 136-390 247-372 252-456 295-656 342-64 14-147 18-575 21-333 3-541 1-623-7-266-24-463-113-677-306-172-154-300-222-518-273-70-17-145-40-168-51-55-29-113-91-146-158l-28-57v-425c0-385 2-428 17-457 33-59 75-88 233-158l157-71 22-60c33-89 67-142 130-202 234-221 621-148 761 143l36 75h2417l36-76c57-121 172-218 301-255 71-20 216-16 285 8 123 42 228 137 283 254l31 67 100 4c59 3 116 12 138 21 62 26 125 92 148 155 20 53 21 72 18 312-4 292-8 308-99 445-111 165-222 227-511 285l-58 11v958l278 3 279 3 37 29c21 16 47 48 57 72 19 41 19 74 17 797l-3 753-27 41c-16 24-44 49-70 62-44 21-50 21-794 21-659 0-753-2-779-16m855-2230c0-438-1-465-17-461-10 3-30 8-45 11l-28 6v449c0 246 3 451 7 454 3 4 24 7 45 7h38zm-1595 117c115-24 232-69 318-123 37-24 187-124 334-223 266-179 412-262 509-291 28-8 216-48 418-88 320-64 377-78 441-110 86-42 165-122 211-213l29-58 3-245c3-211 1-249-13-276-26-48-62-64-148-64h-76l-7 48c-38 264-280 448-542 412-201-27-365-179-407-377-8-38-15-71-15-76 0-4-537-6-1192-5l-1193 3-7 50c-41 317-391 500-686 360-127-60-234-193-257-318-7-35-10-38-33-32-13 3-72 29-131 58l-106 52-3 398c-2 381-1 399 18 437 32 63 71 85 210 118 248 60 400 138 560 287 97 91 163 139 255 187 203 103 227 106 880 107 490 1 548-1 630-18M1042 1182c76-37 120-83 155-160 81-176-5-384-186-453-45-17-72-20-136-17-143 8-254 89-301 220-25 70-20 177 11 246 82 179 281 251 457 164m3353 3c206-105 249-373 86-536-164-164-436-119-538 90-24 49-28 68-28 146 0 75 4 98 24 139 32 65 73 111 130 144 70 41 109 51 192 48 61-2 89-8 134-31"/><path id="path4" d="M1452 2485c-157-34-353-140-437-235-36-41-162-137-250-190-111-67-140-107-140-195 0-52 5-68 29-103 50-73 83-82 299-82 174 0 188 1 207 20 11 11 20 33 20 50s-9 39-20 50c-18 18-33 20-186 20-95 0-174 4-185 10-34 19-24 57 24 86 122 77 184 123 278 206 209 185 310 226 577 235l162 6v-543h-135c-122 0-137-2-155-20-11-11-20-33-20-50s9-39 20-50c20-20 33-20 1055-20h1035l32 29c30 26 33 35 32 83 0 49-15 89-46 129-15 18-651 444-713 477-71 38-138 63-223 83-77 18-122 19-640 18-432 0-571-4-620-14m1245-148c110-29 181-69 498-280 171-114 319-213 330-221 18-13-74-15-762-16h-783v542l328-5c258-3 340-8 389-20"/><path id="path6" d="M1909 1559c-53-20-59-102-10-128 11-6 77-11 149-11 116 0 132 2 156 21 31 25 34 66 7 100-18 23-26 24-148 26-70 1-140-2-154-8"/><path id="path8" d="M792 1079c-47-23-83-64-107-122-64-154 93-330 256-287 169 44 227 255 103 372-65 60-173 76-252 37m132-130c51-23 55-103 7-128-79-42-154 64-85 118 30 24 43 26 78 10"/><path id="path10" d="M4150 1081c-125-67-161-217-79-332 73-102 250-112 335-17 101 110 66 287-69 351-48 23-142 22-187-2m145-146c15-14 25-36 25-51 0-37-36-74-72-74s-78 40-78 75c0 33 42 75 75 75 14 0 37-11 50-25"/><path id="path12" d="M1829 4335c-161-30-338-101-464-184-91-60-205-160-216-189-21-55 34-111 90-90 13 4 48 30 77 57 249 228 610 324 954 254 195-39 349-118 523-267 65-56 108-64 139-25 33 40 23 71-39 130-150 143-332 240-548 296-126 32-393 41-516 18"/><path id="path14" d="M3988 4289c-17-9-18-41-18-433 0-481-4-456 82-456 73 0 78 11 78 183v147h48c90 0 211 19 250 39 93 47 137 141 130 275-7 128-64 212-162 241-59 18-380 21-408 4m351-144c42-21 64-76 59-146-8-105-52-137-190-138l-78-1v300h90c60 0 101-5 119-15"/><path id="path16" d="M1901 3915c-129-24-245-76-359-162-86-66-109-102-92-143 23-55 97-57 141-4 30 37 165 115 243 140 106 34 250 42 356 20 94-20 218-80 289-141 30-26 65-51 78-56 45-17 93 20 93 70 0 52-164 178-302 231-144 56-300 71-447 45"/><path id="path18" d="M1962 3499c-101-20-222-106-222-158 0-34 37-71 71-71 14 0 41 12 60 26 113 86 239 86 353-1 40-30 79-32 106-5 63 63-29 164-187 205-62 16-114 18-181 4"/></g></svg>
+                            <span class="text-sm">Estacionamiento Privado</span>
+                        </div>
+                        <div class="flex flex-col justify-center items-center border border-gray-200 px-5 py-2 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" id="svg8" width="50" height="50" fill="#64afdd" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><g id="g6" stroke="none" transform="matrix(.1 0 0 -.1 0 512)"><path id="path2" d="M656 5109c-107-26-241-137-294-242-29-59-28-90 6-128 24-27 37-32 92-38 36-4 70-10 76-14 7-4-19-37-71-89-184-185-238-422-155-683 96-301 319-631 509-754 73-47 173-81 237-81 85 0 216 60 306 139l36 31 566-707 566-708-2-649-3-649-268-113c-148-62-280-123-294-136-83-76-61-222 40-269 40-18 79-19 827-19 744 0 787 1 826 19 99 45 124 189 45 265-17 17-130 70-297 140l-269 113-3 647-2 648 849 1062c467 585 854 1073 860 1084 24 45 2 109-44 130-19 9-207 12-738 12h-713l-22 98c-77 335-338 597-677 680-103 25-314 22-418-6-193-52-382-174-482-311-16-22-33-39-36-38s-39 33-80 70c-81 76-81 87 1 87 64 0 111 27 128 72 13 34 12 41-8 82-80 166-257 277-419 263-85-8-152-31-222-77l-57-37-57 38c-31 21-80 46-108 55-64 20-179 26-231 13m175-209c48-18 109-64 109-81 0-4-21-11-47-14-27-4-71-13-100-20-51-13-52-12-80 17-15 16-43 39-61 50l-33 20 29 18c57 35 111 38 183 10m579 10c75-21 76-29 11-87l-59-53-48 14c-27 8-70 17-96 21-27 3-48 11-48 17 0 19 60 66 103 81 50 18 90 20 137 7m940-420c0-121-3-220-8-220-4 0-77 70-162 155-148 148-154 155-135 170 36 28 159 85 215 99 99 26 90 46 90-204m307 195c71-22 203-90 203-104 0-4-70-76-155-161l-155-155v223c0 187 2 222 14 222 8 0 50-11 93-25m-1507-75c168-18 301-82 382-183 67-86 69-92 47-177-10-41-21-87-24-102l-5-28h-331c-291 0-334-2-359-17-46-27-62-81-39-126 7-11 111-144 231-295l220-274-26-27c-14-14-51-42-82-61-98-59-175-47-285 47-182 155-380 512-406 732-7 62 11 167 41 234 65 148 239 258 435 277 42 4 81 8 87 9 7 0 58-4 114-9m895-330 160-160h-453l14 62c17 72 42 132 87 206 17 28 31 52 32 52zm1019 60c31-62 57-131 70-192l6-28h-455l160 160c181 181 161 176 219 60m1464-437c-9-10-256-319-550-688-294-368-562-696-596-727-206-189-507-259-782-181-124 35-273 126-366 225-45 46-684 844-684 853 0 3 380 5 845 5 908 0 888-1 915 49 18 35 12 88-14 118l-24 28-945 3-945 2-98 123c-54 67-113 141-132 165l-34 42h1712c1631 0 1712-1 1698-17M2746 2080c84-8 191-3 297 16 20 4 37 3 37 0 0-4-26-40-58-79-32-40-66-83-75-97-16-22-17-86-17-751V442l24-29c18-21 81-52 241-118l216-90-290-3c-160-1-422-1-582 0l-290 3 217 90c158 66 223 98 240 118l24 29v724c0 530-3 731-12 747-6 12-37 54-68 92-81 100-80 99-34 91 21-4 80-11 130-16"/><path id="path4" d="M3558 3561c-27-24-33-36-33-70 0-91 105-131 166-63 40 45 39 84-5 128s-83 45-128 5"/></g></svg>
+                            <span class="text-sm">Restaurant Bar</span>
                         </div>
                     </div>
-                </article>
-            </div>
-        </section>
+                </div>
+            </section>
 
-        <section class="flex flex-col mt-16">
-            <div class=" relative h-[500px] w-full">
-                <img class="w-full h-[500px] object-cover object-top" src="/img/fachada-1.webp" alt="">
-                <div class="absolute inset-0 bg-black/60 pointer-events-none"></div>
-                <div
-                    class="max-w-[1600px] h-[500px] flex flex-col items-center justify-center gap-5 absolute inset-0 z-10 m-auto text-white p-3 md:p-0">
-                    <div class="text-center">
-                        <p class="text-lg text-nuve-express-orange font-semibold">Nuve Express</p>
-                        <h2 class="text-3xl md:text-4xl text-center font-semibold leading-[1] uppercase">
-                            Más que un hotel, tu <br>aliado en Torreón
-                        </h2>
+            <section class="relative h-[400px] bg-[url(/img/home-3.webp)] bg-cover bg-center bg-fixed flex items-center justify-center text-white mt-20">
+                <div class="absolute inset-0 bg-[#172a3a]/50"></div>
+                <div class="max-w-3xl mx-auto flex flex-col gap-3 items-center justify-center text-center px-2 z-[1]">
+                    <h2 class="uppercase font-bold text-2xl md:text-5xl">Reserva tu habitación en menos de 5 minutos</h2>
+                    <span>Representamos la hospitalidad de la Comarca Lagunera haciendo de su estancia una experiencia única.</span>
+                    <a href="" class="w-fit text-white bg-transparent border border-white font-semibold px-10 py-2 rounded-sm">Nuestros hoteles</a>
+                </div>
+            </section>
+
+            <section class="max-w-6xl mx-auto pt-20 px-2">
+                <div class="w-full mx-auto text-center md:text-left">
+                    <span class="text-xs md:text-sm text-nuve-hoteles-blue font-semibold">Nuestros servicios</span>
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <h3 class="text-2xl md:text-5xl uppercase font-semibold">Experiencias Nuve</h3>
+                        <a href="" class="w-fit flex items-center justify-center text-white bg-nuve-hoteles-blue font-semibold px-10 py-2 mt-3 md:mt-0">Conoce más</a>
                     </div>
-                    <p class="text-center text-[22px]">
-                        En Nuve Express entendemos lo importante que es contar con un espacio cómodo, práctico y
-                        confiable durante tus proyectos en la ciudad.
-                    </p>
-                    <p class="text-center text-[22px]">
-                        Nuestras tarifas corporativas, convenios mensuales
-                        y habitaciones totalmente equipadas hacen que tu estancia sea tan productiva como cómoda.
-                    </p>
                 </div>
-            </div>
-        </section>
-
-        <section class="mt-16 pb-16">
-            <div class="flex flex-col items-center">
-                <span class="text-nuve-express-orange uppercase font-semibold">Nuve Express</span>
-                <h2 class="text-2xl md:text-3xl uppercase font-semibold text-center">Opciones que se adaptan a tu
-                    empresa</h2>
-                <BookNowButton text="Solicita tu convenio" path="https://wa.me/5214492176423"
-                    class="fit-content mt-4" />
-            </div>
-
-            <div class="max-w-[1600px] flex flex-col lg:flex-row gap-14 md:gap-5 mx-auto mt-10 px-4">
-                <div class="w-full flex flex-col items-center gap-5 text-center box-customize px-11 py-5">
-                    <BedSvg2 :width="50" :height="50" />
-                    <p class="text-center text-xl font-semibold">Habitación sencilla</p>
-                    <p>1 cama matrimonial para <br>máximo 2 personas</p>
-                </div>
-
-                <div class="w-full flex flex-col items-center gap-5 text-center box-customize px-11 py-5">
-                    <div class="flex items-center gap-2">
-                        <BedSvg2 :width="50" :height="50" />
-                        <BedSvg2 :width="50" :height="50" />
+                
+                <section class="grid grid-cols-[repeat(auto-fit,minmax(1fr,1fr))] md:grid-cols-[repeat(auto-fit,minmax(150px,400px))] justify-center gap-5 mt-10 md:px-0">
+                    <div class="flex flex-col gap-3">
+                        <img class="w-full h-72 object-cover bg-center" src="/img/home-8.webp" alt="">
+                        <div class="flex-1 flex flex-col gap-3">
+                            <p class="uppercase font-bold text-lg">UMO Penthouse</p>
+                            <p class="text-sm flex-1">
+                                Ubicados en el quinto piso del hotel, somos el primer restaurante en Torreón, Coahuila que te brinda una vista espectacular de la ciudad y una experiencia única con platillos de asador, deliciosa coctelería y la mejor selección en vinos de mesa.
+                            </p>
+                            <a href="https://umopenthouse.com/" class="uppercase font-semibold text-nuve-hoteles-blue">Conoce más</a>
+                        </div>
                     </div>
-                    <p class="text-center text-xl font-semibold">Habitación doble</p>
-                    <p>2 cama matrimoniales para <br>máximo 4 personas</p>
+                    <div class="flex flex-col gap-3">
+                        <img class="w-full h-72 object-cover bg-center" src="/img/home-6.webp" alt="">
+                        <div class="flex-1 flex flex-col gap-3">
+                            <p class="uppercase font-bold text-lg">Business center</p>
+                            <p class="text-sm flex-1">
+                                Hotel Nuve ofrece a sus viajeros de negocios excelentes comodidades y servicios en el Business Center, para facilitar la productividad, equipados con acceso a Internet de alta velocidad.
+                            </p>
+                            <a href="https://umopenthouse.com/" class="uppercase font-semibold text-nuve-hoteles-blue">Conoce más</a>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section class="relative h-[400px] bg-[url(/img/home-7.webp)] bg-cover bg-center bg-fixed flex items-center justify-center text-white mt-20">
+                <div class="absolute inset-0 bg-[#172a3a]/50"></div>
+                <div class="max-w-3xl mx-auto flex flex-col gap-3 items-center justify-center text-center px-2 z-[1]">
+                    <h2 class="uppercase font-bold text-2xl md:text-5xl">Reserva tu habitación en menos de 5 minutos</h2>
+                    <span>Contamos con habitaciones donde encontrarás los mejores espacios y nuestros excelentes servicios disponibles para ti.</span>
+                    <a href="/nuestros-hoteles" class="w-fit text-white bg-transparent border border-white font-semibold px-10 py-2 rounded-sm">Nuestros hoteles</a>
                 </div>
-            </div>
-        </section>
+            </section>
+
+            <section class="max-w-6xl mx-auto text-center md:text-left mt-20 px-2">
+                <span class="text-xs text-nuve-hoteles-blue font-semibold">Hotel Nuve</span>
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <h3 class="text-3xl uppercase font-semibold">Información</h3>
+                    <a href="/experiencias" class="w-fit flex items-center justify-center text-white bg-nuve-hoteles-blue font-semibold px-10 py-2 mt-3">Conoce más</a>
+                </div>
+
+                <div class="w-fit md:w-full mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 [&>div]:max-w-xs mt-10">
+                    <div class="w-full">
+                        <div class="px-3">
+                            <div class="flex gap-3">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#64afdd" viewBox="0 0 512 512"><title>informacion-svg</title><g id="Layer"><path id="Layer" d="M293 2.9c14.5 2.3 31.7 6.6 44.5 11.1 10.6 3.8 28.3 11.7 30.7 13.7 4.1 3.6 2.6 10.3-2.8 12.3-2.1.8-4.7.1-14.7-4.4-21.6-9.5-39.3-14.7-62-18.3-15.5-2.4-49.7-2.4-65.7 0-50.9 7.8-95.2 30.1-130.9 65.8-35.6 35.6-57.2 78.5-65.7 130.4-2.8 16.7-2.5 52.6.4 69.5 10.5 59 37.3 105.4 82.9 143.7 12.1 10 13.7 12.5 10.9 16.9-2.2 3.2-5.4 4.4-8.6 3.2-7.2-2.7-37.2-31.1-49.8-47.1-27-34.2-43.8-73.6-50.9-118.7-2.2-14.4-2.5-51.8-.4-65.5 3.6-24.6 10.5-49.5 18.9-68C54.1 93.7 94.1 52 146 26.1c28.2-14 55-21.8 87-25.1 13.6-1.4 45.7-.4 60 1.9m105.3 43.2c9.9 5.2 38.6 32.2 50.7 47.7 21.4 27.4 38 60.5 45.9 91.7 6.3 24.5 8.7 45.7 7.8 68.5-2.2 54.9-18.8 101-52.1 144.9-4.7 6.2-9.9 13.6-11.5 16.4-9.1 16-11.6 37.1-6.8 58.7 2.6 12.1-.5 22.4-9.1 30.2-4.5 4.1-13.6 7.8-19 7.8-8.6 0-31.4-8.2-49.8-18-18.5-9.8-23.8-10.6-41.6-6.6-21.4 4.9-31.9 6-56.8 6.1-17.9 0-26.3-.4-35-1.8-24.7-3.8-47.9-10.9-69.7-21.2-11.1-5.2-13.3-7.2-13.3-11.6 0-2.9 3.7-6.9 6.5-6.9 1.2 0 7.6 2.4 14.1 5.4 21.4 9.7 41.3 15.7 63.4 19.2 8.6 1.4 17.1 1.9 34 1.9 23.3 0 33.6-1.1 53-5.6 12.6-3 23.2-3.5 30.8-1.5 3.5 1 13.4 5.2 22 9.5 19.3 9.7 38.1 16.5 43.5 15.8 4.5-.6 8-2.8 10.3-6.2 2.8-4.3 3.1-8.5 1.2-17-3.3-15-2.1-36.6 2.9-51.5 2.9-8.6 8.2-17.8 17.5-30.1 15.9-21.2 25.2-37.1 33.2-56.8 11.9-29 17-55.3 17.1-88.1 0-21.4-.9-30.6-5-49-12.1-54.4-43.2-102.7-88-136.4-7.9-5.9-9.3-9.9-5-14.1 2.6-2.7 5.4-3.1 8.8-1.4" class="s0"/><path id="Layer" fill-rule="evenodd" d="M295.4 94c2.7 5.8 3.1 7.5 3.1 15.5s-.4 9.7-3.1 15.5c-3.9 8.3-10.1 14.5-18.4 18.4-5.9 2.8-7.4 3.1-16 3.1-8.2 0-10.3-.4-15.2-2.7-7.4-3.4-15.2-11.2-18.6-18.6-3.8-8-4.3-20.3-1.2-28.5 4-10.7 12.6-19.1 23.3-22.8 17.9-6.2 37.6 2.4 46.1 20.1m-52.9 2.8c-2.7 4-3 5.1-3 12.7s.2 8.7 3 12.6c6.1 8.7 18.7 12.3 28 8 7.8-3.5 13.5-12.3 13.5-20.6s-5.7-17.1-13.5-20.6c-9.3-4.3-22-.7-28 7.9m32.8 69.7c9.2.8 16.7 5.8 21.3 14.5 1.8 3.3 1.9 7.6 2.2 79.2l.2 75.8h9.8c11.5 0 17.5 2.2 23.3 8.7 5 5.5 6.4 10.1 6.4 20.8 0 11.2-2 16.8-7.9 22.3-8.1 7.5-6 7.3-70.6 7-54.5-.3-57.7-.4-61.4-2.2-5-2.5-9.7-7.2-12.2-12.2-1.5-3.1-1.9-6-1.9-14.9 0-12.4 1.2-16.2 7.3-22.3 5.2-5.1 9.4-6.5 21.2-7.2l10.5-.5v-106L210 229c-16.7-.6-20-2.1-24.4-10.7-2.4-4.8-2.2-24.3.3-29.9 3.6-8 8.8-9.9 29.6-10.8 18.3-.9 29-2.8 42.7-7.6 9.6-3.4 12.2-3.9 17.1-3.5m-13.3 18c-13.7 5-21.3 6.3-41.5 7.6-9.9.6-18.7 1.4-19.5 1.8-2 1.1-2.7 18-.8 19.3.7.4 6.9.8 13.7.8 11.4 0 12.8.2 16.6 2.5 8.3 4.8 8 2 8 69.7v59.7l-2.3 2.3c-2.1 2.1-3.3 2.3-16.8 2.8l-14.6.5-2.9 3.3c-2.7 3-2.9 3.9-2.9 10.8 0 7.3.1 7.7 3.4 11l3.4 3.4h54.6c60.7 0 59.4.1 62.2-6.5 1.8-4.3 1.8-11.6 0-15.8-2.3-5.7-5-6.7-18.4-6.7s-17.4-1-19.1-4.6c-.8-1.8-1.1-24.3-1.1-80.4v-78l-2.7-3c-4.1-4.5-7.9-4.6-19.3-.5" class="s0"/></g></svg>
+                                </div>
+                                <div class="flex flex-col items-start">
+                                    <span class="text-nuve-hoteles-blue font-semibold">Importante</span>
+                                    <p class="text-start">
+                                        Siempre estamos listos para recibirte, conoce los detalles importantes antes de reservar.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <div class="px-3">
+                            <div class="flex gap-3">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#64afdd" viewBox="0 0 640 640"><title>reloj-circular (1)-svg</title><g id="Layer"><path id="Layer" fill-rule="evenodd" d="M325 .5c34.7.3 41.9.9 65.4 6.1 45.8 10.1 96.1 34.3 130.8 63.1 12 9.9 39.2 37.1 49.1 49.1 21.8 26.4 43.5 66.2 54.9 100.7 4.1 12.5 9.2 33.5 11.9 49.5 2.2 12.5 2.4 16.2 2.4 51s-.2 38.5-2.4 51c-8.2 47.4-24.2 88.3-49.3 126.2-12.7 19-21.5 29.7-41.2 49.4s-30.4 28.5-49.4 41.2c-32.8 21.7-71.8 38.2-109.2 46-25.2 5.4-29.4 5.7-68.5 5.7-34.1 0-38-.2-50.4-2.4-47.4-8.2-88.4-24.2-126.3-49.3-19-12.7-29.7-21.5-49.4-41.2s-28.5-30.4-41.2-49.4c-24.8-37.5-40.4-76.9-48.9-123.8C.7 358.9.6 357.5.6 320s.1-38.9 2.7-53.4c8.5-46.9 24.1-86.3 48.9-123.8 12.7-19 21.5-29.7 41.2-49.4 19.8-19.8 30.4-28.5 49.8-41.4C185.4 24 238.8 4.9 287 .6c2.5-.2 19.6-.2 38-.1m-2 20.9c-24.4-.2-34.9.1-42 1.1-53.2 8.1-98.2 26.3-138.8 56.4-16.9 12.5-50.4 45.8-62.4 62.1-33.3 44.9-52.4 93.9-57.7 147.4-1.4 14.1-1.4 49.1 0 63.2 5.3 53.5 24.4 102.5 57.7 147.4 11.4 15.5 45.4 49.5 61.2 61.2 44.6 33.2 93.9 52.5 147.9 57.8 16.2 1.6 51.1 1.3 66.6-.5 52.9-6.2 99.9-24.9 142.9-56.8 16.1-12 49.9-45.7 61.8-61.7 28.3-38.1 46-78.2 54.2-123 3.5-19.4 4.6-32.5 4.6-56s-1.1-36.6-4.6-56c-8.1-44.5-25.9-85-53.7-122.4-9.8-13.2-43.7-48-56.2-57.7-40.6-31.6-84.7-51-136.5-60-10.7-1.9-17.1-2.2-45-2.5" class="s0"/><path id="Layer" d="M346.5 51c47.5 3.3 99.4 23.6 139.1 54.5 13.5 10.6 16.3 15 13.3 20.8-1.8 3.5-5.1 5.7-9 5.7s-8.5-2.6-20.6-11.8c-34.4-26.1-81.1-44.6-121.8-48.1-15.4-1.4-43.4-1.4-56.6-.1-26.7 2.7-61.8 13.8-87.8 27.7-43.6 23.3-80.2 60-103.6 103.7-13.9 26-25 61.5-27.5 88.1-2.2 24-.8 59.1 3.2 77.5 8.3 38.5 23.4 71.9 46.3 102 4 5.3 8 11 8.9 12.7 2.4 4.7 2.1 9.7-.8 13-2 2.3-3.2 2.8-7 2.8-5.3 0-8.4-2.5-17.7-14.7-26.4-34.4-44.8-77.3-52.6-122.3-2.5-14.7-2.5-71.8 0-85.5 10.9-59 35.6-107.4 74.9-147.1C169.7 87 224.3 59.6 283 51.6c12.6-1.7 42.8-2 63.5-.6" class="s0"/><path id="Layer" d="M319.7 90.1c9.4-.2 10.3 1.8 10.3 23.9 0 20.4-.8 23.3-6.7 25-5 1.5-10.8-.6-12.3-4.5-.6-1.5-1-10.5-1-20.1 0-17.8.8-22.4 4.2-23.7.7-.3 3.2-.6 5.5-.6m-106.2 29.5c3.5 1.7 8.3 8.2 13.4 18.2 4.9 9.8 3.8 15.8-3.4 18.2-6.1 2-9.9 0-15.1-8.1-10.3-15.9-11.3-24.9-3.1-28.4 4.1-1.8 4.3-1.8 8.2.1m216.8-.6c3.8 0 4.9.5 7.1 3.1 3.6 4.2 3.4 8.5-.9 17.1-5.8 11.4-9 15.6-13.4 16.9-3.2.9-4.4.8-7.3-.5-4.5-2.2-6.2-5.4-5.5-10.5.6-4.5 8.2-18.3 12.7-23.1 2.3-2.5 3.6-3 7.3-3m104.2 35.4c30.1 38.6 50.9 91.1 54.5 137.1 2.2 29.3.9 61.9-3.5 82.2-11.7 54.5-36.1 99.9-74 137.8-44 43.9-103.2 72.2-162.5 77.5-16.8 1.5-52.6 1.2-64.5-.5-40.9-5.8-79.7-20.1-112-41.2-21.1-13.9-32.5-24-32.5-28.9 0-3.3 2.5-8.1 4.9-9.4 5.5-2.9 10.5-.8 25.8 10.8 34.4 26.1 81.1 44.6 121.8 48.1 15.4 1.4 43.4 1.4 56.6.1 26.7-2.7 61.8-13.8 87.8-27.7 43.5-23.3 80.2-60 103.6-103.7 13.9-26 25-61.5 27.5-88.1 1.3-14.1 1.3-40.6-.1-56-3.5-40.7-22-87.4-48.1-121.8C510.6 158.6 508 154 508 150s2.2-7.7 5.4-9c6.5-2.6 10.5-.1 21.1 13.4" class="s0"/><path id="Layer" fill-rule="evenodd" d="M326 161c3.8 2 4 5.4 4 68.1v60.8l5.9 4.1c3.4 2.4 7.7 6.7 10.1 10.1l4.1 5.9h104.7l2.6 3.1c3.5 4.2 3.5 9.6 0 13.8l-2.6 3.1H350.2l-4.2 5.8c-2.4 3.3-6.9 7.8-10.2 10.2l-5.8 4.2v7.3c0 6.9-.2 7.5-3.1 9.9-2.1 1.8-4.2 2.6-6.9 2.6s-4.8-.8-6.9-2.6c-2.9-2.4-3.1-2.9-3.1-9.9v-7.4l-5.9-4.1c-3.4-2.4-7.7-6.7-10.1-10.1l-4.1-5.9h-7.4c-7 0-7.5-.2-9.9-3.1-3.5-4.2-3.5-9.6 0-13.8 2.4-2.9 3-3.1 9.9-3.1h7.3l4.2-5.8c2.4-3.3 6.9-7.8 10.2-10.2l5.8-4.2V229c0-39.9.4-61.8 1-63.7.6-1.5 1.8-3.4 2.7-4.1 2-1.4 9.7-1.6 12.3-.2m-12.1 152.9c-4 4-3.9 8.2.1 12.3 2.7 2.6 3.6 3 6.7 2.5 2-.4 4.5-1.5 5.5-2.5s2.1-3.5 2.5-5.5c.5-3.1.1-4-2.5-6.7-4.1-4-8.3-4.1-12.3-.1" class="s0"/><path id="Layer" d="M138.3 203.1c17.1 8.4 21.4 13.9 17.2 21.9-1.7 3.3-7 5.4-11.1 4.4-3.5-.8-13.4-5.7-18.6-9.2-4.3-2.8-6.8-6.7-6.8-10.7 0-3.1 2.4-8.1 4.2-8.8 3.5-1.4 9.3-.5 15.1 2.4m380.1-.5c2 2.1 2.6 3.7 2.6 6.9 0 3.9-.5 4.7-4.8 8.7-5.4 4.8-15.7 10.3-21.3 11.3-7.8 1.5-13.4-5.3-10.9-13 1.2-3.8 4.8-6.6 16-12.9 8.3-4.6 14.4-4.9 18.4-1M135 311.3c1.5.7 3.1 2.9 3.9 5.2 1.2 3.5 1.1 4.5-.2 7.8-1 2.3-2.6 4.1-4.2 4.7-1.5.6-10.5 1-20.1 1-22.6 0-24.4-.8-24.4-10.4 0-4.4 1.2-6.6 4.5-8.4 2.9-1.7 37.3-1.5 40.5.1m390.3-1.2c22.7-.1 24.7.7 24.7 9.9s-2 10-24.4 10c-9.6 0-18.6-.4-20.1-1-3.3-1.3-5.9-7.1-4.9-11.4.8-3.7 2.1-5.5 4.9-6.6 1.1-.5 10-.9 19.8-.9M153.2 412.7c6.2 6.6 4.5 12.6-5.2 18.9-15 9.7-24 11.1-27.5 4.3-3.9-7.4.1-13.5 14-21.4 9.9-5.5 14.7-6 18.7-1.8m348.9.3c17.2 8.5 21.8 14.5 17.4 22.9-1.7 3.3-3.3 4.1-8.3 4.1-3.9 0-13.9-4.6-21.7-10-7-4.8-8.2-12-2.8-17.5 3.4-3.4 7.9-3.3 15.4.5m-278.8 70.9c7.5 2.9 8.5 9.1 3.1 19.5-7.1 13.9-10.9 17.6-18 17.6-7.4 0-10.6-7.8-6.8-16.8 3.2-7.8 10.6-18.4 13.8-19.8 3.8-1.6 4.8-1.7 7.9-.5m201.1.5c3.4 1.4 10.6 11.6 14 19.8 3.9 9.2.6 16.8-7.1 16.8-7-.1-10.4-3.6-17.4-17.2-5.5-11-5.1-15.7 1.7-19.3 3.6-1.8 4.6-1.9 8.8-.1m-95.5 21.7c1.7 5 1.5 36.3-.4 39.9-2 3.8-7.2 5.6-12 4-5.8-1.9-6.5-4.5-6.5-24 0-18.6 1-23.3 5.2-25 5.7-2.2 11.9.1 13.7 5.1" class="s0"/></g></svg>
+                                </div>
+                                <div>
+                                    <span class="text-nuve-hoteles-blue font-semibold">Check-In</span>
+                                    <p>
+                                        03:00 PM
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3 mt-3">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#64afdd" viewBox="0 0 640 640"><title>reloj-circular (1)-svg</title><g id="Layer"><path id="Layer" fill-rule="evenodd" d="M325 .5c34.7.3 41.9.9 65.4 6.1 45.8 10.1 96.1 34.3 130.8 63.1 12 9.9 39.2 37.1 49.1 49.1 21.8 26.4 43.5 66.2 54.9 100.7 4.1 12.5 9.2 33.5 11.9 49.5 2.2 12.5 2.4 16.2 2.4 51s-.2 38.5-2.4 51c-8.2 47.4-24.2 88.3-49.3 126.2-12.7 19-21.5 29.7-41.2 49.4s-30.4 28.5-49.4 41.2c-32.8 21.7-71.8 38.2-109.2 46-25.2 5.4-29.4 5.7-68.5 5.7-34.1 0-38-.2-50.4-2.4-47.4-8.2-88.4-24.2-126.3-49.3-19-12.7-29.7-21.5-49.4-41.2s-28.5-30.4-41.2-49.4c-24.8-37.5-40.4-76.9-48.9-123.8C.7 358.9.6 357.5.6 320s.1-38.9 2.7-53.4c8.5-46.9 24.1-86.3 48.9-123.8 12.7-19 21.5-29.7 41.2-49.4 19.8-19.8 30.4-28.5 49.8-41.4C185.4 24 238.8 4.9 287 .6c2.5-.2 19.6-.2 38-.1m-2 20.9c-24.4-.2-34.9.1-42 1.1-53.2 8.1-98.2 26.3-138.8 56.4-16.9 12.5-50.4 45.8-62.4 62.1-33.3 44.9-52.4 93.9-57.7 147.4-1.4 14.1-1.4 49.1 0 63.2 5.3 53.5 24.4 102.5 57.7 147.4 11.4 15.5 45.4 49.5 61.2 61.2 44.6 33.2 93.9 52.5 147.9 57.8 16.2 1.6 51.1 1.3 66.6-.5 52.9-6.2 99.9-24.9 142.9-56.8 16.1-12 49.9-45.7 61.8-61.7 28.3-38.1 46-78.2 54.2-123 3.5-19.4 4.6-32.5 4.6-56s-1.1-36.6-4.6-56c-8.1-44.5-25.9-85-53.7-122.4-9.8-13.2-43.7-48-56.2-57.7-40.6-31.6-84.7-51-136.5-60-10.7-1.9-17.1-2.2-45-2.5" class="s0"/><path id="Layer" d="M346.5 51c47.5 3.3 99.4 23.6 139.1 54.5 13.5 10.6 16.3 15 13.3 20.8-1.8 3.5-5.1 5.7-9 5.7s-8.5-2.6-20.6-11.8c-34.4-26.1-81.1-44.6-121.8-48.1-15.4-1.4-43.4-1.4-56.6-.1-26.7 2.7-61.8 13.8-87.8 27.7-43.6 23.3-80.2 60-103.6 103.7-13.9 26-25 61.5-27.5 88.1-2.2 24-.8 59.1 3.2 77.5 8.3 38.5 23.4 71.9 46.3 102 4 5.3 8 11 8.9 12.7 2.4 4.7 2.1 9.7-.8 13-2 2.3-3.2 2.8-7 2.8-5.3 0-8.4-2.5-17.7-14.7-26.4-34.4-44.8-77.3-52.6-122.3-2.5-14.7-2.5-71.8 0-85.5 10.9-59 35.6-107.4 74.9-147.1C169.7 87 224.3 59.6 283 51.6c12.6-1.7 42.8-2 63.5-.6" class="s0"/><path id="Layer" d="M319.7 90.1c9.4-.2 10.3 1.8 10.3 23.9 0 20.4-.8 23.3-6.7 25-5 1.5-10.8-.6-12.3-4.5-.6-1.5-1-10.5-1-20.1 0-17.8.8-22.4 4.2-23.7.7-.3 3.2-.6 5.5-.6m-106.2 29.5c3.5 1.7 8.3 8.2 13.4 18.2 4.9 9.8 3.8 15.8-3.4 18.2-6.1 2-9.9 0-15.1-8.1-10.3-15.9-11.3-24.9-3.1-28.4 4.1-1.8 4.3-1.8 8.2.1m216.8-.6c3.8 0 4.9.5 7.1 3.1 3.6 4.2 3.4 8.5-.9 17.1-5.8 11.4-9 15.6-13.4 16.9-3.2.9-4.4.8-7.3-.5-4.5-2.2-6.2-5.4-5.5-10.5.6-4.5 8.2-18.3 12.7-23.1 2.3-2.5 3.6-3 7.3-3m104.2 35.4c30.1 38.6 50.9 91.1 54.5 137.1 2.2 29.3.9 61.9-3.5 82.2-11.7 54.5-36.1 99.9-74 137.8-44 43.9-103.2 72.2-162.5 77.5-16.8 1.5-52.6 1.2-64.5-.5-40.9-5.8-79.7-20.1-112-41.2-21.1-13.9-32.5-24-32.5-28.9 0-3.3 2.5-8.1 4.9-9.4 5.5-2.9 10.5-.8 25.8 10.8 34.4 26.1 81.1 44.6 121.8 48.1 15.4 1.4 43.4 1.4 56.6.1 26.7-2.7 61.8-13.8 87.8-27.7 43.5-23.3 80.2-60 103.6-103.7 13.9-26 25-61.5 27.5-88.1 1.3-14.1 1.3-40.6-.1-56-3.5-40.7-22-87.4-48.1-121.8C510.6 158.6 508 154 508 150s2.2-7.7 5.4-9c6.5-2.6 10.5-.1 21.1 13.4" class="s0"/><path id="Layer" fill-rule="evenodd" d="M326 161c3.8 2 4 5.4 4 68.1v60.8l5.9 4.1c3.4 2.4 7.7 6.7 10.1 10.1l4.1 5.9h104.7l2.6 3.1c3.5 4.2 3.5 9.6 0 13.8l-2.6 3.1H350.2l-4.2 5.8c-2.4 3.3-6.9 7.8-10.2 10.2l-5.8 4.2v7.3c0 6.9-.2 7.5-3.1 9.9-2.1 1.8-4.2 2.6-6.9 2.6s-4.8-.8-6.9-2.6c-2.9-2.4-3.1-2.9-3.1-9.9v-7.4l-5.9-4.1c-3.4-2.4-7.7-6.7-10.1-10.1l-4.1-5.9h-7.4c-7 0-7.5-.2-9.9-3.1-3.5-4.2-3.5-9.6 0-13.8 2.4-2.9 3-3.1 9.9-3.1h7.3l4.2-5.8c2.4-3.3 6.9-7.8 10.2-10.2l5.8-4.2V229c0-39.9.4-61.8 1-63.7.6-1.5 1.8-3.4 2.7-4.1 2-1.4 9.7-1.6 12.3-.2m-12.1 152.9c-4 4-3.9 8.2.1 12.3 2.7 2.6 3.6 3 6.7 2.5 2-.4 4.5-1.5 5.5-2.5s2.1-3.5 2.5-5.5c.5-3.1.1-4-2.5-6.7-4.1-4-8.3-4.1-12.3-.1" class="s0"/><path id="Layer" d="M138.3 203.1c17.1 8.4 21.4 13.9 17.2 21.9-1.7 3.3-7 5.4-11.1 4.4-3.5-.8-13.4-5.7-18.6-9.2-4.3-2.8-6.8-6.7-6.8-10.7 0-3.1 2.4-8.1 4.2-8.8 3.5-1.4 9.3-.5 15.1 2.4m380.1-.5c2 2.1 2.6 3.7 2.6 6.9 0 3.9-.5 4.7-4.8 8.7-5.4 4.8-15.7 10.3-21.3 11.3-7.8 1.5-13.4-5.3-10.9-13 1.2-3.8 4.8-6.6 16-12.9 8.3-4.6 14.4-4.9 18.4-1M135 311.3c1.5.7 3.1 2.9 3.9 5.2 1.2 3.5 1.1 4.5-.2 7.8-1 2.3-2.6 4.1-4.2 4.7-1.5.6-10.5 1-20.1 1-22.6 0-24.4-.8-24.4-10.4 0-4.4 1.2-6.6 4.5-8.4 2.9-1.7 37.3-1.5 40.5.1m390.3-1.2c22.7-.1 24.7.7 24.7 9.9s-2 10-24.4 10c-9.6 0-18.6-.4-20.1-1-3.3-1.3-5.9-7.1-4.9-11.4.8-3.7 2.1-5.5 4.9-6.6 1.1-.5 10-.9 19.8-.9M153.2 412.7c6.2 6.6 4.5 12.6-5.2 18.9-15 9.7-24 11.1-27.5 4.3-3.9-7.4.1-13.5 14-21.4 9.9-5.5 14.7-6 18.7-1.8m348.9.3c17.2 8.5 21.8 14.5 17.4 22.9-1.7 3.3-3.3 4.1-8.3 4.1-3.9 0-13.9-4.6-21.7-10-7-4.8-8.2-12-2.8-17.5 3.4-3.4 7.9-3.3 15.4.5m-278.8 70.9c7.5 2.9 8.5 9.1 3.1 19.5-7.1 13.9-10.9 17.6-18 17.6-7.4 0-10.6-7.8-6.8-16.8 3.2-7.8 10.6-18.4 13.8-19.8 3.8-1.6 4.8-1.7 7.9-.5m201.1.5c3.4 1.4 10.6 11.6 14 19.8 3.9 9.2.6 16.8-7.1 16.8-7-.1-10.4-3.6-17.4-17.2-5.5-11-5.1-15.7 1.7-19.3 3.6-1.8 4.6-1.9 8.8-.1m-95.5 21.7c1.7 5 1.5 36.3-.4 39.9-2 3.8-7.2 5.6-12 4-5.8-1.9-6.5-4.5-6.5-24 0-18.6 1-23.3 5.2-25 5.7-2.2 11.9.1 13.7 5.1" class="s0"/></g></svg>
+                                </div>
+                                <div>
+                                    <span class="text-nuve-hoteles-blue font-semibold">Check-Out</span>
+                                    <p>
+                                        12:00 PM
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <div class="px-3">
+                            <div class="flex gap-3">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#64afdd" viewBox="0 0 512 512"><title>llamada-telefonica-svg</title><g id="Layer"><path id="Layer" d="M199.6 17.1c17.3 3 33.2 11.1 45 22.7 7.6 7.4 9.8 12.8 9.9 23.2v8.5l-17.9 37c-26.1 54.2-28.9 59.4-34.1 64.6-9.4 9.5-23.6 14.3-35.7 12.1-3.4-.6-6.4-.9-6.6-.7-1.1 1-3.2 14.8-4.3 28-2.8 33.7 3.7 70.3 18.2 102.7 4.4 9.7 12.5 24.4 13.9 25.3.5.3 2.9-.5 5.2-1.9 13.2-7.6 30.8-7.3 43.6.7 2.3 1.5 20 17.8 39.2 36.3 38.5 36.9 39.7 38.5 42 52.4 4.5 26.8-20.3 55.6-56 65.1-6.6 1.8-11.3 2.3-21 2.3-14.8 0-24.8-2.2-37.7-8.4-15.3-7.4-18.9-13.6-11.9-20.6 4.3-4.3 6.6-4.3 13.7 0 26.8 16.2 59.2 13.1 81.5-7.7 9.5-8.8 12.9-15.5 12.8-24.8 0-4.7-.6-7.5-2-10-3.3-5.6-67.2-66.5-72.8-69.4-7.7-3.9-13.9-3.5-23.3 1.5-5.9 3.1-8.8 4-12.5 4-10 0-14.4-3.8-23.6-20.5-17-30.7-26.3-63.6-28.7-102-1.1-17 2.2-49.8 6.1-60.2 3.1-8.3 12.3-13.3 21.4-11.7 8.9 1.6 15.3 1 20.3-1.9 2.5-1.5 5.5-4 6.6-5.6 1.2-1.6 11.8-23 23.6-47.5C229 80.5 236 64.9 236 62.8c0-4.8-3.1-9.2-10.1-14.3-12.5-9.2-25.5-13.5-40.5-13.5-23.4.1-43.5 11.1-56.7 31.3C114.2 88.4 96 127 89.7 149c-2.1 7.3-5.3 25.9-6.9 39.5-1.6 14.3-1.6 54 0 68 6.6 57.7 26.5 108.5 58.6 149.9 11.2 14.4 11.6 15.8 6.2 21.2-4 4-8 4.4-12 1.3-1.4-1.1-6.4-7.1-11-13.2-36.9-49.3-57-105.3-61.7-172.4-2.5-35.8 2.2-80.5 11.1-107.3 7.7-23 24.9-58.8 37.7-78.5 7.4-11.3 19-23.2 27.6-28.3 8.3-5 20.3-9.9 28.2-11.6 8.4-1.7 23.8-2 32.1-.5" class="s0"/><path id="Layer" fill-rule="evenodd" d="M343.5 102.4c17.4.4 26.7 2.6 42 10.1 32.1 15.7 52.5 45 56.5 81.2 4.4 40.1-17.9 81.2-54 99.7-17.6 9-31.8 12.1-51.5 11.3-18.2-.8-30.1-4.1-45.7-12.9l-6.6-3.7-27.1-1.5c-14.9-.9-28-2-29.1-2.6-2.7-1.4-5-5-5-7.8 0-1.3 3.7-14.1 8.2-28.5l8.1-26.2.2-16c.2-20.9 2.9-32.4 11-48.5 14.3-28.3 44-49.5 76-54.4 1.7-.2 9.3-.3 17-.2m-29 22.6c-21.5 7-41.6 25.8-50.1 46.8-4.9 12.3-5.7 16.8-5.9 35.2l-.1 17.5-6.7 21c-3.6 11.5-6.5 21-6.3 21.2.1.1 10.1.8 22.2 1.4l21.9 1.1 6.5 3.9c17.2 10.1 29.6 13.4 48 12.6 14.8-.7 21.4-2.3 33.5-8.3 16.7-8.3 29-20.4 37.1-36.9 6.5-13.2 8.6-22.4 8.6-37s-2.1-23.8-8.6-37c-10.8-21.7-31-37.9-54.6-43.5-13.8-3.2-32-2.5-45.5 2" class="s0"/><path id="Layer" d="M313.1 199.9c3.8 3.9 3.9 8 0 12.3-4.1 4.6-9.2 4.5-13.3-.1-2.5-2.8-2.9-3.9-2.4-7 .3-2.1 1.6-4.5 3.1-5.9 3.8-3.2 8.9-3 12.6.7m37 0c3.2 3.3 3.7 6.7 1.4 11-3.7 7.2-15.2 5.2-17-3-.7-3.1 1.5-8.2 4.2-9.8 3.5-2 8.3-1.3 11.4 1.8m39.9 5.8c0 4.7-1.6 7.2-5.6 8.9-2.9 1.2-3.9 1.2-6.8 0-4.1-1.7-5.6-4.2-5.6-9.1 0-2.5.8-4.3 2.5-6 5.5-5.5 15.5-1.5 15.5 6.2M166.5 441c3.6 0 4.8.5 6.9 3.1 3.5 4.1 3.4 8.3-.3 12-4.1 4-9.1 4-13.2 0-3.7-3.7-3.8-7.9-.3-12 2.1-2.6 3.3-3.1 6.9-3.1" class="s0"/></g></svg>
+                                </div>
+                                <div>
+                                    <span class="text-nuve-hoteles-blue font-semibold">Hotel Torreón</span>
+                                    <p>
+                                        (871) 717 4595
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3 mt-3">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#64afdd" viewBox="0 0 512 512"><title>llamada-telefonica-svg</title><g id="Layer"><path id="Layer" d="M199.6 17.1c17.3 3 33.2 11.1 45 22.7 7.6 7.4 9.8 12.8 9.9 23.2v8.5l-17.9 37c-26.1 54.2-28.9 59.4-34.1 64.6-9.4 9.5-23.6 14.3-35.7 12.1-3.4-.6-6.4-.9-6.6-.7-1.1 1-3.2 14.8-4.3 28-2.8 33.7 3.7 70.3 18.2 102.7 4.4 9.7 12.5 24.4 13.9 25.3.5.3 2.9-.5 5.2-1.9 13.2-7.6 30.8-7.3 43.6.7 2.3 1.5 20 17.8 39.2 36.3 38.5 36.9 39.7 38.5 42 52.4 4.5 26.8-20.3 55.6-56 65.1-6.6 1.8-11.3 2.3-21 2.3-14.8 0-24.8-2.2-37.7-8.4-15.3-7.4-18.9-13.6-11.9-20.6 4.3-4.3 6.6-4.3 13.7 0 26.8 16.2 59.2 13.1 81.5-7.7 9.5-8.8 12.9-15.5 12.8-24.8 0-4.7-.6-7.5-2-10-3.3-5.6-67.2-66.5-72.8-69.4-7.7-3.9-13.9-3.5-23.3 1.5-5.9 3.1-8.8 4-12.5 4-10 0-14.4-3.8-23.6-20.5-17-30.7-26.3-63.6-28.7-102-1.1-17 2.2-49.8 6.1-60.2 3.1-8.3 12.3-13.3 21.4-11.7 8.9 1.6 15.3 1 20.3-1.9 2.5-1.5 5.5-4 6.6-5.6 1.2-1.6 11.8-23 23.6-47.5C229 80.5 236 64.9 236 62.8c0-4.8-3.1-9.2-10.1-14.3-12.5-9.2-25.5-13.5-40.5-13.5-23.4.1-43.5 11.1-56.7 31.3C114.2 88.4 96 127 89.7 149c-2.1 7.3-5.3 25.9-6.9 39.5-1.6 14.3-1.6 54 0 68 6.6 57.7 26.5 108.5 58.6 149.9 11.2 14.4 11.6 15.8 6.2 21.2-4 4-8 4.4-12 1.3-1.4-1.1-6.4-7.1-11-13.2-36.9-49.3-57-105.3-61.7-172.4-2.5-35.8 2.2-80.5 11.1-107.3 7.7-23 24.9-58.8 37.7-78.5 7.4-11.3 19-23.2 27.6-28.3 8.3-5 20.3-9.9 28.2-11.6 8.4-1.7 23.8-2 32.1-.5" class="s0"/><path id="Layer" fill-rule="evenodd" d="M343.5 102.4c17.4.4 26.7 2.6 42 10.1 32.1 15.7 52.5 45 56.5 81.2 4.4 40.1-17.9 81.2-54 99.7-17.6 9-31.8 12.1-51.5 11.3-18.2-.8-30.1-4.1-45.7-12.9l-6.6-3.7-27.1-1.5c-14.9-.9-28-2-29.1-2.6-2.7-1.4-5-5-5-7.8 0-1.3 3.7-14.1 8.2-28.5l8.1-26.2.2-16c.2-20.9 2.9-32.4 11-48.5 14.3-28.3 44-49.5 76-54.4 1.7-.2 9.3-.3 17-.2m-29 22.6c-21.5 7-41.6 25.8-50.1 46.8-4.9 12.3-5.7 16.8-5.9 35.2l-.1 17.5-6.7 21c-3.6 11.5-6.5 21-6.3 21.2.1.1 10.1.8 22.2 1.4l21.9 1.1 6.5 3.9c17.2 10.1 29.6 13.4 48 12.6 14.8-.7 21.4-2.3 33.5-8.3 16.7-8.3 29-20.4 37.1-36.9 6.5-13.2 8.6-22.4 8.6-37s-2.1-23.8-8.6-37c-10.8-21.7-31-37.9-54.6-43.5-13.8-3.2-32-2.5-45.5 2" class="s0"/><path id="Layer" d="M313.1 199.9c3.8 3.9 3.9 8 0 12.3-4.1 4.6-9.2 4.5-13.3-.1-2.5-2.8-2.9-3.9-2.4-7 .3-2.1 1.6-4.5 3.1-5.9 3.8-3.2 8.9-3 12.6.7m37 0c3.2 3.3 3.7 6.7 1.4 11-3.7 7.2-15.2 5.2-17-3-.7-3.1 1.5-8.2 4.2-9.8 3.5-2 8.3-1.3 11.4 1.8m39.9 5.8c0 4.7-1.6 7.2-5.6 8.9-2.9 1.2-3.9 1.2-6.8 0-4.1-1.7-5.6-4.2-5.6-9.1 0-2.5.8-4.3 2.5-6 5.5-5.5 15.5-1.5 15.5 6.2M166.5 441c3.6 0 4.8.5 6.9 3.1 3.5 4.1 3.4 8.3-.3 12-4.1 4-9.1 4-13.2 0-3.7-3.7-3.8-7.9-.3-12 2.1-2.6 3.3-3.1 6.9-3.1" class="s0"/></g></svg>
+                                </div>
+                                <div>
+                                    <span class="text-nuve-hoteles-blue font-semibold">Hotel Gómez Palacio</span>
+                                    <p>
+                                        (871) 169 0253
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3 mt-3">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#64afdd" viewBox="0 0 512 512"><title>llamada-telefonica-svg</title><g id="Layer"><path id="Layer" d="M199.6 17.1c17.3 3 33.2 11.1 45 22.7 7.6 7.4 9.8 12.8 9.9 23.2v8.5l-17.9 37c-26.1 54.2-28.9 59.4-34.1 64.6-9.4 9.5-23.6 14.3-35.7 12.1-3.4-.6-6.4-.9-6.6-.7-1.1 1-3.2 14.8-4.3 28-2.8 33.7 3.7 70.3 18.2 102.7 4.4 9.7 12.5 24.4 13.9 25.3.5.3 2.9-.5 5.2-1.9 13.2-7.6 30.8-7.3 43.6.7 2.3 1.5 20 17.8 39.2 36.3 38.5 36.9 39.7 38.5 42 52.4 4.5 26.8-20.3 55.6-56 65.1-6.6 1.8-11.3 2.3-21 2.3-14.8 0-24.8-2.2-37.7-8.4-15.3-7.4-18.9-13.6-11.9-20.6 4.3-4.3 6.6-4.3 13.7 0 26.8 16.2 59.2 13.1 81.5-7.7 9.5-8.8 12.9-15.5 12.8-24.8 0-4.7-.6-7.5-2-10-3.3-5.6-67.2-66.5-72.8-69.4-7.7-3.9-13.9-3.5-23.3 1.5-5.9 3.1-8.8 4-12.5 4-10 0-14.4-3.8-23.6-20.5-17-30.7-26.3-63.6-28.7-102-1.1-17 2.2-49.8 6.1-60.2 3.1-8.3 12.3-13.3 21.4-11.7 8.9 1.6 15.3 1 20.3-1.9 2.5-1.5 5.5-4 6.6-5.6 1.2-1.6 11.8-23 23.6-47.5C229 80.5 236 64.9 236 62.8c0-4.8-3.1-9.2-10.1-14.3-12.5-9.2-25.5-13.5-40.5-13.5-23.4.1-43.5 11.1-56.7 31.3C114.2 88.4 96 127 89.7 149c-2.1 7.3-5.3 25.9-6.9 39.5-1.6 14.3-1.6 54 0 68 6.6 57.7 26.5 108.5 58.6 149.9 11.2 14.4 11.6 15.8 6.2 21.2-4 4-8 4.4-12 1.3-1.4-1.1-6.4-7.1-11-13.2-36.9-49.3-57-105.3-61.7-172.4-2.5-35.8 2.2-80.5 11.1-107.3 7.7-23 24.9-58.8 37.7-78.5 7.4-11.3 19-23.2 27.6-28.3 8.3-5 20.3-9.9 28.2-11.6 8.4-1.7 23.8-2 32.1-.5" class="s0"/><path id="Layer" fill-rule="evenodd" d="M343.5 102.4c17.4.4 26.7 2.6 42 10.1 32.1 15.7 52.5 45 56.5 81.2 4.4 40.1-17.9 81.2-54 99.7-17.6 9-31.8 12.1-51.5 11.3-18.2-.8-30.1-4.1-45.7-12.9l-6.6-3.7-27.1-1.5c-14.9-.9-28-2-29.1-2.6-2.7-1.4-5-5-5-7.8 0-1.3 3.7-14.1 8.2-28.5l8.1-26.2.2-16c.2-20.9 2.9-32.4 11-48.5 14.3-28.3 44-49.5 76-54.4 1.7-.2 9.3-.3 17-.2m-29 22.6c-21.5 7-41.6 25.8-50.1 46.8-4.9 12.3-5.7 16.8-5.9 35.2l-.1 17.5-6.7 21c-3.6 11.5-6.5 21-6.3 21.2.1.1 10.1.8 22.2 1.4l21.9 1.1 6.5 3.9c17.2 10.1 29.6 13.4 48 12.6 14.8-.7 21.4-2.3 33.5-8.3 16.7-8.3 29-20.4 37.1-36.9 6.5-13.2 8.6-22.4 8.6-37s-2.1-23.8-8.6-37c-10.8-21.7-31-37.9-54.6-43.5-13.8-3.2-32-2.5-45.5 2" class="s0"/><path id="Layer" d="M313.1 199.9c3.8 3.9 3.9 8 0 12.3-4.1 4.6-9.2 4.5-13.3-.1-2.5-2.8-2.9-3.9-2.4-7 .3-2.1 1.6-4.5 3.1-5.9 3.8-3.2 8.9-3 12.6.7m37 0c3.2 3.3 3.7 6.7 1.4 11-3.7 7.2-15.2 5.2-17-3-.7-3.1 1.5-8.2 4.2-9.8 3.5-2 8.3-1.3 11.4 1.8m39.9 5.8c0 4.7-1.6 7.2-5.6 8.9-2.9 1.2-3.9 1.2-6.8 0-4.1-1.7-5.6-4.2-5.6-9.1 0-2.5.8-4.3 2.5-6 5.5-5.5 15.5-1.5 15.5 6.2M166.5 441c3.6 0 4.8.5 6.9 3.1 3.5 4.1 3.4 8.3-.3 12-4.1 4-9.1 4-13.2 0-3.7-3.7-3.8-7.9-.3-12 2.1-2.6 3.3-3.1 6.9-3.1" class="s0"/></g></svg>
+                                </div>
+                                <div>
+                                    <span class="text-nuve-hoteles-blue font-semibold">Hotel Parras</span>
+                                    <p>
+                                        (842) 115 5663
+                                    </p>
+                                    <p>
+                                        (842) 422 1361
+                                    </p>
+                                    <p>
+                                        (842) 115 5663
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <div class="px-3">
+                            <div class="flex gap-3">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" id="svg12" width="30" height="30" fill="#64afdd" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><g id="g10" stroke="none" transform="matrix(.1 0 0 -.1 0 512)"><path id="path2" d="M1430 4733c-8-3-25-15-37-26-44-40-22-189 39-273 13-17 37-50 55-73 69-91 62-205-19-298-23-27-52-72-66-101-25-56-39-152-28-196 8-33 58-59 97-51 38 9 57 39 69 110 9 56 22 81 90 169 49 63 73 140 73 231 0 100-27 174-90 252-49 59-73 109-73 146 0 49-22 89-56 103-18 8-35 14-36 13-2 0-10-3-18-6"/><path id="path4" d="M1935 4731c-46-19-58-46-53-118 6-81 34-151 87-213 59-70 75-107 75-175s-13-98-80-184c-53-68-84-151-84-223 1-75 40-116 100-103 40 9 59 35 69 96 13 75 23 97 70 154 133 160 131 365-4 525-44 52-65 97-65 139 0 50-18 81-55 96-19 8-36 15-37 14-2 0-12-4-23-8"/><path id="path6" d="M2443 4730c-87-34-63-202 50-348 90-116 90-211-2-321-57-67-92-150-99-227-4-60-3-64 26-93 39-40 74-40 113-2 21 22 29 39 29 66 0 49 21 95 74 163 61 78 87 140 93 227 7 92-21 194-72 257-61 76-86 126-94 183-11 79-59 118-118 95"/><path id="path8" d="M985 3451c-87-21-127-81-133-198-3-63-8-83-17-79-41 15-189 28-269 23-152-11-264-58-354-150C77 2909 16 2722 4 2405q-24-618 321-834c118-74 296-95 488-56 48 9 89 16 91 14 1-2 15-34 30-71 51-122 152-256 265-351l45-37H879c-219 0-379-4-401-10-50-14-97-55-119-105-24-52-26-237-4-313 31-104 131-194 260-235l70-22h2045c1958 0 2048 1 2105 18 123 39 207 103 252 195 25 51 28 69 32 181 2 74-1 140-8 162-14 46-77 104-128 118-23 7-156 11-333 11h-295l85 46c158 85 316 225 409 366 34 50 41 69 41 110 0 27-7 62-15 78-15 29-14 32 50 142 110 192 164 357 185 563 14 132 8 355-11 420-11 41-87 125-113 125-8 0-24 43-44 121-61 233-148 372-254 404-60 17-95 12-171-28-120-63-157-148-165-374l-5-153-43-21c-59-28-113-93-147-176-15-37-34-77-42-87-14-19-16-18-73 7-93 42-117 38-371-59-124-48-241-95-258-106-22-13-44-42-69-93l-37-74-31 13-31 12-5 520c-4 384-8 525-17 540-20 34-70 72-111 84-43 11-2078 13-2127 1m2085-615v-454l-47-7c-27-4-56-11-65-16-13-7-30 8-87 79-134 169-206 217-321 216-178-3-265-117-239-312 11-78 64-244 105-324 24-47 24-49 8-81-27-51-23-135 10-192 72-131 256-345 370-432l39-29-59-47c-77-62-199-122-298-147-72-18-113-20-432-20-385 0-437 5-563 58-129 54-250 155-333 275-51 75-82 144-110 243-22 78-22 90-26 848-2 423-1 775 2 782 5 12 176 14 1026 14h1020zm1598 421c40-43 136-296 119-314-6-5-180-22-236-23h-34l5 128c6 142 21 192 67 217 37 20 54 18 79-8M795 3008l50-13 3-92 3-91-63 20c-44 14-92 21-158 22-84 1-100-2-138-24-50-28-96-93-117-163-39-131-44-452-9-582 32-122 92-206 169-235 42-16 163-13 240 6 36 9 68 15 70 12 2-2 7-40 11-85l7-81-40-11c-66-18-215-29-273-21-258 37-396 304-377 729 8 162 20 240 53 340 47 143 142 242 264 276 63 17 223 14 305-7m4136-255c11-12 14-58 14-197 0-194-12-282-52-406-25-76-111-260-122-260-3 0-31 42-63 93-100 163-251 337-410 472l-46 40 47 98c27 54 54 105 62 112 24 25 295 61 475 64 65 1 84-2 95-16m-4210-79c30-9 71-25 92-37l37-21-2-280-3-280-49-19c-56-20-161-33-199-23-76 19-113 363-62 581 22 95 66 114 186 79m1898-213c26-17 171-186 171-200 0-5-6-11-12-14-7-3-56-37-108-76s-97-71-100-71c-8 0-54 116-75 192-19 67-22 153-5 173 23 27 84 26 129-4m1400-25c150-76 313-225 454-414 71-95 181-276 228-374 28-59 23-70-73-173-166-177-462-330-750-386-157-30-418-22-447 15-5 6-16 52-24 101-32 177-40 295-34 499 4 167 9 219 30 306 25 107 76 251 100 284 12 17 403 174 435 176 7 0 43-16 81-34m-878-266c46-22 89-40 97-40 11 0 13-8 9-32-3-18-13-71-22-118-27-148-36-339-25-497 5-80 13-156 16-170 6-23 5-25-17-18-98 30-249 118-343 199-115 99-276 308-276 359 0 28 32 60 155 153 106 81 293 204 310 204 8 0 51-18 96-40m28-1044c136-50 123-56-114-56h-206l58 48c32 27 64 56 71 65 12 14 18 13 60-6 26-11 85-35 131-51m1769-235c11-6 13-32 10-107-4-124-20-152-117-198l-66-31-1985-3c-1369-2-2007 1-2054 8-81 12-158 51-189 94-18 26-23 48-25 130-3 75-1 101 10 107 17 11 4399 11 4416 0"/></g></svg>
+                                </div>
+                                <div class="flex flex-col items-start">
+                                    <span class="text-nuve-hoteles-blue font-semibold">Restaurante</span>
+                                    <p>
+                                        UMO Penthouse 5to piso
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3 mt-3">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" id="svg12" width="30" height="30" preserveAspectRatio="xMidYMid meet" fill="#64afdd" viewBox="0 0 512 512"><g id="g10" stroke="none" transform="matrix(.1 0 0 -.1 0 512)"><path id="path2" d="M1430 4733c-8-3-25-15-37-26-44-40-22-189 39-273 13-17 37-50 55-73 69-91 62-205-19-298-23-27-52-72-66-101-25-56-39-152-28-196 8-33 58-59 97-51 38 9 57 39 69 110 9 56 22 81 90 169 49 63 73 140 73 231 0 100-27 174-90 252-49 59-73 109-73 146 0 49-22 89-56 103-18 8-35 14-36 13-2 0-10-3-18-6"/><path id="path4" d="M1935 4731c-46-19-58-46-53-118 6-81 34-151 87-213 59-70 75-107 75-175s-13-98-80-184c-53-68-84-151-84-223 1-75 40-116 100-103 40 9 59 35 69 96 13 75 23 97 70 154 133 160 131 365-4 525-44 52-65 97-65 139 0 50-18 81-55 96-19 8-36 15-37 14-2 0-12-4-23-8"/><path id="path6" d="M2443 4730c-87-34-63-202 50-348 90-116 90-211-2-321-57-67-92-150-99-227-4-60-3-64 26-93 39-40 74-40 113-2 21 22 29 39 29 66 0 49 21 95 74 163 61 78 87 140 93 227 7 92-21 194-72 257-61 76-86 126-94 183-11 79-59 118-118 95"/><path id="path8" d="M985 3451c-87-21-127-81-133-198-3-63-8-83-17-79-41 15-189 28-269 23-152-11-264-58-354-150C77 2909 16 2722 4 2405q-24-618 321-834c118-74 296-95 488-56 48 9 89 16 91 14 1-2 15-34 30-71 51-122 152-256 265-351l45-37H879c-219 0-379-4-401-10-50-14-97-55-119-105-24-52-26-237-4-313 31-104 131-194 260-235l70-22h2045c1958 0 2048 1 2105 18 123 39 207 103 252 195 25 51 28 69 32 181 2 74-1 140-8 162-14 46-77 104-128 118-23 7-156 11-333 11h-295l85 46c158 85 316 225 409 366 34 50 41 69 41 110 0 27-7 62-15 78-15 29-14 32 50 142 110 192 164 357 185 563 14 132 8 355-11 420-11 41-87 125-113 125-8 0-24 43-44 121-61 233-148 372-254 404-60 17-95 12-171-28-120-63-157-148-165-374l-5-153-43-21c-59-28-113-93-147-176-15-37-34-77-42-87-14-19-16-18-73 7-93 42-117 38-371-59-124-48-241-95-258-106-22-13-44-42-69-93l-37-74-31 13-31 12-5 520c-4 384-8 525-17 540-20 34-70 72-111 84-43 11-2078 13-2127 1m2085-615v-454l-47-7c-27-4-56-11-65-16-13-7-30 8-87 79-134 169-206 217-321 216-178-3-265-117-239-312 11-78 64-244 105-324 24-47 24-49 8-81-27-51-23-135 10-192 72-131 256-345 370-432l39-29-59-47c-77-62-199-122-298-147-72-18-113-20-432-20-385 0-437 5-563 58-129 54-250 155-333 275-51 75-82 144-110 243-22 78-22 90-26 848-2 423-1 775 2 782 5 12 176 14 1026 14h1020zm1598 421c40-43 136-296 119-314-6-5-180-22-236-23h-34l5 128c6 142 21 192 67 217 37 20 54 18 79-8M795 3008l50-13 3-92 3-91-63 20c-44 14-92 21-158 22-84 1-100-2-138-24-50-28-96-93-117-163-39-131-44-452-9-582 32-122 92-206 169-235 42-16 163-13 240 6 36 9 68 15 70 12 2-2 7-40 11-85l7-81-40-11c-66-18-215-29-273-21-258 37-396 304-377 729 8 162 20 240 53 340 47 143 142 242 264 276 63 17 223 14 305-7m4136-255c11-12 14-58 14-197 0-194-12-282-52-406-25-76-111-260-122-260-3 0-31 42-63 93-100 163-251 337-410 472l-46 40 47 98c27 54 54 105 62 112 24 25 295 61 475 64 65 1 84-2 95-16m-4210-79c30-9 71-25 92-37l37-21-2-280-3-280-49-19c-56-20-161-33-199-23-76 19-113 363-62 581 22 95 66 114 186 79m1898-213c26-17 171-186 171-200 0-5-6-11-12-14-7-3-56-37-108-76s-97-71-100-71c-8 0-54 116-75 192-19 67-22 153-5 173 23 27 84 26 129-4m1400-25c150-76 313-225 454-414 71-95 181-276 228-374 28-59 23-70-73-173-166-177-462-330-750-386-157-30-418-22-447 15-5 6-16 52-24 101-32 177-40 295-34 499 4 167 9 219 30 306 25 107 76 251 100 284 12 17 403 174 435 176 7 0 43-16 81-34m-878-266c46-22 89-40 97-40 11 0 13-8 9-32-3-18-13-71-22-118-27-148-36-339-25-497 5-80 13-156 16-170 6-23 5-25-17-18-98 30-249 118-343 199-115 99-276 308-276 359 0 28 32 60 155 153 106 81 293 204 310 204 8 0 51-18 96-40m28-1044c136-50 123-56-114-56h-206l58 48c32 27 64 56 71 65 12 14 18 13 60-6 26-11 85-35 131-51m1769-235c11-6 13-32 10-107-4-124-20-152-117-198l-66-31-1985-3c-1369-2-2007 1-2054 8-81 12-158 51-189 94-18 26-23 48-25 130-3 75-1 101 10 107 17 11 4399 11 4416 0"/></g></svg>
+                                </div>
+                                <div class="flex flex-col items-start">
+                                    <span class="text-nuve-hoteles-blue font-semibold">Cafetería</span>
+                                    <p>
+                                        UMO Cafetería
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="max-w-6xl mx-auto mt-20">
+                <div class="flex flex-wrap justify-center gap-6">
+                    <div class="aspect-[4/4] max-w-72 w-full">
+                        <iframe class="w-full h-full" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115139.20085985523!2d-103.48789781071967!3d25.60159221910289!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x868fdbc4bdbb81af%3A0x82c8009679825f7!2sHotel%20Nuve!5e0!3m2!1ses!2smx!4v1771429258492!5m2!1ses!2smx" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                    <div class="aspect-[4/4] max-w-72 w-full">
+                        <iframe class="w-full h-full" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3599.54201207641!2d-103.49064281761127!3d25.55362828697339!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x868fd96c9b563769%3A0x43472365c443af24!2sHotel%20Nuve%20G%C3%B3mez%20Palacio!5e0!3m2!1ses!2smx!4v1771429305799!5m2!1ses!2smx" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                    <div class="aspect-[4/4] max-w-72 w-full">
+                        <iframe class="w-full h-full" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d28823.98912057342!2d-102.176651!3d25.438309!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x868f494d3a5ec7cd%3A0x488e14ca2a61b0f7!2sVicente%20Guerrero%2027%2C%20Zona%20Centro%2C%2027980%20Parras%20de%20la%20Fuente%2C%20Coah.%2C%20M%C3%A9xico!5e0!3m2!1ses-419!2sus!4v1771429323319!5m2!1ses-419!2sus" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </section>
+
+            <section class="relative h-[400px] bg-[url(/img/home-3.webp)] bg-cover bg-center bg-fixed flex items-center justify-center text-white mt-20">
+                <div class="absolute inset-0 bg-[#172a3a]/50"></div>
+                <div class="max-w-3xl mx-auto flex flex-col gap-3 items-center justify-center text-center z-[1]">
+                    <h2 class="uppercase font-bold text-2xl md:text-5xl">Reserva tu habitación en menos de 5 minutos</h2>
+                    <span>Representamos la hospitalidad de la Comarca Lagunera haciendo de su estancia una experiencia única.</span>
+                    <a href="#reservar" class="w-fit text-white bg-transparent border border-white font-semibold px-10 py-2 rounded-sm">Reserva ahora</a>
+                </div>
+            </section>
+        </main>
 
         <Footer />
     </section>
@@ -383,23 +492,23 @@ html {
 <!-- Estilos específicos del componente -->
 <style scoped>
 .nuve-btn {
-    background-color: #de813e;
-    border-color: #de813e;
+  background-color: #1182ba;
+  border-color: #1182ba;
 }
 
-/* Opcional: hover / focus */
+/* Hover / focus */
 .nuve-btn:hover,
 .nuve-btn:focus {
-    background-color: #c86f32;
-    border-color: #c86f32;
+  background-color: #0e6f9e;   /* un poco más oscuro */
+  border-color: #0e6f9e;
 }
 
-/* Opcional: cuando está disabled, para que no se vea gris */
+/* Disabled (mismo color pero con transparencia) */
 .nuve-btn.is-disabled {
-    background-color: #de813e80;
-    /* mismo color pero más clarito */
-    border-color: #de813e80;
+  background-color: #1182ba80;
+  border-color: #1182ba80;
 }
+
 
 .box-customize {
     box-shadow: 0px 0px 21px -6px #000000;
