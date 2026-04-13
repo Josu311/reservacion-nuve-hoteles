@@ -33,6 +33,7 @@ class ReservaController extends Controller
     
             // 2) SOAP: tarifas por fecha (todas las habitaciones)
             try {
+                //NUVE TORREON
                 $tarifasXml = $this->callSoapTarifasFechas([
                     'lFechaIni'     => $data['dateIni'] . 'T00:00:00',
                     'lFechaFinal'   => $data['dateFin'] . 'T00:00:00',
@@ -45,6 +46,20 @@ class ReservaController extends Controller
                 ]);
     
                 $rooms = $this->parseTarifasAll($tarifasXml);
+
+                //NUVE GOMEZ
+                $tarifasXmlGomez = $this->callSoapTarifasFechas([
+                    'lFechaIni'     => $data['dateIni'] . 'T00:00:00',
+                    'lFechaFinal'   => $data['dateFin'] . 'T00:00:00',
+                    'lAdul'         => $data['adults'],
+                    'lMen'          => 0,
+                    'lJr'           => 0,
+                    'lHabs'         => $data['numHabs'],
+                    'lPassCliente'  => config('services.fc.pass'),
+                    'lStringCxSAHM' => config('services.fc.cx'),
+                ]);
+    
+                $roomsGomez = $this->parseTarifasAll($tarifasXmlGomez);
             } catch (\Throwable $e) {
                 Log::warning('SOAP tarifas fallo', ['msg' => $e->getMessage()]);
                 $rooms = [];
@@ -55,6 +70,7 @@ class ReservaController extends Controller
         return Inertia::render('Disponibilidad', [
             'data'  => $data ?? [],   // filtros normalizados
             'rooms' => $rooms ?? [],  // arreglo de habitaciones con tarifas/imágenes/plan
+            'roomsGomez' => $roomsGomez ?? [],  // arreglo de habitaciones con tarifas/imágenes/plan
         ]);
     }
 

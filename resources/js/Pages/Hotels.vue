@@ -79,7 +79,7 @@
             <div class="w-full grid grid-cols-5 gap-3">
                 <template v-for="(src, i) in images_torreon">
                     <el-image
-                    class=" flex-1 w-full h-auto"
+                    class=" flex-1 w-full h-24 md:h-52"
                     :src="src"
                     :zoom-rate="1.2"
                     :max-scale="7"
@@ -216,7 +216,7 @@
             <div class="w-full grid grid-cols-5 gap-3">
                 <template v-for="(src, i) in images_parras">
                     <el-image
-                    class=" flex-1 w-full h-auto"
+                    class=" flex-1 w-full h-24 md:h-52"
                     :src="src"
                     :zoom-rate="1.2"
                     :max-scale="7"

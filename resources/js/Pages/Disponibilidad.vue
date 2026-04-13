@@ -4,8 +4,7 @@
     <Header />
 
 
-    <div class=" relative h-[400px] w-full">
-        <img class="w-full h-full object-cover" src="/img/nuveexpress-fachada.jpg" alt="">
+    <div class=" relative h-[600px] w-full bg-[url(/img/home-1.webp)] bg-cover bg-center md:bg-bottom bg-fixed">
         <div class="absolute inset-0 bg-black/60 pointer-events-none"></div>
         <div class="flex items-center justify-center absolute inset-0 z-10 p-6 text-white text-2xl font-bold">
             Reserva aquí
@@ -31,105 +30,207 @@
         <div class="p-2 md:p-5">
             <el-countdown v-if="rooms.length" title="Tiempo restante en la sesión" :value="countDown" format="mm:ss" @finish="onFinish" />
             
-            <div v-if="rooms.length">
-                <span class="text-2xl text-gray-900 text-center font-bold">Hotel Corregidora.</span>
-                <article v-for="room in rooms" :key="room.code"
-                    class="w-full md:w-[500px] flex flex-col gap-4 outline outline-1 outline-gray-300 rounded-lg p-3 mt-3">
-                    <div class="w-full h-[200px] rounded-md overflow-hidden">
-                        <!-- Imagen fija del diseño original -->
-                        <el-carousel trigger="click" height="200px" :interval=6000>
-                            <template v-for="image in imagesRooms['corregidora'][room.code]" :key="image">
-                                <el-carousel-item>
-                                    <img :src="image" alt="" class="w-full h-full object-cover">
-                                </el-carousel-item>
-                            </template>
-                        </el-carousel>
-                    </div>
-    
-                    <div class="w-full flex flex-col gap-3">
-                        <header class="flex flex-col">
-                            <h3 class="font-extrabold text-2xl text-gray-800">
-                                {{ room.name || typeHabs[room.code] }}
-                            </h3>
-                            <span class="w-fit text-gray-400 text-xs font-semibold">
-                                <!-- {{ room.plan || 'Plan no especificado' }} -->
-                                  Desayuno incluído por promoción
-                            </span>
-                        </header>
-    
-                        <div class="flex-1">
-                            <div class="w-full flex justify-between gap-3 text-sm text-gray-700">
-                                <div class="flex flex-col">
-                                    <h6 class="font-semibold text-base">Tarifa por noche</h6>
-                                    <span class="font-bold">
-                                        {{ format_mxn(toCents(firstNightRate(room))) }}
-                                    </span>
+            <div v-if="rooms.length || roomsGomez.length" class="flex flex-col md:flex-row gap-10">
+                <div>
+                    <span class="text-2xl text-gray-900 text-center font-bold">Nuve Torreón.</span>
+                    <article v-for="room in rooms" :key="room.code"
+                        class="w-full md:w-[500px] flex flex-col gap-4 outline outline-1 outline-gray-300 rounded-lg p-3 mt-3">
+                        <div class="w-full h-[200px] rounded-md overflow-hidden">
+                            <!-- Imagen fija del diseño original -->
+                            <el-carousel trigger="click" height="200px" :interval=6000>
+                                <template v-for="image in imagesRooms['corregidora'][room.code]" :key="image">
+                                    <el-carousel-item>
+                                        <img :src="image" alt="" class="w-full h-full object-cover">
+                                    </el-carousel-item>
+                                </template>
+                            </el-carousel>
+                        </div>
+        
+                        <div class="w-full flex flex-col gap-3">
+                            <header class="flex flex-col">
+                                <h3 class="font-extrabold text-2xl text-gray-800">
+                                    {{ room.name || typeHabs[room.code] }}
+                                </h3>
+                                <span class="w-fit text-gray-400 text-xs font-semibold">
+                                    <!-- {{ room.plan || 'Plan no especificado' }} -->
+                                      Desayuno incluído por promoción
+                                </span>
+                            </header>
+        
+                            <div class="flex-1">
+                                <div class="w-full flex justify-between gap-3 text-sm text-gray-700">
+                                    <div class="flex flex-col">
+                                        <h6 class="font-semibold text-base">Tarifa por noche</h6>
+                                        <span class="font-bold">
+                                            {{ format_mxn(toCents(firstNightRate(room))) }}
+                                        </span>
+                                    </div>
+        
+                                    <div class="flex flex-col text-right">
+                                        <span>
+                                            {{ gapDate() }}, {{ data.adults }}
+                                            {{ Number(data.adults) === 1 ? 'adulto' : 'adultos' }}
+                                        </span>
+                                    </div>
                                 </div>
-    
-                                <div class="flex flex-col text-right">
-                                    <span>
-                                        {{ gapDate() }}, {{ data.adults }}
-                                        {{ Number(data.adults) === 1 ? 'adulto' : 'adultos' }}
-                                    </span>
-                                </div>
-                            </div>
-    
-                            <el-divider />
-    
-                            <div class="text-sm text-gray-700">
-                                <div class="flex items-center gap-1 text-xs italic underline">
-                                    <span class="font-bold">
-                                        Total: {{ format_mxn(totalCents(room), true) }}
-                                    </span>
-    
-                                    <!-- Desglose por noche -->
-                                    <el-dropdown placement="top-start">
-                                        <InfoSvg :width="15" :height="15" />
-                                        <template #dropdown>
-                                            <el-dropdown-menu>
-                                                <div class="flex flex-col px-3 py-1 min-w-[220px]">
-                                                    <p class="font-semibold text-center">Desglose de costos</p>
-                                                    <div class="h-[1px] w-full bg-gray-200 my-2"></div>
-    
-                                                    <div v-for="r in room.rates" :key="r.date"
-                                                        class="flex justify-between gap-2">
-                                                        <span class="whitespace-nowrap">
-                                                            {{ new Date(r.date).toLocaleDateString('es-MX') }}
-                                                        </span>
-                                                        <span class="font-medium">
-                                                            {{ format_mxn(toCents(r.rate)) }}
-                                                        </span>
+        
+                                <el-divider />
+        
+                                <div class="text-sm text-gray-700">
+                                    <div class="flex items-center gap-1 text-xs italic underline">
+                                        <span class="font-bold">
+                                            Total: {{ format_mxn(totalCents(room), true) }}
+                                        </span>
+        
+                                        <!-- Desglose por noche -->
+                                        <el-dropdown placement="top-start">
+                                            <InfoSvg :width="15" :height="15" />
+                                            <template #dropdown>
+                                                <el-dropdown-menu>
+                                                    <div class="flex flex-col px-3 py-1 min-w-[220px]">
+                                                        <p class="font-semibold text-center">Desglose de costos</p>
+                                                        <div class="h-[1px] w-full bg-gray-200 my-2"></div>
+        
+                                                        <div v-for="r in room.rates" :key="r.date"
+                                                            class="flex justify-between gap-2">
+                                                            <span class="whitespace-nowrap">
+                                                                {{ new Date(r.date).toLocaleDateString('es-MX') }}
+                                                            </span>
+                                                            <span class="font-medium">
+                                                                {{ format_mxn(toCents(r.rate)) }}
+                                                            </span>
+                                                        </div>
+        
+                                                        <div class="h-[1px] w-full bg-gray-200 my-2"></div>
+                                                        <p class="flex justify-between">
+                                                            <span>Habitaciones</span>
+                                                            <span>x {{ data.numHabs }}</span>
+                                                        </p>
+                                                        <p class="text-right font-semibold">
+                                                            {{ format_mxn(totalCents(room), true) }}
+                                                        </p>
+                                                        <p class="text-xs">* IVA inlcuído</p>
                                                     </div>
-    
-                                                    <div class="h-[1px] w-full bg-gray-200 my-2"></div>
-                                                    <p class="flex justify-between">
-                                                        <span>Habitaciones</span>
-                                                        <span>x {{ data.numHabs }}</span>
-                                                    </p>
-                                                    <p class="text-right font-semibold">
-                                                        {{ format_mxn(totalCents(room), true) }}
-                                                    </p>
-                                                    <p class="text-xs">* IVA inlcuído</p>
-                                                </div>
-                                            </el-dropdown-menu>
-                                        </template>
-                                    </el-dropdown>
+                                                </el-dropdown-menu>
+                                            </template>
+                                        </el-dropdown>
+                                    </div>
                                 </div>
-                            </div>
-    
-                            <div class="flex flex-col md:flex-row md:gap-3">
-                                <el-button class="w-full mt-2" type="warning" :loading="isLoading"
-                                    @click="pendingRoom = room; goToCheckout(room); isPayingAtHotel = false;">
-                                    Pagar en línea
-                                </el-button>
-                                <el-button class="w-full mt-2" style="margin-left:0px !important;" type="default" :loading="isLoading"
-                                    @click="pendingRoom = room; isPayingAtHotel = true; bookingInReception(room);">
-                                    Pagar en recepción
-                                </el-button>
+        
+                                <div class="flex flex-col md:flex-row md:gap-3">
+                                    <el-button class="w-full mt-2 nuve-btn" :loading="isLoading"
+                                        @click="pendingRoom = room; goToCheckout(room); isPayingAtHotel = false;">
+                                        Pagar en línea
+                                    </el-button>
+                                    <el-button class="w-full mt-2" style="margin-left:0px !important;" type="default" :loading="isLoading"
+                                        @click="pendingRoom = room; isPayingAtHotel = true; bookingInReception(room);">
+                                        Pagar en recepción
+                                    </el-button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </article>
+                    </article>
+                </div>
+                <div>
+                    <span class="text-2xl text-gray-900 text-center font-bold">Nuve Gomez.</span>
+                    <article v-for="room in roomsGomez" :key="room.code"
+                        class="w-full md:w-[500px] flex flex-col gap-4 outline outline-1 outline-gray-300 rounded-lg p-3 mt-3">
+                        <div class="w-full h-[200px] rounded-md overflow-hidden">
+                            <!-- Imagen fija del diseño original -->
+                            <el-carousel trigger="click" height="200px" :interval=6000>
+                                <template v-for="image in imagesRooms['corregidora'][room.code]" :key="image">
+                                    <el-carousel-item>
+                                        <img :src="image" alt="" class="w-full h-full object-cover">
+                                    </el-carousel-item>
+                                </template>
+                            </el-carousel>
+                        </div>
+        
+                        <div class="w-full flex flex-col gap-3">
+                            <header class="flex flex-col">
+                                <h3 class="font-extrabold text-2xl text-gray-800">
+                                    {{ room.name || typeHabs[room.code] }}
+                                </h3>
+                                <span class="w-fit text-gray-400 text-xs font-semibold">
+                                    <!-- {{ room.plan || 'Plan no especificado' }} -->
+                                      Desayuno incluído por promoción
+                                </span>
+                            </header>
+        
+                            <div class="flex-1">
+                                <div class="w-full flex justify-between gap-3 text-sm text-gray-700">
+                                    <div class="flex flex-col">
+                                        <h6 class="font-semibold text-base">Tarifa por noche</h6>
+                                        <span class="font-bold">
+                                            {{ format_mxn(toCents(firstNightRate(room))) }}
+                                        </span>
+                                    </div>
+        
+                                    <div class="flex flex-col text-right">
+                                        <span>
+                                            {{ gapDate() }}, {{ data.adults }}
+                                            {{ Number(data.adults) === 1 ? 'adulto' : 'adultos' }}
+                                        </span>
+                                    </div>
+                                </div>
+        
+                                <el-divider />
+        
+                                <div class="text-sm text-gray-700">
+                                    <div class="flex items-center gap-1 text-xs italic underline">
+                                        <span class="font-bold">
+                                            Total: {{ format_mxn(totalCents(room), true) }}
+                                        </span>
+        
+                                        <!-- Desglose por noche -->
+                                        <el-dropdown placement="top-start">
+                                            <InfoSvg :width="15" :height="15" />
+                                            <template #dropdown>
+                                                <el-dropdown-menu>
+                                                    <div class="flex flex-col px-3 py-1 min-w-[220px]">
+                                                        <p class="font-semibold text-center">Desglose de costos</p>
+                                                        <div class="h-[1px] w-full bg-gray-200 my-2"></div>
+        
+                                                        <div v-for="r in room.rates" :key="r.date"
+                                                            class="flex justify-between gap-2">
+                                                            <span class="whitespace-nowrap">
+                                                                {{ new Date(r.date).toLocaleDateString('es-MX') }}
+                                                            </span>
+                                                            <span class="font-medium">
+                                                                {{ format_mxn(toCents(r.rate)) }}
+                                                            </span>
+                                                        </div>
+        
+                                                        <div class="h-[1px] w-full bg-gray-200 my-2"></div>
+                                                        <p class="flex justify-between">
+                                                            <span>Habitaciones</span>
+                                                            <span>x {{ data.numHabs }}</span>
+                                                        </p>
+                                                        <p class="text-right font-semibold">
+                                                            {{ format_mxn(totalCents(room), true) }}
+                                                        </p>
+                                                        <p class="text-xs">* IVA inlcuído</p>
+                                                    </div>
+                                                </el-dropdown-menu>
+                                            </template>
+                                        </el-dropdown>
+                                    </div>
+                                </div>
+        
+                                <div class="flex flex-col md:flex-row md:gap-3">
+                                    <el-button class="w-full mt-2 nuve-btn" :loading="isLoading"
+                                        @click="pendingRoom = room; goToCheckout(room); isPayingAtHotel = false;">
+                                        Pagar en línea
+                                    </el-button>
+                                    <el-button class="w-full mt-2" style="margin-left:0px !important;" type="default" :loading="isLoading"
+                                        @click="pendingRoom = room; isPayingAtHotel = true; bookingInReception(room);">
+                                        Pagar en recepción
+                                    </el-button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
             </div>
             <span v-else class="text-sm text-gray-500 text-center">Por favor, seleccione fechas válidas para ver las habitaciones disponibles.</span>
         </div>
@@ -170,6 +271,7 @@ export default {
     },
     props: {
         rooms: { type: Array, default: () => [] }, // viene del backend (tarifas)
+        roomsGomez: { type: Array, default: () => [] }, // viene del backend (tarifas)
         data: { type: Object, required: true },   // dateIni, dateFin, numHabs, adults
     },
     data() {
@@ -505,5 +607,24 @@ export default {
     /* azul */
     box-shadow: 0 0 0 1px #6e6e6e;
     /* Element Plus usa box-shadow para el borde */
+}
+
+.nuve-btn {
+  background-color: #1182ba;
+  border-color: #1182ba;
+  color: white;
+}
+
+/* Hover / focus */
+.nuve-btn:hover,
+.nuve-btn:focus {
+  background-color: #0e6f9e;   /* un poco más oscuro */
+  border-color: #0e6f9e;
+}
+
+/* Disabled (mismo color pero con transparencia) */
+.nuve-btn.is-disabled {
+  background-color: #1182ba80;
+  border-color: #1182ba80;
 }
 </style>

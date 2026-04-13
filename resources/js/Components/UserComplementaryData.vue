@@ -33,14 +33,14 @@
                     <el-input v-model="form.cp" placeholder="Ingresa tu CP" />
                 </el-form-item>
             </div>
-            <el-button class="w-full mt-10" type="warning" @click="sendData" :loading="isLoading">Enviar datos</el-button>
+            <el-button class="w-full mt-10 nuve-btn" @click="sendData" :loading="isLoading">Enviar datos</el-button>
         </el-form>
         <el-divider>
             <span class="text-gray-300">ó</span>
         </el-divider>
         <div class="flex items-center justify-center">
             <el-link href="/login">
-                <span class="text-orange-400 underline">
+                <span class="text-nuve-hoteles-blue underline">
                     Haz clic aquí para iniciar sesión
                 </span>
             </el-link>
@@ -223,5 +223,33 @@ export default {
 <style>
 .el-form-item__content {
     width: 100%;
+}
+</style>
+
+<style scoped>
+.mi-input-custom :deep(.el-input__wrapper) {
+    border-color: #6e6e6e;
+    /* azul */
+    box-shadow: 0 0 0 1px #6e6e6e;
+    /* Element Plus usa box-shadow para el borde */
+}
+
+.nuve-btn {
+  background-color: #1182ba;
+  border-color: #1182ba;
+  color: white;
+}
+
+/* Hover / focus */
+.nuve-btn:hover,
+.nuve-btn:focus {
+  background-color: #0e6f9e;   /* un poco más oscuro */
+  border-color: #0e6f9e;
+}
+
+/* Disabled (mismo color pero con transparencia) */
+.nuve-btn.is-disabled {
+  background-color: #1182ba80;
+  border-color: #1182ba80;
 }
 </style>
