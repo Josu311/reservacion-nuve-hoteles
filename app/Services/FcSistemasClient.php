@@ -7,12 +7,18 @@ use Illuminate\Support\Facades\Http;
 
 class FcSistemasClient
 {
-    public function disponibilidadTipo(string $roomTypeCode, $checkin, $checkout, int $rooms): bool
+    public function disponibilidadTipo(string $roomTypeCode, $checkin, $checkout, int $rooms, ?string $hotelCode = null): bool
     {
-        $endpoint = config('services.fc.soap_endpoint');
+        $hotelCode = HotelConfig::normalize($hotelCode);
+        $fc = HotelConfig::fc($hotelCode);
+        $endpoint = $fc['soap_endpoint'] ?? null;
         $action   = 'https://fcsistemas.com/fDisponibilidadTipo';
-        $pass     = config('services.fc.pass');
-        $cx       = config('services.fc.cx');
+        $pass     = $fc['pass'] ?? null;
+        $cx       = $fc['cx'] ?? null;
+
+        if (!$endpoint || !$pass || !$cx) {
+            return false;
+        }
 
         // SOAP pide dateTime. Normalmente se manda inicio de día.
         $checkinDt  = Carbon::parse($checkin)->startOfDay();

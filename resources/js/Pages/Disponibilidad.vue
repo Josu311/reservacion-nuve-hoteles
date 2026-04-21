@@ -28,7 +28,7 @@
             </div> -->
         </div>
         <div class="p-2 md:p-5">
-            <el-countdown v-if="rooms.length" title="Tiempo restante en la sesión" :value="countDown" format="mm:ss" @finish="onFinish" />
+            <el-countdown v-if="rooms.length || roomsGomez.length" title="Tiempo restante en la sesión" :value="countDown" format="mm:ss" @finish="onFinish" />
             
             <div v-if="rooms.length || roomsGomez.length" class="flex flex-col md:flex-row gap-10">
                 <div>
@@ -326,6 +326,7 @@ export default {
             },
 
             pendingRoom: null,
+            pendingHotelCode: null,
             isPayingAtHotel: false,
         }
     },
@@ -405,6 +406,10 @@ export default {
         },
         goToCheckout(room) {
             room = room || this.pendingRoom
+            const hotelCode = room?.hotel_code || this.pendingHotelCode
+            this.pendingRoom = room
+            this.pendingHotelCode = hotelCode
+
             // Si no hay sesión y tampoco datos del modal → abre modal
             if (!this.isLogged && !this.userInfo) {
                 this.showUserComplementaryData = true
@@ -457,6 +462,7 @@ export default {
             const payload = {
                 amount,                       // en centavos (MXN)
                 currency: 'MXN',
+                hotel_code: hotelCode,
                 room_type_code: room.code,    // viene del objeto room
                 checkin: this.data.dateIni,
                 checkout: this.data.dateFin,
@@ -490,6 +496,9 @@ export default {
         },
         async bookingInReception(room) {
             room = room || this.pendingRoom
+            const hotelCode = room?.hotel_code || this.pendingHotelCode
+            this.pendingRoom = room
+            this.pendingHotelCode = hotelCode
             
             if (!this.isLogged && !this.userInfo) {
                 this.showUserComplementaryData = true
@@ -506,6 +515,7 @@ export default {
 
                 ElMessageBox.confirm(
                     `<strong>Estos son los datos de la habitación:</strong><br><br>
+                    <strong>Hotel:</strong> ${room.hotel_name || this.hotelName(hotelCode)}<br>
                     <strong>Habitación:</strong> ${room.name || this.typeHabs[room.code]}<br>
                     <strong>Plan:</strong> ${room.plan || 'Plan no especificado'}<br>
                     <strong>Check-in:</strong> ${this.data.dateIni}<br>
@@ -557,7 +567,10 @@ export default {
             window.location.reload();
         },
         saveBookingInReception() {
+            const amountCents = this.totalCents(this.pendingRoom);
             const payload = {
+                hotel_code: this.pendingHotelCode || this.pendingRoom.hotel_code,
+                hotel_name: this.pendingRoom.hotel_name || this.hotelName(this.pendingHotelCode || this.pendingRoom.hotel_code),
                 room_code: this.pendingRoom.code,
                 room_name: this.pendingRoom.name,
                 plan: this.pendingRoom.plan,
@@ -571,8 +584,8 @@ export default {
                     email: this.userInfo.email,
                     phone: this.userInfo.phone,
                 },
-                amount_cents: this.pendingRoom.sum_rate_cents,
-                amount: this.pendingRoom.sum_rate,
+                amount_cents: amountCents,
+                amount: amountCents / 100,
             };
 
             axios.post('/create-booking-reception', payload)
@@ -596,6 +609,14 @@ export default {
                     type: 'error'
                 })
             })
+        },
+        hotelName(hotelCode) {
+            const names = {
+                torreon: 'Nuve Torreón',
+                gomez: 'Nuve Gomez',
+            };
+
+            return names[hotelCode] || hotelCode || 'Hotel';
         }
     },
 }

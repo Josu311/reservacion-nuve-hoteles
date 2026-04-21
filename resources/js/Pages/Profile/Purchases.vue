@@ -23,6 +23,7 @@
                     <thead class="bg-slate-50 text-slate-600">
                         <tr class="[&>th]:px-4 [&>th]:py-3">
                             <th>Fecha</th>
+                            <th>Hotel</th>
                             <th>Folio proveedor</th>
                             <th>Habitación</th>
                             <th>Fechas</th>
@@ -35,6 +36,7 @@
                     <tbody class="divide-y">
                         <tr v-for="r in rows" :key="r.id" class="[&>td]:px-4 [&>td]:py-3">
                             <td>{{ fmtDate(r.created_at) }}</td>
+                            <td>{{ hotelName(r.hotel_code) }}</td>
                             <td class="font-mono">{{ r.provider_folio || '-' }}</td>
                             <td><span class="font-medium">{{ r.room_type_code }}</span></td>
                             <td>{{ fmtDate(r.checkin) }} → {{ fmtDate(r.checkout) }}</td>
@@ -104,6 +106,14 @@ export default {
             if (!d) return '-'
             const dt = new Date(d)
             return isNaN(dt) ? d : dt.toLocaleDateString('es-MX')
+        },
+        hotelName(hotelCode) {
+            const names = {
+                torreon: 'Nuve Torreón',
+                gomez: 'Nuve Gomez',
+            }
+
+            return names[hotelCode] || hotelCode || 'Hotel'
         },
         statusBadgeClass(status) {
             switch ((status || '').toLowerCase()) {

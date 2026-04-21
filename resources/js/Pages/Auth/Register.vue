@@ -63,9 +63,9 @@
         </form> -->
 
     <section class="w-full h-[100dvh] flex items-center">
-        <img class="w-[50%] h-full object-cover hidden md:block" src="/img/nuveexpress-fachada.jpg" alt="">
+        <img class="w-[50%] h-full object-cover hidden md:block" src="/img/hotels-1.webp" alt="">
         <article class="w-full md:w-[50%] p-20">
-            <img class="mx-auto" src="/img/Logo-Nuve-Express-01-1.png" alt="Logo de Nuve Express" width="100px"
+            <img class="mx-auto" src="/img/logo-nuve-hoteles.webp" alt="Logo de Nuve Express" width="100px"
                 height="100px">
             <el-form class="w-full" :model="form" :rules="rules" @submit.prevent="submit">
                 <div class="flex items-center gap-5">
@@ -110,11 +110,17 @@
                         show-password />
                 </el-form-item>
                 <p class="text-end text-sm">
-                    <a class="text-orange-500 hover:text-blue-600 hover:underline" href="/login">¿Ya tienes cuenta?
+                    <a class="text-nuve-hoteles-blue hover:text-blue-600 hover:underline" href="/login">¿Ya tienes cuenta?
                         ¡Inicia sesión!</a>
                 </p>
-                <el-button class="w-full mt-10" type="warning" :loading="isLoading" native-type="submit"
-                    @click="submit">Crear cuenta</el-button>
+                <el-button 
+                    class="w-full mt-10 btn-nuve-blue" 
+                    :loading="isLoading" 
+                    native-type="submit"
+                    @click="submit"
+                >
+                    Crear cuenta
+                </el-button>
             </el-form>
         </article>
     </section>
@@ -296,5 +302,21 @@ export default {
 <style>
 .el-form-item__content {
     width: 100%;
+}
+
+.btn-nuve-blue {
+  /* Color base */
+  --el-button-bg-color: #1182ba;
+  --el-button-border-color: #1182ba;
+  --el-button-text-color: #ffffff;
+
+  /* Color al pasar el mouse (un poco más claro) */
+  --el-button-hover-bg-color: #1a95d4;
+  --el-button-hover-border-color: #1a95d4;
+  --el-button-hover-text-color: #ffffff;
+
+  /* Color al hacer clic (un poco más oscuro) */
+  --el-button-active-bg-color: #0e6b9a;
+  --el-button-active-border-color: #0e6b9a;
 }
 </style>

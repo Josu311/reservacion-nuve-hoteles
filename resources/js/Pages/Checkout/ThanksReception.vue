@@ -27,6 +27,11 @@
           </div>
 
           <div class="flex justify-between">
+            <span class="text-gray-500">Hotel:</span>
+            <span class="font-medium">{{ reservation.hotel_name || hotelName(reservation.hotel_code) }}</span>
+          </div>
+
+          <div class="flex justify-between">
             <span class="text-gray-500">Habitación:</span>
             <span class="font-medium">{{ reservation.room_name }}</span>
           </div>
@@ -121,6 +126,15 @@ export default {
         month: 'long', 
         day: '2-digit' 
       })
+    },
+
+    hotelName(hotelCode) {
+      const names = {
+        torreon: 'Nuve Torreón',
+        gomez: 'Nuve Gomez',
+      }
+
+      return names[hotelCode] || hotelCode || 'Hotel'
     },
   },
 }

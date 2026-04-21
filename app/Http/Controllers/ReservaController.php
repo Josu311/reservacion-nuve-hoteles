@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Reservation;
+use App\Services\HotelConfig;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class ReservaController extends Controller
@@ -18,59 +17,52 @@ class ReservaController extends Controller
      */
     public function index(Request $request)
     {
-        if($request->only(['dateIni', 'dateFin', 'typeHab', 'numHabs', 'adults'])) {
+        $data = [];
+        $rooms = [];
+        $roomsGomez = [];
+
+        if ($request->filled(['dateIni', 'dateFin', 'numHabs', 'adults'])) {
             // 1) Normaliza/asegura filtros
             $data = $request->only(['dateIni', 'dateFin', 'typeHab', 'numHabs', 'adults']);
-    
+
             // Defaults sensatos si llegan vacíos (evita errores en acceso directo)
             $start = $data['dateIni'];
             $end   = $data['dateFin'];
-    
+
             $data['dateIni'] = Carbon::parse($start)->format('Y-m-d');
             $data['dateFin'] = Carbon::parse($end)->format('Y-m-d');
             $data['adults']  = (int)($data['adults']);
             $data['numHabs'] = (int)($data['numHabs']);
-    
-            // 2) SOAP: tarifas por fecha (todas las habitaciones)
-            try {
-                //NUVE TORREON
-                $tarifasXml = $this->callSoapTarifasFechas([
-                    'lFechaIni'     => $data['dateIni'] . 'T00:00:00',
-                    'lFechaFinal'   => $data['dateFin'] . 'T00:00:00',
-                    'lAdul'         => $data['adults'],
-                    'lMen'          => 0,
-                    'lJr'           => 0,
-                    'lHabs'         => $data['numHabs'],
-                    'lPassCliente'  => config('services.fc.pass'),
-                    'lStringCxSAHM' => config('services.fc.cx'),
-                ]);
-    
-                $rooms = $this->parseTarifasAll($tarifasXml);
 
-                //NUVE GOMEZ
-                $tarifasXmlGomez = $this->callSoapTarifasFechas([
-                    'lFechaIni'     => $data['dateIni'] . 'T00:00:00',
-                    'lFechaFinal'   => $data['dateFin'] . 'T00:00:00',
-                    'lAdul'         => $data['adults'],
-                    'lMen'          => 0,
-                    'lJr'           => 0,
-                    'lHabs'         => $data['numHabs'],
-                    'lPassCliente'  => config('services.fc.pass'),
-                    'lStringCxSAHM' => config('services.fc.cx'),
-                ]);
-    
-                $roomsGomez = $this->parseTarifasAll($tarifasXmlGomez);
+            // 2) SOAP: tarifas por fecha por hotel.
+            try {
+                $tarifasXml = $this->callSoapTarifasFechas($data, 'torreon');
+                $rooms = $this->parseTarifasAll($tarifasXml, 'torreon');
             } catch (\Throwable $e) {
-                Log::warning('SOAP tarifas fallo', ['msg' => $e->getMessage()]);
+                Log::warning('SOAP tarifas fallo', [
+                    'hotel_code' => 'torreon',
+                    'msg' => $e->getMessage(),
+                ]);
                 $rooms = [];
+            }
+
+            try {
+                $tarifasXmlGomez = $this->callSoapTarifasFechas($data, 'gomez');
+                $roomsGomez = $this->parseTarifasAll($tarifasXmlGomez, 'gomez');
+            } catch (\Throwable $e) {
+                Log::warning('SOAP tarifas fallo', [
+                    'hotel_code' => 'gomez',
+                    'msg' => $e->getMessage(),
+                ]);
+                $roomsGomez = [];
             }
         }
 
         // 3) Render: manda TODO al front
         return Inertia::render('Disponibilidad', [
-            'data'  => $data ?? [],   // filtros normalizados
-            'rooms' => $rooms ?? [],  // arreglo de habitaciones con tarifas/imágenes/plan
-            'roomsGomez' => $roomsGomez ?? [],  // arreglo de habitaciones con tarifas/imágenes/plan
+            'data'  => $data,   // filtros normalizados
+            'rooms' => $rooms,  // arreglo de habitaciones con tarifas/imágenes/plan
+            'roomsGomez' => $roomsGomez,  // arreglo de habitaciones con tarifas/imágenes/plan
         ]);
     }
 
@@ -104,27 +96,40 @@ class ReservaController extends Controller
      * Llama al método SOAP GetHabitacionTarifasFechasFotoDescrip_ES_EN (todas las habitaciones).
      * Devuelve el XML de la respuesta o lanza excepción en error.
      */
-    private function callSoapTarifasFechas(array $p): string
+    private function callSoapTarifasFechas(array $p, string $hotelCode): string
     {
+        $fc = HotelConfig::fc($hotelCode);
+
+        if (empty($fc['soap_endpoint']) || empty($fc['pass']) || empty($fc['cx'])) {
+            throw new \RuntimeException('Configuracion FC incompleta para ' . HotelConfig::name($hotelCode));
+        }
+
+        $fechaIni = $this->xml($p['dateIni'] . 'T00:00:00');
+        $fechaFin = $this->xml($p['dateFin'] . 'T00:00:00');
+        $adults = $this->xml($p['adults']);
+        $rooms = $this->xml($p['numHabs']);
+        $pass = $this->xml($fc['pass']);
+        $cx = $this->xml($fc['cx']);
+
         $xml = <<<XML
         <?xml version="1.0" encoding="utf-8"?>
         <soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
           <soap12:Body>
             <GetHabitacionTarifasFechasFotoDescrip_ES_EN xmlns="https://fcsistemas.com/">
-              <lFechaIni>{$p['lFechaIni']}</lFechaIni>
-              <lFechaFinal>{$p['lFechaFinal']}</lFechaFinal>
-              <lAdul>{$p['lAdul']}</lAdul>
-              <lMen>{$p['lMen']}</lMen>
-              <lJr>{$p['lJr']}</lJr>
-              <lHabs>{$p['lHabs']}</lHabs>
-              <lPassCliente>{$p['lPassCliente']}</lPassCliente>
-              <lStringCxSAHM>{$p['lStringCxSAHM']}</lStringCxSAHM>
+              <lFechaIni>{$fechaIni}</lFechaIni>
+              <lFechaFinal>{$fechaFin}</lFechaFinal>
+              <lAdul>{$adults}</lAdul>
+              <lMen>0</lMen>
+              <lJr>0</lJr>
+              <lHabs>{$rooms}</lHabs>
+              <lPassCliente>{$pass}</lPassCliente>
+              <lStringCxSAHM>{$cx}</lStringCxSAHM>
             </GetHabitacionTarifasFechasFotoDescrip_ES_EN>
           </soap12:Body>
         </soap12:Envelope>
         XML;
 
-        $endpoint = config('services.fc.soap_endpoint');
+        $endpoint = $fc['soap_endpoint'];
         $action   = 'https://fcsistemas.com/GetHabitacionTarifasFechasFotoDescrip_ES_EN';
 
         $resp = Http::retry(2, 300)
@@ -151,7 +156,7 @@ class ReservaController extends Controller
      *   ...
      * ]
      */
-    private function parseTarifasAll(string $xmlBody): array
+    private function parseTarifasAll(string $xmlBody, string $hotelCode): array
     {
         $doc = new \DOMDocument();
         $doc->loadXML($xmlBody);
@@ -194,6 +199,8 @@ class ReservaController extends Controller
             $sumRateCents  = (int) round($sumRate * 100);
 
             $rooms[] = [
+                'hotel_code'      => $hotelCode,
+                'hotel_name'      => HotelConfig::name($hotelCode),
                 'code'            => $txt($roomNode, 'Tipo_Hab'),
                 'name'            => $txt($roomNode, 'Descripcion_HabitacionCorta') ?: $txt($roomNode, 'Descripcion_HabitacionEN'),
                 'plan'            => $plan,
@@ -206,5 +213,10 @@ class ReservaController extends Controller
         }
 
         return $rooms;
+    }
+
+    private function xml($s): string
+    {
+        return htmlspecialchars((string) $s, ENT_XML1 | ENT_QUOTES, 'UTF-8');
     }
 }

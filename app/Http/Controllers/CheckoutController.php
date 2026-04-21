@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BookingInReceptionAdminMail;
+use App\Mail\BookingInReceptionCustomerMail;
 use App\Mail\ReservationConfirmedMail;
 use App\Models\Reservation;
+use App\Services\HotelConfig;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Resend\Laravel\Facades\Resend;
 use Stripe\StripeClient;
 use Throwable;
 
@@ -20,6 +25,7 @@ class CheckoutController extends Controller
         $data = $request->validate([
             'amount'         => ['required', 'integer', 'min:100'],     // centavos
             'currency'       => ['required', 'string', 'size:3'],       // 'MXN'
+            'hotel_code'      => ['required', 'string', Rule::in(HotelConfig::codes())],
             'room_type_code' => ['required', 'string', 'max:10'],
             'checkin'        => ['required', 'string'],                 // 'YYYY-MM-DD'
             'checkout'       => ['required', 'string'],                 // 'YYYY-MM-DD'
@@ -28,6 +34,8 @@ class CheckoutController extends Controller
             'userInfo'       => ['nullable', 'array'],
             // 'userInfo.email' => ['nullable', 'email'],
         ]);
+
+        $data['hotel_code'] = HotelConfig::normalize($data['hotel_code']);
 
         $customerName = auth()->user()->name ?? ($data['userInfo']['name'] ?? null);
         $customerLastName = auth()->user()->lastname ?? ($data['userInfo']['lastname'] ?? null);
@@ -79,7 +87,8 @@ class CheckoutController extends Controller
 
         // 2) Guardar en BD la reserva local
         $nights = max(1, Carbon::parse($data['checkin'])->diffInDays(Carbon::parse($data['checkout'])));
-        $minutes   = (int) config('services.fc.hold_ttl_minutes', 30);
+        $hotelFc = HotelConfig::fc($data['hotel_code']);
+        $minutes   = (int) ($hotelFc['hold_ttl_minutes'] ?? 30);
         $expiresAt = Carbon::now()->addMinutes($minutes);
 
         $user       = auth()->user();
@@ -88,6 +97,7 @@ class CheckoutController extends Controller
 
         $reservation = Reservation::create([
             'user_id'                  => $userId,
+            'hotel_code'               => $data['hotel_code'],
             'guest_name'               => $isLoggedIn ? null : $customerName,
             'guest_email'              => $isLoggedIn ? null : $customerEmail,
             'guest_phone'              => $isLoggedIn ? null : $customerPhone,
@@ -112,7 +122,7 @@ class CheckoutController extends Controller
         ]);
 
         // 3) Crear sesión de Stripe
-        $stripe = new StripeClient(config('services.stripe.secret'));
+        $stripe = new StripeClient(HotelConfig::stripeSecret($reservation->hotel_code));
 
         $session = $stripe->checkout->sessions->create([
             'mode'        => 'payment',
@@ -122,8 +132,8 @@ class CheckoutController extends Controller
             'payment_intent_data' => [
                 'capture_method' => 'manual',
             ],
-            'success_url' => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url'  => route('checkout.cancel') . '?session_id={CHECKOUT_SESSION_ID}',
+            'success_url' => route('checkout.success') . '?hotel=' . urlencode($reservation->hotel_code) . '&session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url'  => route('checkout.cancel') . '?hotel=' . urlencode($reservation->hotel_code) . '&session_id={CHECKOUT_SESSION_ID}',
             'line_items'  => [[
                 'price_data'  => [
                     'currency'     => strtolower($data['currency']),
@@ -134,6 +144,7 @@ class CheckoutController extends Controller
             ]],
             'metadata'    => [
                 'reservation_id'   => (string) $reservation->id,
+                'hotel_code'        => (string) $reservation->hotel_code,
                 'provider_folio'    => (string) $reservation->provider_folio,
                 'room_type_code'    => (string) $reservation->room_type_code,
                 'checkin'           => (string) $reservation->checkin,
@@ -161,13 +172,13 @@ class CheckoutController extends Controller
             abort(400, 'Falta session_id');
         }
 
-        $stripe = new \Stripe\StripeClient(config('services.stripe.secret'));
+        // 1) Busca por session_id (lo normal)
+        $reservation = Reservation::where('stripe_session_id', $sessionId)->first();
+        $hotelCode = $reservation?->hotel_code ?? $request->query('hotel');
+        $stripe = new \Stripe\StripeClient(HotelConfig::stripeSecret($hotelCode));
 
         // Solo para UI (estado de Stripe); NO lo uses como “fuente de verdad”
         $session = $stripe->checkout->sessions->retrieve($sessionId);
-
-        // 1) Busca por session_id (lo normal)
-        $reservation = Reservation::where('stripe_session_id', $sessionId)->first();
 
         // 2) Fallback: si por alguna razón no está, intenta por metadata.reservation_id
         if (!$reservation) {
@@ -217,6 +228,7 @@ class CheckoutController extends Controller
                 'checkout',
                 'amount_cents',
                 'currency',
+                'hotel_code',
                 'nights',
                 'rooms',
                 'adults',
@@ -238,14 +250,19 @@ class CheckoutController extends Controller
      */
     private function createProviderHold(array $data, array $customer): array
     {
-        $endpoint   = config('services.fc.soap_endpoint');
+        $fc         = HotelConfig::fc($data['hotel_code']);
+        $endpoint   = $fc['soap_endpoint'] ?? null;
         $action     = 'https://fcsistemas.com/fInsertaReservaNew';
-        $rateName   = config('services.fc.rate_name', 'WWW_SA');
-        $pass       = config('services.fc.pass');
-        $cx         = config('services.fc.cx');
+        $rateName   = $fc['rate_name'] ?? 'WWW_SA';
+        $pass       = $fc['pass'] ?? null;
+        $cx         = $fc['cx'] ?? null;
 
         // Dummy CC desde config/env (por defecto, 16 ceros)
-        $dummyCc    = config('services.fc.dummy_cc', '0000000000000000');
+        $dummyCc    = $fc['dummy_cc'] ?? '0000000000000000';
+
+        if (!$endpoint || !$pass || !$cx) {
+            throw new \RuntimeException('Configuracion FC incompleta para ' . HotelConfig::name($data['hotel_code']));
+        }
 
         $checkinDt  = \Carbon\Carbon::parse($data['checkin']);
         $checkoutDt = \Carbon\Carbon::parse($data['checkout']);
@@ -255,7 +272,7 @@ class CheckoutController extends Controller
         $totalPesos     = ((int) $data['amount']) / 100;
         $pricePerNight  = round($totalPesos / ($nights * $roomsCount), 2);
 
-        $minutes   = (int) config('services.fc.hold_ttl_minutes', 30);
+        $minutes   = (int) ($fc['hold_ttl_minutes'] ?? 30);
         $expiresAt = now()->addMinutes($minutes);
 
         $iso = fn($d) => \Carbon\Carbon::parse($d)->format('Y-m-d\TH:i:s');
@@ -341,12 +358,17 @@ class CheckoutController extends Controller
         return htmlspecialchars((string)$s, ENT_XML1 | ENT_QUOTES, 'UTF-8');
     }
 
-    private function providerPagoConfirmado(string $folio, string $idTX, int $amountCents): bool
+    private function providerPagoConfirmado(string $folio, string $idTX, int $amountCents, string $hotelCode = HotelConfig::DEFAULT_CODE): bool
     {
-        $endpoint = config('services.fc.soap_endpoint');
+        $fc = HotelConfig::fc($hotelCode);
+        $endpoint = $fc['soap_endpoint'] ?? null;
         $action   = 'https://fcsistemas.com/fPagoConfirmado';
-        $pass     = config('services.fc.pass');
-        $cx       = config('services.fc.cx');
+        $pass     = $fc['pass'] ?? null;
+        $cx       = $fc['cx'] ?? null;
+
+        if (!$endpoint || !$pass || !$cx) {
+            return false;
+        }
 
         $importe = number_format($amountCents / 100, 2, '.', ''); // MXN con 2 decimales
         $concepto = 'TARJETA CREDITO';
@@ -387,13 +409,18 @@ class CheckoutController extends Controller
     /**
      * Llama a fCambioStatusReserva (VIGENTE).
      */
-    private function providerCambioStatusVigente(string $folio, ?\DateTimeInterface $fechaLimite): bool
+    private function providerCambioStatusVigente(string $folio, ?\DateTimeInterface $fechaLimite, string $hotelCode = HotelConfig::DEFAULT_CODE): bool
     {
-        $endpoint = config('services.fc.soap_endpoint');
+        $fc = HotelConfig::fc($hotelCode);
+        $endpoint = $fc['soap_endpoint'] ?? null;
         $action   = 'https://fcsistemas.com/fCambioStatusReserva';
-        $pass     = config('services.fc.pass');
-        $cx       = config('services.fc.cx');
-        $dummyCc  = config('services.fc.dummy_cc', '0000000000000000');
+        $pass     = $fc['pass'] ?? null;
+        $cx       = $fc['cx'] ?? null;
+        $dummyCc  = $fc['dummy_cc'] ?? '0000000000000000';
+
+        if (!$endpoint || !$pass || !$cx) {
+            return false;
+        }
 
         $limiteIso = ($fechaLimite ? \Carbon\Carbon::parse($fechaLimite) : now())
             ->format('Y-m-d\TH:i:s');
@@ -487,6 +514,7 @@ class CheckoutController extends Controller
                     'updated_at' => optional($reservation->updated_at)->toISOString(),
 
                     'provider_folio' => $reservation->provider_folio,
+                    'hotel_code' => $reservation->hotel_code,
 
                     // Campos para pintar el resumen en UI:
                     'room_type_code' => $reservation->room_type_code,
@@ -533,5 +561,63 @@ class CheckoutController extends Controller
 
     public function pagoEnRecepcion(Request $request) {
         return Inertia::render('Checkout/ThanksReception', $request->all());
+    }
+
+    public function bookingInReception(Request $request)
+    {
+        $data = $request->validate([
+            'hotel_code' => ['required', 'string', Rule::in(HotelConfig::codes())],
+            'room_code' => ['required', 'string'],
+            'room_name' => ['required', 'string'],
+            'plan' => ['nullable', 'string'],
+            'check_in' => ['required', 'date'],
+            'check_out' => ['required', 'date'],
+            'adults' => ['required', 'integer', 'min:1'],
+            'num_habs' => ['required', 'integer', 'min:1'],
+            'amount_cents' => ['required', 'integer', 'min:100'],
+            'amount' => ['nullable', 'numeric'],
+            'user_info' => ['required', 'array'],
+            'user_info.name' => ['required', 'string'],
+            'user_info.lastname' => ['required', 'string'],
+            'user_info.email' => ['required', 'email'],
+            'user_info.phone' => ['required', 'string'],
+        ]);
+
+        $data['hotel_code'] = HotelConfig::normalize($data['hotel_code']);
+        $data['hotel_name'] = HotelConfig::name($data['hotel_code']);
+
+        Reservation::create([
+            'hotel_code' => $data['hotel_code'],
+            'room_type_code' => $data['room_code'],
+            'checkin' => $data['check_in'],
+            'checkout' => $data['check_out'],
+            'nights' => (new \DateTime($data['check_out']))->diff(new \DateTime($data['check_in']))->days,
+            'rooms' => $data['num_habs'],
+            'adults' => $data['adults'],
+            'guest_name' => $data['user_info']['name'] . ' ' . $data['user_info']['lastname'],
+            'guest_email' => $data['user_info']['email'],
+            'guest_phone' => $data['user_info']['phone'],
+            'amount_cents' => $data['amount_cents'],
+            'provider_folio' => 'RECEPCION-' . strtoupper(uniqid()),
+            'provider_hold_expires_at' => now()->addHours(2),
+            'status' => 'booking_in_reception',
+            'client_order_key' => (string) Str::uuid(),
+        ]);
+
+        Resend::emails()->send([
+            'from' => 'Nuve Express <no-reply@nuveexpress.com.mx>',
+            'to' => $data['user_info']['email'],
+            'subject' => 'Reserva con pago en recepción',
+            'html' => (new BookingInReceptionCustomerMail($data))->render(),
+        ]);
+
+        Resend::emails()->send([
+            'from' => 'Nuve Express <no-reply@nuveexpress.com.mx>',
+            'to' => 'bedbedhoteles@gmail.com',
+            'subject' => 'Reserva con pago en recepción',
+            'html' => (new BookingInReceptionAdminMail($data))->render(),
+        ]);
+
+        return response()->json(['message' => 'Reserva creada con éxito para pago en recepción.'], 201);
     }
 }

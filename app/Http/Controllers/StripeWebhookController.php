@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\ReservationConfirmedMail;
 use App\Models\Reservation;
+use App\Services\HotelConfig;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,11 +19,18 @@ use UnexpectedValueException;
 
 class StripeWebhookController extends Controller
 {
-public function handle(Request $request)
+public function handle(Request $request, ?string $hotel = null)
 {
     $payload   = $request->getContent();
     $sigHeader = $request->header('Stripe-Signature');
-    $secret    = config('services.stripe.webhook_secret');
+
+    try {
+        $hotelCode = HotelConfig::normalize($hotel);
+        $secret = HotelConfig::stripeWebhookSecret($hotelCode);
+        $stripeSecret = HotelConfig::stripeSecret($hotelCode);
+    } catch (\InvalidArgumentException $e) {
+        return response($e->getMessage(), 500);
+    }
 
     if (!$secret) {
         return response('Falta STRIPE_WEBHOOK_SECRET', 500);
@@ -54,7 +62,7 @@ public function handle(Request $request)
                     return $ack();
                 }
 
-                DB::transaction(function () use ($event, $sessionId, $piId, $reservationId) {
+                DB::transaction(function () use ($event, $sessionId, $piId, $reservationId, $hotelCode, $stripeSecret) {
 
                     /** @var Reservation|null $reservation */
                     $reservation = Reservation::lockForUpdate()->find($reservationId);
@@ -81,6 +89,11 @@ public function handle(Request $request)
                     if ($piId && !$reservation->stripe_payment_intent_id) {
                         $reservation->stripe_payment_intent_id = $piId;
                     }
+                    if (!$reservation->hotel_code) {
+                        $reservation->hotel_code = $hotelCode;
+                    }
+
+                    $reservationHotelCode = $reservation->hotel_code ?: $hotelCode;
 
                     // Si ya está final, no re-proceses
                     if (in_array($reservation->status, ['paid', 'failed', 'expired', 'cancelled'], true)) {
@@ -100,6 +113,7 @@ public function handle(Request $request)
 
                     // --- 1) Disponibilidad ---
                     $availability = $this->providerDisponibilidadTipo(
+                        hotelCode: $reservationHotelCode,
                         roomTypeCode: $reservation->room_type_code,
                         checkin: $reservation->checkin,
                         checkout: $reservation->checkout,
@@ -116,7 +130,7 @@ public function handle(Request $request)
 
                         if ($piId) {
                             try {
-                                $stripeTmp = new StripeClient(config('services.stripe.secret'));
+                                $stripeTmp = new StripeClient($stripeSecret);
                                 $piTmp = $stripeTmp->paymentIntents->retrieve($piId, []);
                                 if ($piTmp->status === 'requires_capture') {
                                     $stripeTmp->paymentIntents->cancel($piId, []);
@@ -150,7 +164,7 @@ public function handle(Request $request)
                         return;
                     }
 
-                    $stripe = new StripeClient(config('services.stripe.secret'));
+                    $stripe = new StripeClient($stripeSecret);
 
                     // --- 2) Captura (idempotente por captured_at) ---
                     $metaNow = $reservation->meta ?? [];
@@ -184,6 +198,7 @@ public function handle(Request $request)
                         $idTX = (string) $piId;
 
                         $pagoOk = $this->providerPagoConfirmado(
+                            hotelCode: $reservationHotelCode,
                             folio: (string) $reservation->provider_folio,
                             idTX: $idTX,
                             amountCents: (int) $reservation->amount_cents
@@ -192,6 +207,7 @@ public function handle(Request $request)
                         $cambioOk = false;
                         if ($pagoOk) {
                             $cambioOk = $this->providerCambioStatusVigente(
+                                hotelCode: $reservationHotelCode,
                                 folio: (string) $reservation->provider_folio,
                                 fechaLimite: $reservation->provider_hold_expires_at
                             );
@@ -333,12 +349,24 @@ public function handle(Request $request)
     // =========================
     // SOAP: fDisponibilidadTipo
     // =========================
-    private function providerDisponibilidadTipo(string $roomTypeCode, $checkin, $checkout, int $rooms): array
+    private function providerDisponibilidadTipo(string $hotelCode, string $roomTypeCode, $checkin, $checkout, int $rooms): array
     {
-        $endpoint = config('services.fc.soap_endpoint');
+        $fc = HotelConfig::fc($hotelCode);
+        $endpoint = $fc['soap_endpoint'] ?? null;
         $action   = 'https://fcsistemas.com/fDisponibilidadTipo';
-        $pass     = config('services.fc.pass');
-        $cx       = config('services.fc.cx');
+        $pass     = $fc['pass'] ?? null;
+        $cx       = $fc['cx'] ?? null;
+
+        if (!$endpoint || !$pass || !$cx) {
+            return [
+                'ok' => false,
+                'available' => null,
+                'norm' => null,
+                'raw' => null,
+                'http_status' => null,
+                'error' => 'fc_config_incomplete',
+            ];
+        }
 
         $checkinDt  = Carbon::parse($checkin)->startOfDay();
         $checkoutDt = Carbon::parse($checkout)->startOfDay();
@@ -454,12 +482,17 @@ public function handle(Request $request)
     // SOAP: PagoConfirmado / CambioStatus
     // (copiados de tu estilo en CheckoutController)
     // =========================
-    private function providerPagoConfirmado(string $folio, string $idTX, int $amountCents): bool
+    private function providerPagoConfirmado(string $hotelCode, string $folio, string $idTX, int $amountCents): bool
     {
-        $endpoint = config('services.fc.soap_endpoint');
+        $fc = HotelConfig::fc($hotelCode);
+        $endpoint = $fc['soap_endpoint'] ?? null;
         $action   = 'https://fcsistemas.com/fPagoConfirmado';
-        $pass     = config('services.fc.pass');
-        $cx       = config('services.fc.cx');
+        $pass     = $fc['pass'] ?? null;
+        $cx       = $fc['cx'] ?? null;
+
+        if (!$endpoint || !$pass || !$cx) {
+            return false;
+        }
 
         $importe  = number_format($amountCents / 100, 2, '.', '');
         $concepto = 'TARJETA CREDITO';
@@ -493,13 +526,18 @@ public function handle(Request $request)
         return $this->parseSoapBoolean($resp->body(), 'fPagoConfirmadoResult', false);
     }
 
-    private function providerCambioStatusVigente(string $folio, ?\DateTimeInterface $fechaLimite): bool
+    private function providerCambioStatusVigente(string $hotelCode, string $folio, ?\DateTimeInterface $fechaLimite): bool
     {
-        $endpoint = config('services.fc.soap_endpoint');
+        $fc = HotelConfig::fc($hotelCode);
+        $endpoint = $fc['soap_endpoint'] ?? null;
         $action   = 'https://fcsistemas.com/fCambioStatusReserva';
-        $pass     = config('services.fc.pass');
-        $cx       = config('services.fc.cx');
-        $dummyCc  = config('services.fc.dummy_cc', '0000000000000000');
+        $pass     = $fc['pass'] ?? null;
+        $cx       = $fc['cx'] ?? null;
+        $dummyCc  = $fc['dummy_cc'] ?? '0000000000000000';
+
+        if (!$endpoint || !$pass || !$cx) {
+            return false;
+        }
 
         $limiteIso = ($fechaLimite ? Carbon::parse($fechaLimite) : now())->format('Y-m-d\TH:i:s');
 

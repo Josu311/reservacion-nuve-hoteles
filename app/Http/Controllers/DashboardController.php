@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reservation;
+use App\Services\HotelConfig;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,8 +14,14 @@ use function PHPSTORM_META\map;
 
 class DashboardController extends Controller
 {
-    public function dashboardData() {
-        $generalQuery = Reservation::query();
+    public function dashboardData(Request $request) {
+        $filters = $request->validate([
+            'hotel_code' => ['nullable', 'string', 'in:' . implode(',', HotelConfig::codes())],
+        ]);
+
+        $hotelCode = $filters['hotel_code'] ?? null;
+        $generalQuery = Reservation::query()
+            ->when($hotelCode, fn ($query) => $query->where('hotel_code', $hotelCode));
 
         $year = now()->year;
 
@@ -80,6 +87,7 @@ class DashboardController extends Controller
             ->select([
                 'r.id',
                 'r.status',
+                'r.hotel_code',
                 'r.description',
                 'r.is_confirmed',
                 'r.amount_cents',
@@ -111,6 +119,12 @@ class DashboardController extends Controller
     public function paginateReservations(Request $request)
     {
         $generalQuery = Reservation::query();
+        $hotelCode = $request->input('hotel_code');
+        if ($hotelCode !== null) {
+            $request->validate([
+                'hotel_code' => ['string', 'in:' . implode(',', HotelConfig::codes())],
+            ]);
+        }
         
         // Params desde el front (con defaults)
         $page    = (int) $request->input('page', 1);
@@ -122,10 +136,12 @@ class DashboardController extends Controller
         $query = (clone $generalQuery)
             ->from('reservations as r')
             ->leftJoin('users as u', 'u.id', '=', 'r.user_id')
+            ->when($hotelCode, fn ($query) => $query->where('r.hotel_code', $hotelCode))
             ->whereIn('r.status', ['paid', 'booking_in_reception'])
             ->select([
                 'r.id',
                 'r.status',
+                'r.hotel_code',
                 'r.description',
                 'r.is_confirmed',
                 'r.amount_cents',

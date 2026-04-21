@@ -67,6 +67,11 @@
           </div>
 
           <div class="flex justify-between">
+            <span class="text-gray-500">Hotel:</span>
+            <span class="font-medium">{{ hotelName(currentReservation.hotel_code) }}</span>
+          </div>
+
+          <div class="flex justify-between">
             <span class="text-gray-500">Habitación:</span>
             <span class="font-medium">{{ typeHabs[currentReservation.room_type_code] || currentReservation.room_type_code }}</span>
           </div>
@@ -247,6 +252,15 @@ export default {
       const d = new Date(dateStr)
       if (isNaN(d)) return String(dateStr || '')
       return d.toLocaleDateString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit' })
+    },
+
+    hotelName(hotelCode) {
+      const names = {
+        torreon: 'Nuve Torreón',
+        gomez: 'Nuve Gomez',
+      }
+
+      return names[hotelCode] || hotelCode || 'Hotel'
     },
   },
 }

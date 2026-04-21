@@ -4,6 +4,7 @@
     Tu reservación quedó **confirmada**.
 
     **Folio:** {{ $reservation->provider_folio }}
+    **Hotel:** {{ \App\Services\HotelConfig::name($reservation->hotel_code) }}
 
     @php
         $room_types = [

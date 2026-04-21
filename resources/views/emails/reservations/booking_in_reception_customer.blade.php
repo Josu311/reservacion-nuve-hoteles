@@ -5,6 +5,7 @@ Hola **{{ $data['user_info']['name'] }}**, hemos recibido tu solicitud de reserv
 
 @component('mail::panel')
 ### 📋 Resumen de tu estancia
+**Hotel:** {{ $data['hotel_name'] ?? $data['hotel_code'] ?? 'Nuve Express' }}  
 **Habitación:** {{ $data['room_name'] }}  
 **Check-in:** {{ \Carbon\Carbon::parse($data['check_in'])->format('d/m/Y') }}  
 **Check-out:** {{ \Carbon\Carbon::parse($data['check_out'])->format('d/m/Y') }}  
