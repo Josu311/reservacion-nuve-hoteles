@@ -5,7 +5,7 @@ Hola **{{ $data['user_info']['name'] }}**, hemos recibido tu solicitud de reserv
 
 @component('mail::panel')
 ### 📋 Resumen de tu estancia
-**Hotel:** {{ $data['hotel_name'] ?? $data['hotel_code'] ?? 'Nuve Express' }}  
+**Hotel:** {{ $data['hotel_name'] ?? $data['hotel_code'] ?? 'Nuve Hotel' }}  
 **Habitación:** {{ $data['room_name'] }}  
 **Check-in:** {{ \Carbon\Carbon::parse($data['check_in'])->format('d/m/Y') }}  
 **Check-out:** {{ \Carbon\Carbon::parse($data['check_out'])->format('d/m/Y') }}  
@@ -28,5 +28,5 @@ Ir a mi cuenta
 Si tienes alguna duda, responde a este correo o contáctanos al 870-148-3119.
 
 Atentamente,  
-El equipo de Nuve Express
+El equipo de Nuve Hotel
 @endcomponent

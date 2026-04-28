@@ -4,7 +4,7 @@
             <div class="grid gap-10 sm:grid-cols-1 lg:grid-cols-4 items-start">
                 <!-- Logo -->
                 <div class="w-full h-full grid place-content-center">
-                    <img src="/img/logo-nuve-hoteles.webp" alt="Nuve Express" class="h-24 w-auto" />
+                    <img src="/img/logo-nuve-hoteles.webp" alt="Nuve Hotel" class="h-24 w-auto" />
                 </div>
 
                 <!-- Ubicaciones -->

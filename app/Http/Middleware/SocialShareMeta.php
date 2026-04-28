@@ -49,34 +49,34 @@ class SocialShareMeta
 
     private function metaForPath(string $path): ?array
     {
-        $base = 'https://nuveexpress.com.mx';
+        $base = 'https://nuvehotel.com';
 
         $map = [
             '/' => [
-                'title' => 'Nuve Express | Hoteles en Torreón, Coahuila',
+                'title' => 'Nuve Hotel | Hoteles en Torreón, Coahuila',
                 'description' => 'Hoteles con ubicación estratégica en Torreón. Hospedaje cómodo y accesible. Reserva en línea en minutos.',
-                'image' => $base.'/img/nuve-express-og-image.png',
+                'image' => $base.'/img/nuvehotel-og-image.png',
                 'canonical' => $base.'/',
                 'url' => $base.'/',
             ],
             '/nosotros' => [
-                'title' => 'Nosotros | Nuve Express – Hoteles en Torreón',
-                'description' => 'Conoce Nuve Express: hoteles con ubicación estratégica en Torreón, Coahuila. Reserva en línea en minutos.',
-                'image' => $base.'/img/nuve-express-og-image.png',
+                'title' => 'Nosotros | Nuve Hotel – Hoteles en Torreón',
+                'description' => 'Conoce Nuve Hotel: hoteles con ubicación estratégica en Torreón, Coahuila. Reserva en línea en minutos.',
+                'image' => $base.'/img/nuvehotel-og-image.png',
                 'canonical' => $base.'/nosotros',
                 'url' => $base.'/nosotros',
             ],
             '/hoteles' => [
-                'title' => 'Ubicaciones Nuve Express en Torreón | Abasolo y Corregidora',
+                'title' => 'Ubicaciones Nuve Hotel en Torreón | Abasolo y Corregidora',
                 'description' => 'Encuentra nuestras ubicaciones en Torreón, Coahuila. Revisa el mapa de Abasolo y Corregidora y reserva tu estancia en línea.',
-                'image' => $base.'/img/nuve-express-og-image.png',
+                'image' => $base.'/img/nuvehotel-og-image.png',
                 'canonical' => $base.'/hoteles',
                 'url' => $base.'/hoteles',
             ],
             '/disponibilidad' => [
-                'title' => 'Disponibilidad | Nuve Express',
-                'description' => 'Busca habitaciones por fechas, número de habitaciones y adultos. Reserva tu estancia en Nuve Express.',
-                'image' => $base.'/img/nuve-express-og-image.png',
+                'title' => 'Disponibilidad | Nuve Hotel',
+                'description' => 'Busca habitaciones por fechas, número de habitaciones y adultos. Reserva tu estancia en Nuve Hotel.',
+                'image' => $base.'/img/nuvehotel-og-image.png',
                 'canonical' => $base.'/disponibilidad',
                 'url' => $base.'/disponibilidad',
             ],

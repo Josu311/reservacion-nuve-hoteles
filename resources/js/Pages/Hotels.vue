@@ -1,21 +1,21 @@
 <template>
     <Head>
-        <title>Ubicaciones Nuve Express en Torreón | Abasolo y Corregidora</title>
-        <meta name="description" content="Conoce las ubicaciones de Nuve Express en Torreón, Coahuila: Abasolo (Centro) y Corregidora. Consulta el mapa y reserva tu habitación en línea.">
+        <title>Ubicaciones Nuve Hotel en Torreón | Abasolo y Corregidora</title>
+        <meta name="description" content="Conoce las ubicaciones de Nuve Hotel en Torreón, Coahuila: Abasolo (Centro) y Corregidora. Consulta el mapa y reserva tu habitación en línea.">
         
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Nuve Express">
-        <meta property="og:title" content="Nosotros | Nuve Express – Hoteles en Torreón"/>
+        <meta property="og:site_name" content="Nuve Hotel">
+        <meta property="og:title" content="Nosotros | Nuve Hotel – Hoteles en Torreón"/>
         <meta property="og:description" content="Encuentra nuestras ubicaciones en Torreón, Coahuila. Revisa el mapa de Abasolo y Corregidora y reserva tu estancia en línea."/>
-        <meta property="og:image" content="https://nuveexpress.com.mx/img/nuve-express-og-image.png"/>
-        <meta property="og:url" content="https://nuveexpress.com.mx/hotels"/>
+        <meta property="og:image" content="https://nuvehotel.com/img/nuvehotel-og-image.png"/>
+        <meta property="og:url" content="https://nuvehotel.com/hoteles"/>
 
         <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="Ubicaciones Nuve Express en Torreón | Abasolo y Corregidora">
-        <meta name="twitter:description" content="Conoce nuestras ubicaciones en Torreón, Coahuila. Mapa y reserva en línea en Nuve Express.">
-        <meta name="twitter:image" content="https://nuveexpress.com.mx/img/nuve-express-og-image.png">
+        <meta name="twitter:title" content="Ubicaciones Nuve Hotel en Torreón | Abasolo y Corregidora">
+        <meta name="twitter:description" content="Conoce nuestras ubicaciones en Torreón, Coahuila. Mapa y reserva en línea en Nuve Hotel.">
+        <meta name="twitter:image" content="https://nuvehotel.com/img/nuvehotel-og-image.png">
 
-        <link rel="canonical" href="https://nuveexpress.com.mx/hoteles" />
+        <link rel="canonical" href="https://nuvehotel.com/hoteles" />
     </Head>
     <Header />
 

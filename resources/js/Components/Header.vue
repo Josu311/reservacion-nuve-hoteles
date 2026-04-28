@@ -37,7 +37,7 @@
         <div class="w-full flex items-center">
             <div class="w-full max-w-6xl mx-auto flex justify-between items-center py-2 px-6 lg:px-0">
                 <a href="/">
-                    <img class="h-14" src="/img/logo-nuve-hoteles.webp" alt="Logo de Nuve Express">
+                    <img class="h-14" src="/img/logo-nuve-hoteles.webp" alt="Logo de Nuve Hotel">
                 </a>
                 <div class="hidden lg:flex items-center gap-2">
                     <ul class="flex items-center gap-12 text-xs font-semibold">

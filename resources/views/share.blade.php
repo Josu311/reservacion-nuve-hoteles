@@ -13,7 +13,7 @@
   <meta property="og:description" content="{{ $description }}">
   <meta property="og:url" content="{{ $url }}">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Nuve Express">
+  <meta property="og:site_name" content="Nuve Hotel">
   <meta property="og:image" content="{{ $image }}">
 
   <meta name="twitter:card" content="summary_large_image">

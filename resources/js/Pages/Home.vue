@@ -1,21 +1,21 @@
 <template>
     <Head>
-        <title>Nuve Express | Hoteles en Torreón, Coahuila</title>
-        <meta name="description" content="Hospédate en Nuve Express en Torreón, Coahuila: cómodo y accesible. Reserva en línea en minutos y elige la mejor opción para viajes de trabajo o estancias largas.">
+        <title>Nuve Hotel | Hoteles en Torreón, Coahuila</title>
+        <meta name="description" content="Hospédate en Nuve Hotel en Torreón, Coahuila: cómodo y accesible. Reserva en línea en minutos y elige la mejor opción para viajes de trabajo o estancias largas.">
         
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Nuve Express">
-        <meta property="og:title" content="Reserva en Nuve Express | Hoteles en Torreón, Coahuila"/>
+        <meta property="og:site_name" content="Nuve Hotel">
+        <meta property="og:title" content="Reserva en Nuve Hotel | Hoteles en Torreón, Coahuila"/>
         <meta property="og:description" content="Hospedaje cómodo y accesible en Torreón. Reserva en línea en minutos y elige la mejor opción para viajes de trabajo o estancias largas."/>
-        <meta property="og:image" content="https://nuveexpress.com.mx/img/nuve-express-og-image.png"/>
-        <meta property="og:url" content="https://nuveexpress.com.mx/"/>
+        <meta property="og:image" content="https://nuvehotel.com/img/nuvehotel-og-image.png"/>
+        <meta property="og:url" content="https://nuvehotel.com/"/>
 
         <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="Reserva en Nuve Express | Hoteles en Torreón, Coahuila">
+        <meta name="twitter:title" content="Reserva en Nuve Hotel | Hoteles en Torreón, Coahuila">
         <meta name="twitter:description" content="Hoteles con ubicación estratégica en Torreón. Reserva tu estancia en línea en minutos.">
-        <meta property="twitter:image" content="https://nuveexpress.com.mx/img/nuve-express-og-image.png"/>
+        <meta property="twitter:image" content="https://nuvehotel.com/img/nuvehotel-og-image.png"/>
 
-        <link rel="canonical" href="https://nuveexpress.com.mx/" />
+        <link rel="canonical" href="https://nuvehotel.com/" />
     </Head>
     <Header />
     <section class="min-h-screen flex flex-col">

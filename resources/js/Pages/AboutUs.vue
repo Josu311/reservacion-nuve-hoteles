@@ -1,21 +1,21 @@
 <template>
     <Head>
-        <title>Nosotros | Nuve Express – Hoteles en Torreón, Coahuila</title>
-        <meta name="description" content="Conoce Nuve Express, cadena de hoteles en Torreón, Coahuila. Hospedaje cómodo y accesible, ideal para viajes de trabajo y estancias largas. Reserva en línea.">
+        <title>Nosotros | Nuve Hotel – Hoteles en Torreón, Coahuila</title>
+        <meta name="description" content="Conoce Nuve Hotel, cadena de hoteles en Torreón, Coahuila. Hospedaje cómodo y accesible, ideal para viajes de trabajo y estancias largas. Reserva en línea.">
         
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Nuve Express">
-        <meta property="og:title" content="Nosotros | Nuve Express – Hoteles en Torreón"/>
-        <meta property="og:description" content="Conoce Nuve Express: hoteles con ubicación estratégica en Torreón, Coahuila. Reserva en línea en minutos."/>
-        <meta property="og:image" content="https://nuveexpress.com.mx/img/nuve-express-og-image.png"/>
-        <meta property="og:url" content="https://nuveexpress.com.mx/nosotros"/>
+        <meta property="og:site_name" content="Nuve Hotel">
+        <meta property="og:title" content="Nosotros | Nuve Hotel – Hoteles en Torreón"/>
+        <meta property="og:description" content="Conoce Nuve Hotel: hoteles con ubicación estratégica en Torreón, Coahuila. Reserva en línea en minutos."/>
+        <meta property="og:image" content="https://nuvehotel.com/img/nuvehotel-og-image.png"/>
+        <meta property="og:url" content="https://nuvehotel.com/nosotros"/>
 
         <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="Nosotros | Nuve Express – Hoteles en Torreón">
-        <meta name="twitter:description" content="Conoce Nuve Express: ubicación estratégica en Torreón, Coahuila. Reserva en línea en minutos.">
-        <meta property="twitter:image" content="https://nuveexpress.com.mx/img/nuve-express-og-image.png"/>
+        <meta name="twitter:title" content="Nosotros | Nuve Hotel – Hoteles en Torreón">
+        <meta name="twitter:description" content="Conoce Nuve Hotel: ubicación estratégica en Torreón, Coahuila. Reserva en línea en minutos.">
+        <meta property="twitter:image" content="https://nuvehotel.com/img/nuvehotel-og-image.png"/>
 
-        <link rel="canonical" href="https://nuveexpress.com.mx/nosotros" />
+        <link rel="canonical" href="https://nuvehotel.com/nosotros" />
     </Head>
     <Header />
     

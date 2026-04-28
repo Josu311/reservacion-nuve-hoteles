@@ -65,7 +65,7 @@
     <section class="w-full h-[100dvh] flex items-center">
         <img class="w-[50%] h-full object-cover hidden md:block" src="/img/hotels-1.webp" alt="">
         <article class="w-full md:w-[50%] p-20">
-            <img class="mx-auto" src="/img/logo-nuve-hoteles.webp" alt="Logo de Nuve Express" width="100px"
+            <img class="mx-auto" src="/img/logo-nuve-hoteles.webp" alt="Logo de Nuve Hotel" width="100px"
                 height="100px">
             <el-form class="w-full" :model="form" :rules="rules" @submit.prevent="submit">
                 <div class="flex items-center gap-5">

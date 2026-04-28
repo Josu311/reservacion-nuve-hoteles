@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:5174', 'https://admin.nuveexpress.com.mx'],
+    'allowed_origins' => ['http://localhost:5174', 'https://admin.nuvehotel.com'],
 
     'allowed_origins_patterns' => [],
 

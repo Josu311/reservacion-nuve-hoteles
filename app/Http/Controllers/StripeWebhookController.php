@@ -266,7 +266,7 @@ public function handle(Request $request, ?string $hotel = null)
                             // Si tu MAIL_MAILER=resend está configurado,
                             // esto usa Resend automáticamente:
                             Resend::emails()->send([
-                                    'from' => 'Nuve Express <no-reply@nuveexpress.com.mx>',
+                                    'from' => 'Nuve Hotel <no-reply@nuvehotel.com>',
                                     'to' => $recipient,
                                     'subject' => 'Tu reserva #' . $reservation->provider_folio . ' está confirmada',
                                     'html' => (new ReservationConfirmedMail($reservation))->render(),

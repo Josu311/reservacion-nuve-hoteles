@@ -66,7 +66,7 @@ class SendMonthlyReservationsDaily extends Command
             "metric_revenue" => $amountMx,
             "pending_reservation_count" => $currentMonthlyReservationsPending,
             "pending_reservation_revenue" => $pendingAmountMx,
-            "source" => "Sistema Reservas Nuve Express"
+            "source" => "Sistema Reservas Nuve Hotel"
         ];
 
         $response = Http::timeout(20)

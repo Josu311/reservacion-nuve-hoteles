@@ -605,14 +605,14 @@ class CheckoutController extends Controller
         ]);
 
         Resend::emails()->send([
-            'from' => 'Nuve Express <no-reply@nuveexpress.com.mx>',
+            'from' => 'Nuve Hotel <no-reply@nuvehotel.com>',
             'to' => $data['user_info']['email'],
             'subject' => 'Reserva con pago en recepción',
             'html' => (new BookingInReceptionCustomerMail($data))->render(),
         ]);
 
         Resend::emails()->send([
-            'from' => 'Nuve Express <no-reply@nuveexpress.com.mx>',
+            'from' => 'Nuve Hotel <no-reply@nuvehotel.com>',
             'to' => 'bedbedhoteles@gmail.com',
             'subject' => 'Reserva con pago en recepción',
             'html' => (new BookingInReceptionAdminMail($data))->render(),

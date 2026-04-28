@@ -38,7 +38,7 @@
                         <div class="w-full h-[200px] rounded-md overflow-hidden">
                             <!-- Imagen fija del diseño original -->
                             <el-carousel trigger="click" height="200px" :interval=6000>
-                                <template v-for="image in imagesRooms['corregidora'][room.code]" :key="image">
+                                <template v-for="image in roomImages(room)" :key="image">
                                     <el-carousel-item>
                                         <img :src="image" alt="" class="w-full h-full object-cover">
                                     </el-carousel-item>
@@ -49,7 +49,7 @@
                         <div class="w-full flex flex-col gap-3">
                             <header class="flex flex-col">
                                 <h3 class="font-extrabold text-2xl text-gray-800">
-                                    {{ room.name || typeHabs[room.code] }}
+                                    {{ typeHabs[room.name] || room.name }}
                                 </h3>
                                 <span class="w-fit text-gray-400 text-xs font-semibold">
                                     <!-- {{ room.plan || 'Plan no especificado' }} -->
@@ -138,7 +138,7 @@
                         <div class="w-full h-[200px] rounded-md overflow-hidden">
                             <!-- Imagen fija del diseño original -->
                             <el-carousel trigger="click" height="200px" :interval=6000>
-                                <template v-for="image in imagesRooms['corregidora'][room.code]" :key="image">
+                                <template v-for="image in roomImages(room)" :key="image">
                                     <el-carousel-item>
                                         <img :src="image" alt="" class="w-full h-full object-cover">
                                     </el-carousel-item>
@@ -149,7 +149,7 @@
                         <div class="w-full flex flex-col gap-3">
                             <header class="flex flex-col">
                                 <h3 class="font-extrabold text-2xl text-gray-800">
-                                    {{ room.name || typeHabs[room.code] }}
+                                    {{ typeHabs[room.name] || room.name }}
                                 </h3>
                                 <span class="w-fit text-gray-400 text-xs font-semibold">
                                     <!-- {{ room.plan || 'Plan no especificado' }} -->
@@ -292,6 +292,8 @@ export default {
             },
             typeHabs: {
                 "1K": "King size",
+                "1M": "Habitación sencilla",
+                "2M": "Habitación doble",
                 "DO": "Doble",
                 "Q": "Queen",
                 "S": "Standard",
@@ -301,6 +303,17 @@ export default {
             },
 
             imagesRooms: {
+                "torreon" : {
+                    "1M": [
+                        "/img/hotels-21.webp",
+                        "/img/hotels-24.webp",
+                    ],
+                    "2M": [
+                        "/img/hotels-19.webp",
+                        "/img/hotels-23.webp",
+                        "/img/hotels-25.webp",
+                    ],
+                },
                 "corregidora" : {
                     "1K": [
                         "/img/hotel_corregidora/habitacion-sencilla-corregidora-1.webp",
@@ -617,6 +630,34 @@ export default {
             };
 
             return names[hotelCode] || hotelCode || 'Hotel';
+        },
+        normalizeRoomImageCode(code) {
+            return String(code || '')
+                .toUpperCase()
+                .replace(/-/g, '')
+                .trim();
+        },
+        roomImages(room) {
+            const hotelCode = room?.hotel_code || this.pendingHotelCode || 'torreon';
+            const normalizedCode = this.normalizeRoomImageCode(room?.code);
+            const hotelImages = this.imagesRooms[hotelCode] || {};
+
+            if (hotelCode === 'torreon') {
+                if (normalizedCode === '1M') {
+                    return hotelImages["1M"];
+                }
+
+                if (normalizedCode === '2M') {
+                    return hotelImages["2M"];
+                }
+            }
+
+            return hotelImages[room?.code]
+                || this.imagesRooms.corregidora[room?.code]
+                || this.imagesRooms.corregidora[normalizedCode]
+                || this.imagesRooms.corregidora[`${normalizedCode}-`]
+                || this.imagesRooms.corregidora[`${normalizedCode[0] || ''}-`]
+                || this.imagesRooms.corregidora["1K"];
         }
     },
 }

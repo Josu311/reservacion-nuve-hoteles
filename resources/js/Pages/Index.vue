@@ -5,7 +5,7 @@
         <Header />
         <section class="flex flex-col h-full">
             <div class=" relative h-[400px] w-full">
-                <img class="w-full h-full object-cover" src="/img/nuveexpress-fachada.jpg" alt="">
+                <img class="w-full h-full object-cover" src="/img/nuvehotel-fachada.jpg" alt="">
                 <div class="absolute inset-0 bg-black/60 pointer-events-none"></div>
                 <div class="flex items-center justify-center absolute inset-0 z-10 p-6 text-white text-2xl font-bold">
                     Reserva aquí

@@ -10,15 +10,16 @@ class ApiController extends Controller
     public function getStates()
     {
         $endpoint = 'http://fcsistemas.ddns.net:8092/wsSAHM2011.asmx';
+        $connectionString = env('FC_SOAP_CX', 'HotelNuveTorreonCxString');
 
-        $xmlBody = <<<'XML'
+        $xmlBody = <<<XML
         <?xml version="1.0" encoding="utf-8"?>
         <soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
         <soap12:Body>
             <GetPaisRegiones xmlns="https://fcsistemas.com/">
             <lPaisId>MX</lPaisId>
             <lPassCliente>enwk@difs@uwoi</lPassCliente>
-            <lStringCxSAHM>HotelNuveExpressCxString</lStringCxSAHM>
+            <lStringCxSAHM>{$connectionString}</lStringCxSAHM>
             </GetPaisRegiones>
         </soap12:Body>
         </soap12:Envelope>
@@ -138,6 +139,7 @@ class ApiController extends Controller
         }
 
         $endpoint = 'http://fcsistemas.ddns.net:8092/wsSAHM2011.asmx';
+        $connectionString = env('FC_SOAP_CX', 'HotelNuveTorreonCxString');
 
         // 2) Armar el body SOAP con la región
         $xmlBody = <<<XML
@@ -147,7 +149,7 @@ class ApiController extends Controller
             <GetPaisRegionCiudades xmlns="https://fcsistemas.com/">
             <lRegionId>{$regionId}</lRegionId>
             <lPassCliente>enwk@difs@uwoi</lPassCliente>
-            <lStringCxSAHM>HotelNuveExpressCxString</lStringCxSAHM>
+            <lStringCxSAHM>{$connectionString}</lStringCxSAHM>
             </GetPaisRegionCiudades>
         </soap12:Body>
         </soap12:Envelope>
@@ -244,6 +246,7 @@ class ApiController extends Controller
         }
 
         $endpoint = 'http://fcsistemas.ddns.net:8092/wsSAHM2011.asmx';
+        $connectionString = env('FC_SOAP_CX', 'HotelNuveTorreonCxString');
 
         // 2) Body SOAP usando el CP del request
         $xmlBody = <<<XML
@@ -254,7 +257,7 @@ class ApiController extends Controller
             <lPaisId>MX</lPaisId>
             <lCP>{$cp}</lCP>
             <lPassCliente>enwk@difs@uwoi</lPassCliente>
-            <lStringCxSAHM>HotelNuveExpressCxString</lStringCxSAHM>
+            <lStringCxSAHM>{$connectionString}</lStringCxSAHM>
             </GetPaisRegionCiudadCP>
         </soap12:Body>
         </soap12:Envelope>

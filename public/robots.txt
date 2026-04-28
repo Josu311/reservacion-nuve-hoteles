@@ -33,4 +33,4 @@ Disallow: /storage/
 Disallow: /vendor
 
 # Sitemap
-Sitemap: https://nuveexpress.com.mx/sitemap.xml
+Sitemap: https://nuvehotel.com/sitemap.xml

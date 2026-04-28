@@ -147,7 +147,7 @@ export default {
 
     supportEmail: {
       type: String,
-      default: () => (import.meta.env.VITE_SUPPORT_EMAIL || 'soporte@nuve-express.com'),
+      default: () => (import.meta.env.VITE_SUPPORT_EMAIL || 'soporte@nuvehotel.com'),
     },
   },
 
