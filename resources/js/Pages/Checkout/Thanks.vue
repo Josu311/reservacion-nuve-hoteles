@@ -106,7 +106,7 @@
         <!-- BOTONES -->
         <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
           <Link href="/"
-            class="inline-flex items-center justify-center rounded-lg bg-nuve-express-orange px-5 py-2.5 font-semibold text-white hover:opacity-90">
+            class="inline-flex items-center justify-center rounded-lg bg-nuve-hoteles-blue px-5 py-2.5 font-semibold text-white hover:opacity-90">
             Ir al inicio
           </Link>
 

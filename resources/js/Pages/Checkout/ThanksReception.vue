@@ -16,7 +16,7 @@
         <h1 class="text-2xl font-bold">¡Reserva registrada!</h1>
         <p class="mt-2 text-gray-600">
           Tu reservación ha sido creada exitosamente. 
-          <span class="block font-semibold text-nuve-express-orange">El pago se realizará directamente en recepción.</span>
+          <span class="block font-semibold text-nuve-hoteles-blue">El pago se realizará directamente en recepción.</span>
         </p>
 
         <div v-if="reservation" class="mt-6 grid grid-cols-1 gap-3 text-sm text-left border-t border-b py-6 border-gray-100">
@@ -70,7 +70,7 @@
 
         <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
           <Link href="/"
-            class="inline-flex items-center justify-center rounded-lg bg-nuve-express-orange px-8 py-3 font-semibold text-white hover:opacity-90 transition-all">
+            class="inline-flex items-center justify-center rounded-lg bg-nuve-hoteles-blue px-8 py-3 font-semibold text-white hover:opacity-90 transition-all">
             Volver al inicio
           </Link>
         </div>
