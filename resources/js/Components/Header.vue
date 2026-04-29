@@ -6,7 +6,7 @@
                     <FacebookSvg :class="'w-5'" />
                     <InstagramSvg :class="'w-5'" />
                 </div>
-                <div class="text-xs font-semibold">
+                <div class="flex items-center gap-5 text-xs font-semibold">
                     <ul class="flex items-center gap-5">
                         <li class="">
                             <a href="https://goo.gl/maps/vTJhAKVWyufePM7x8" class="flex items-center gap-2">

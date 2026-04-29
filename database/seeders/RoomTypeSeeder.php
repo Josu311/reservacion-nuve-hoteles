@@ -29,6 +29,30 @@ class RoomTypeSeeder extends Seeder
                 'updated_at'        => $now,
             ],
             [
+                'code'              => '1M',
+                'name'              => 'Habitación sencilla',
+                'max_occupancy'     => 2,
+                'base_rate_cents'   => 180000, // $1,800.00 MXN
+                'currency'          => 'MXN',
+                'beds_json'         => json_encode([['type' => 'double', 'count' => 1]]),
+                'amenities_json'    => json_encode(['wifi', 'ac', 'tv', 'parking']),
+                'active'            => true,
+                'created_at'        => $now,
+                'updated_at'        => $now,
+            ],
+            [
+                'code'              => '2M',
+                'name'              => 'Habitación doble',
+                'max_occupancy'     => 4,
+                'base_rate_cents'   => 200000, // $2,000.00 MXN
+                'currency'          => 'MXN',
+                'beds_json'         => json_encode([['type' => 'double', 'count' => 2]]),
+                'amenities_json'    => json_encode(['wifi', 'ac', 'tv', 'parking']),
+                'active'            => true,
+                'created_at'        => $now,
+                'updated_at'        => $now,
+            ],
+            [
                 'code'              => 'DO',
                 'name'              => 'Doble',
                 'max_occupancy'     => 4,

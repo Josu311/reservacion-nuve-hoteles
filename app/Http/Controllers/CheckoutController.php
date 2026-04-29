@@ -10,6 +10,7 @@ use App\Services\HotelConfig;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -319,6 +320,23 @@ class CheckoutController extends Controller
             </soap12:Envelope>
             XML;
 
+        $this->debugSoap('fInsertaReservaNew.request', [
+            'hotel_code' => $data['hotel_code'],
+            'endpoint' => $endpoint,
+            'room_type_code' => $data['room_type_code'],
+            'checkin' => (string) $data['checkin'],
+            'checkout' => (string) $data['checkout'],
+            'rooms' => $roomsCount,
+            'adults' => (int) $data['adults'],
+            'amount_cents' => (int) $data['amount'],
+            'price_per_night' => number_format($pricePerNight, 2, '.', ''),
+            'rate_name' => $rateName,
+            'cx' => $cx,
+            'pass' => $pass,
+            'customer' => $customer,
+            'xml' => $xml,
+        ]);
+
         $resp = \Illuminate\Support\Facades\Http::retry(2, 300)
             ->timeout(20)
             ->withHeaders([
@@ -326,6 +344,13 @@ class CheckoutController extends Controller
             ])
             ->withBody($xml, 'application/soap+xml; charset=utf-8')
             ->post($endpoint);
+
+        $this->debugSoap('fInsertaReservaNew.response', [
+            'hotel_code' => $data['hotel_code'],
+            'endpoint' => $endpoint,
+            'http_status' => $resp->status(),
+            'body' => $resp->body(),
+        ]);
 
         if (!$resp->ok()) {
             throw new \RuntimeException('SOAP hold error: HTTP ' . $resp->status());
@@ -389,6 +414,18 @@ class CheckoutController extends Controller
         </soap12:Envelope>
         XML;
 
+        $this->debugSoap('fPagoConfirmado.request', [
+            'hotel_code' => $hotelCode,
+            'endpoint' => $endpoint,
+            'folio' => $folio,
+            'idTX' => $idTX,
+            'amount_cents' => $amountCents,
+            'importe' => $importe,
+            'cx' => $cx,
+            'pass' => $pass,
+            'xml' => $xml,
+        ]);
+
         $resp = Http::retry(2, 300)
             ->timeout(20)
             ->withHeaders([
@@ -396,6 +433,13 @@ class CheckoutController extends Controller
             ])
             ->withBody($xml, 'application/soap+xml; charset=utf-8')
             ->post($endpoint);
+
+        $this->debugSoap('fPagoConfirmado.response', [
+            'hotel_code' => $hotelCode,
+            'endpoint' => $endpoint,
+            'http_status' => $resp->status(),
+            'body' => $resp->body(),
+        ]);
 
         if (!$resp->ok()) {
             // \Log::warning('fPagoConfirmado HTTP error', ['status' => $resp->status(), 'body' => $resp->body()]);
@@ -442,6 +486,16 @@ class CheckoutController extends Controller
         </soap12:Envelope>
         XML;
 
+        $this->debugSoap('fCambioStatusReserva.request', [
+            'hotel_code' => $hotelCode,
+            'endpoint' => $endpoint,
+            'folio' => $folio,
+            'fecha_limite' => $limiteIso,
+            'cx' => $cx,
+            'pass' => $pass,
+            'xml' => $xml,
+        ]);
+
         $resp = Http::retry(2, 300)
             ->timeout(20)
             ->withHeaders([
@@ -449,6 +503,13 @@ class CheckoutController extends Controller
             ])
             ->withBody($xml, 'application/soap+xml; charset=utf-8')
             ->post($endpoint);
+
+        $this->debugSoap('fCambioStatusReserva.response', [
+            'hotel_code' => $hotelCode,
+            'endpoint' => $endpoint,
+            'http_status' => $resp->status(),
+            'body' => $resp->body(),
+        ]);
 
         if (!$resp->ok()) {
             // \Log::warning('fCambioStatusReserva HTTP error', ['status' => $resp->status(), 'body' => $resp->body()]);
@@ -480,6 +541,15 @@ class CheckoutController extends Controller
 
         $valueLower = strtolower($value);
         return in_array($valueLower, ['true', '1', 'yes', 'si'], true);
+    }
+
+    private function debugSoap(string $event, array $context): void
+    {
+        if (!filter_var(env('FC_SOAP_DEBUG', false), FILTER_VALIDATE_BOOL)) {
+            return;
+        }
+
+        Log::debug($event, $context);
     }
 
     public function status(Request $request)

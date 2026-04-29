@@ -28,7 +28,7 @@
                     <h2 class="uppercase font-bold text-2xl md:text-5xl">Bienvenido a <br>Nuve Hotel</h2>
                     <span>Representamos la hospitalidad de la Comarca Lagunera haciendo de su estancia una experiencia única.</span>
                 </div>
-                <div class="w-full max-w-6xl bg-transparent p-5 rounded-2xl shadow-md backdrop-blur-sm backdrop-brightness-50 z-[1]">
+                <div class="w-full max-w-6xl bg-transparent p-5 rounded-2xl shadow-md backdrop-blur-sm backdrop-brightness-[0.65] z-[1]">
                     <h4 class="text-3xl text-center text-nuve-hoteles-blue font-semibold">Reservar ahora</h4>
                     <el-form class="mt-4" :model="form" v-if="isInProduction">
                         <div class="w-full grid grid-cols-1 grid-rows-4 md:grid-cols-4 md:grid-rows-1 gap-2">

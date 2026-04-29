@@ -263,8 +263,6 @@ public function handle(Request $request, ?string $hotel = null)
                         if (!$recipient) return;
 
                         try {
-                            // Si tu MAIL_MAILER=resend está configurado,
-                            // esto usa Resend automáticamente:
                             Resend::emails()->send([
                                     'from' => 'Nuve Hotel <no-reply@nuvehotel.com>',
                                     'to' => $recipient,
