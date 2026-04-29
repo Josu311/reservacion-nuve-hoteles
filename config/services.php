@@ -35,10 +35,11 @@ return [
         ],
     ],
     'fc' => [
-        'rate_name' => env('FC_RATE_NAME', 'WWW_SA'),
+        'rate_name' => env('FC_RATE_NAME', 'WWW_CA'),
         'soap_endpoint' => env('FC_SOAP_ENDPOINT', 'http://fcsistemas.ddns.net:8092/wsSAHM2011.asmx'),
         'pass'          => env('FC_SOAP_PASS'),
         'cx'            => env('FC_SOAP_CX'),
+        'soap_debug'    => env('FC_SOAP_DEBUG', false),
         'hold_ttl_minutes' => env('FC_HOLD_TTL_MINUTES', 30),
         'dummy_cc'          => env('FC_DUMMY_CC', '0000000000000000'),
     ],
@@ -52,10 +53,11 @@ return [
         'torreon' => [
             'name' => env('HOTEL_TORREON_NAME', 'Nuve Torreon'),
             'fc' => [
-                'rate_name' => env('FC_TORREON_RATE_NAME', env('FC_RATE_NAME', 'WWW_SA')),
+                'rate_name' => env('FC_TORREON_RATE_NAME', env('FC_RATE_NAME', 'WWW_CA')),
                 'soap_endpoint' => env('FC_TORREON_SOAP_ENDPOINT', env('FC_SOAP_ENDPOINT', 'http://fcsistemas.ddns.net:8092/wsSAHM2011.asmx')),
                 'pass' => env('FC_TORREON_SOAP_PASS', env('FC_SOAP_PASS')),
                 'cx' => env('FC_SOAP_CX', env('FC_TORREON_SOAP_CX')),
+                'soap_debug' => env('FC_TORREON_SOAP_DEBUG', env('FC_SOAP_DEBUG', false)),
                 'hold_ttl_minutes' => env('FC_TORREON_HOLD_TTL_MINUTES', env('FC_HOLD_TTL_MINUTES', 30)),
                 'dummy_cc' => env('FC_TORREON_DUMMY_CC', env('FC_DUMMY_CC', '0000000000000000')),
             ],
@@ -68,10 +70,11 @@ return [
         'gomez' => [
             'name' => env('HOTEL_GOMEZ_NAME', 'Nuve Gomez'),
             'fc' => [
-                'rate_name' => env('FC_GOMEZ_RATE_NAME', env('FC_RATE_NAME', 'WWW_SA')),
+                'rate_name' => env('FC_GOMEZ_RATE_NAME', env('FC_RATE_NAME', 'WWW_CA')),
                 'soap_endpoint' => env('FC_GOMEZ_SOAP_ENDPOINT', env('FC_SOAP_ENDPOINT', 'http://fcsistemas.ddns.net:8092/wsSAHM2011.asmx')),
                 'pass' => env('FC_GOMEZ_SOAP_PASS', env('FC_SOAP_PASS')),
                 'cx' => env('FC_SOAP_CX_GOMEZ', env('FC_GOMEZ_SOAP_CX', env('FC_SOAP_CX'))),
+                'soap_debug' => env('FC_GOMEZ_SOAP_DEBUG', env('FC_SOAP_DEBUG', false)),
                 'hold_ttl_minutes' => env('FC_GOMEZ_HOLD_TTL_MINUTES', env('FC_HOLD_TTL_MINUTES', 30)),
                 'dummy_cc' => env('FC_GOMEZ_DUMMY_CC', env('FC_DUMMY_CC', '0000000000000000')),
             ],

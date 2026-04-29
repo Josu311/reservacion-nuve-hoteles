@@ -254,7 +254,7 @@ class CheckoutController extends Controller
         $fc         = HotelConfig::fc($data['hotel_code']);
         $endpoint   = $fc['soap_endpoint'] ?? null;
         $action     = 'https://fcsistemas.com/fInsertaReservaNew';
-        $rateName   = $fc['rate_name'] ?? 'WWW_SA';
+        $rateName   = $fc['rate_name'] ?? 'WWW_CA';
         $pass       = $fc['pass'] ?? null;
         $cx         = $fc['cx'] ?? null;
 
@@ -545,11 +545,35 @@ class CheckoutController extends Controller
 
     private function debugSoap(string $event, array $context): void
     {
-        if (!filter_var(env('FC_SOAP_DEBUG', false), FILTER_VALIDATE_BOOL)) {
+        $hotelCode = $context['hotel_code'] ?? null;
+        $enabled = $hotelCode
+            ? (HotelConfig::fc($hotelCode)['soap_debug'] ?? false)
+            : config('services.fc.soap_debug', false);
+
+        if (!filter_var($enabled, FILTER_VALIDATE_BOOL)) {
             return;
         }
 
-        Log::debug($event, $context);
+        Log::warning($event, $context);
+
+        try {
+            $payload = [
+                'timestamp' => now()->toIso8601String(),
+                'event' => $event,
+                'context' => $context,
+            ];
+
+            file_put_contents(
+                storage_path('logs/soap-debug.log'),
+                json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL,
+                FILE_APPEND
+            );
+        } catch (\Throwable $e) {
+            Log::error('soap-debug.write_failed', [
+                'event' => $event,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function status(Request $request)
