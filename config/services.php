@@ -49,6 +49,15 @@ return [
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
     ],
 
+    'enzo' => [
+        'api_key' => env('ENZO_API_KEY', 'enzo_master_key_zB3JnXRw2Z}ci}~.+,N>'),
+        'metrics_url' => env('ENZO_METRICS_URL', 'https://control.enzomarketing.mx/wp-json/enzo-api/v1/update-client-metrics'),
+        'post_ids' => [
+            'torreon' => (int) env('ENZO_TORREON_POST_ID', 1339),
+            'gomez' => (int) env('ENZO_GOMEZ_POST_ID', 6405),
+        ],
+    ],
+
     'hotels' => [
         'torreon' => [
             'name' => env('HOTEL_TORREON_NAME', 'Nuve Torreon'),

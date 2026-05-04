@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -30,6 +31,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        DB::table('reservations')
+            ->where('status', 'booking_in_reception')
+            ->update(['status' => 'pending']);
+
         Schema::table('reservations', function (Blueprint $table) {
             // Volvemos a la lista original eliminando 'refunded'
             $table->enum('status', [

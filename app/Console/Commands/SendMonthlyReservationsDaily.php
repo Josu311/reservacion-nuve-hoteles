@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Http;
 
 class SendMonthlyReservationsDaily extends Command
 {
+    private const HOTEL_CODES = ['torreon', 'gomez'];
+
     /**
      * The name and signature of the console command.
      *
@@ -28,73 +30,80 @@ class SendMonthlyReservationsDaily extends Command
      */
     public function handle()
     {
-        $currentMonthlyReservationsPaid = Reservation::query()
-                                        ->whereMonth('created_at', now()->month)
-                                        ->whereYear('created_at', now()->year)
-                                        ->where('status', 'paid')
-                                        ->count();
-
-        $currentMonthlyReservationsPaidMount = Reservation::query()
-                                            ->whereMonth('created_at', now()->month)
-                                            ->whereYear('created_at', now()->year)
-                                            ->where('status', 'paid')
-                                            ->sum('amount_cents');
-
-        $currentMonthlyReservationsPending = Reservation::query()
-                                        ->whereMonth('created_at', now()->month)
-                                        ->whereYear('created_at', now()->year)
-                                        ->where('status', 'booking_in_reception')
-                                        ->count();
-
-        $currentMonthlyReservationsPendingMount = Reservation::query()
-                                            ->whereMonth('created_at', now()->month)
-                                            ->whereYear('created_at', now()->year)
-                                            ->where('status', 'booking_in_reception')
-                                            ->sum('amount_cents');
-
         $currentDate = now()->format('Y-m-d');
+        $enzoApiKey = config('services.enzo.api_key');
+        $enzoMetricsUrl = config('services.enzo.metrics_url');
+        $enzoPostIds = config('services.enzo.post_ids', []);
+        $hasFailures = false;
 
-        $amountMx = number_format($currentMonthlyReservationsPaidMount / 100, 2, '.', '');
+        foreach (self::HOTEL_CODES as $hotelCode) {
+            $postId = $enzoPostIds[$hotelCode] ?? null;
 
-        $pendingAmountMx = number_format($currentMonthlyReservationsPendingMount / 100, 2, '.', '');
+            if (!$postId) {
+                $this->error("No hay post_id configurado para {$hotelCode}.");
+                $hasFailures = true;
 
-        $payload = [
-            "api_key" => "enzo_master_key_zB3JnXRw2Z}ci}~.+,N>",
-            "post_id" => 1350,
-            "date" => $currentDate,
-            "metric_count" => $currentMonthlyReservationsPaid,
-            "metric_revenue" => $amountMx,
-            "pending_reservation_count" => $currentMonthlyReservationsPending,
-            "pending_reservation_revenue" => $pendingAmountMx,
-            "source" => "Sistema Reservas Nuve Hotel"
-        ];
+                continue;
+            }
 
-        $response = Http::timeout(20)
-                    ->retry(30)
-                    ->post('https://control.enzomarketing.mx/wp-json/enzo-api/v1/update-client-metrics', $payload);
+            $baseQuery = Reservation::query()
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->where('hotel_code', $hotelCode);
 
-        $saveSendDataToEnzo = SendDataToEnzo::create([
-            'reservations_count' => $currentMonthlyReservationsPaid,
-            'reservations_mount' => $currentMonthlyReservationsPaidMount,
-            'pending_reservations_count' => $currentMonthlyReservationsPending,
-            'pending_reservations_mount' => $currentMonthlyReservationsPendingMount,
-            'payload'            => json_encode($payload),
-            'post_id'            => 1350
-        ]);
+            $currentMonthlyReservationsPaid = (clone $baseQuery)
+                ->where('status', 'paid')
+                ->count();
 
-        if(!$response->successful()) {
+            $currentMonthlyReservationsPaidMount = (clone $baseQuery)
+                ->where('status', 'paid')
+                ->sum('amount_cents');
+
+            $currentMonthlyReservationsPending = (clone $baseQuery)
+                ->where('status', 'booking_in_reception')
+                ->count();
+
+            $currentMonthlyReservationsPendingMount = (clone $baseQuery)
+                ->where('status', 'booking_in_reception')
+                ->sum('amount_cents');
+
+            $amountMx = number_format($currentMonthlyReservationsPaidMount / 100, 2, '.', '');
+            $pendingAmountMx = number_format($currentMonthlyReservationsPendingMount / 100, 2, '.', '');
+
+            $payload = [
+                'api_key' => $enzoApiKey,
+                'post_id' => $postId,
+                'date' => $currentDate,
+                'metric_count' => $currentMonthlyReservationsPaid,
+                'metric_revenue' => $amountMx,
+                'pending_reservation_count' => $currentMonthlyReservationsPending,
+                'pending_reservation_revenue' => $pendingAmountMx,
+                'source' => 'Sistema Reservas Nuve Hotel',
+            ];
+
+            $response = Http::timeout(20)
+                ->retry(30)
+                ->post($enzoMetricsUrl, $payload);
+
+            $saveSendDataToEnzo = SendDataToEnzo::create([
+                'reservations_count' => $currentMonthlyReservationsPaid,
+                'reservations_mount' => $currentMonthlyReservationsPaidMount,
+                'pending_reservations_count' => $currentMonthlyReservationsPending,
+                'pending_reservations_mount' => $currentMonthlyReservationsPendingMount,
+                'payload' => json_encode($payload),
+                'post_id' => $postId,
+            ]);
+
             $saveSendDataToEnzo->response = $response->json();
             $saveSendDataToEnzo->status = $response->status();
             $saveSendDataToEnzo->save();
 
-            return self::FAILURE;
+            if (!$response->successful()) {
+                $this->error("Error al enviar métricas de {$hotelCode} a Enzo.");
+                $hasFailures = true;
+            }
         }
 
-        $saveSendDataToEnzo->response = $response->json();
-        $saveSendDataToEnzo->status = $response->status();
-        $saveSendDataToEnzo->save();
-
-        return self::SUCCESS;
-
+        return $hasFailures ? self::FAILURE : self::SUCCESS;
     }
 }
