@@ -110,116 +110,9 @@
                             <el-button
                                 class="w-full nuve-btn"
                                 :loading="isLoading"
-                                @click="pendingRoom = room; goToCheckout(room); isPayingAtHotel = false;"
+                                @click="pendingRoom = room; goToCheckout(room);"
                             >
                                 Pagar en línea
-                            </el-button>
-                            <el-button
-                                class="w-full"
-                                style="margin-left:0 !important;"
-                                type="default"
-                                :loading="isLoading"
-                                @click="pendingRoom = room; isPayingAtHotel = true; bookingInReception(room);"
-                            >
-                                Pagar en recepción
-                            </el-button>
-                        </div>
-                    </div>
-                </article>
-            </div>
-
-            <!-- Nuve Gomez -->
-            <div class="flex-1">
-                <div class="flex items-center gap-3 mb-4">
-                    <h2 class="text-xl font-bold text-gray-900">Nuve Gomez</h2>
-                    <div class="flex-1 h-px bg-gray-200"></div>
-                </div>
-
-                <article
-                    v-for="room in visibleRoomsGomez"
-                    :key="room.code"
-                    class="w-full md:max-w-[500px] bg-white rounded-2xl border border-gray-200 overflow-hidden mb-4"
-                >
-                    <div class="w-full h-[220px]">
-                        <el-carousel trigger="click" height="220px" :interval="6000">
-                            <template v-for="image in roomImages(room)" :key="image">
-                                <el-carousel-item>
-                                    <img :src="image" alt="" class="w-full h-full object-cover">
-                                </el-carousel-item>
-                            </template>
-                        </el-carousel>
-                    </div>
-
-                    <div class="p-5 flex flex-col gap-4">
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-900">
-                                {{ typeHabs[room.name] || room.name }}
-                            </h3>
-                            <span class="inline-block mt-1 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-0.5">
-                                Desayuno incluído por promoción
-                            </span>
-                        </div>
-
-                        <div class="h-px bg-gray-100"></div>
-
-                        <div class="flex items-end justify-between gap-4">
-                            <div>
-                                <p class="text-xs text-gray-400 mb-0.5">Tarifa por noche desde</p>
-                                <p class="text-2xl font-bold text-gray-900">
-                                    {{ format_mxn(toCents(firstNightRate(room))) }}
-                                </p>
-                                <p class="text-xs text-gray-400 mt-0.5">
-                                    {{ gapDate() }} · {{ data.adults }} {{ Number(data.adults) === 1 ? 'adulto' : 'adultos' }}
-                                </p>
-                            </div>
-
-                            <div class="text-right">
-                                <div class="flex items-center gap-1 justify-end">
-                                    <span class="text-base font-bold text-gray-900">
-                                        Total: {{ format_mxn(totalCents(room), true) }}
-                                    </span>
-                                    <el-dropdown placement="top-start">
-                                        <InfoSvg :width="14" :height="14" class="text-gray-400 cursor-pointer" />
-                                        <template #dropdown>
-                                            <el-dropdown-menu>
-                                                <div class="flex flex-col px-3 py-1 min-w-[220px]">
-                                                    <p class="font-semibold text-center text-sm">Desglose de costos</p>
-                                                    <div class="h-px w-full bg-gray-200 my-2"></div>
-                                                    <div v-for="r in room.rates" :key="r.date" class="flex justify-between gap-2 text-sm">
-                                                        <span class="whitespace-nowrap">{{ new Date(r.date).toLocaleDateString('es-MX') }}</span>
-                                                        <span class="font-medium">{{ format_mxn(toCents(r.rate)) }}</span>
-                                                    </div>
-                                                    <div class="h-px w-full bg-gray-200 my-2"></div>
-                                                    <p class="flex justify-between text-sm">
-                                                        <span>Habitaciones</span>
-                                                        <span>x {{ data.numHabs }}</span>
-                                                    </p>
-                                                    <p class="text-right font-semibold text-sm mt-1">{{ format_mxn(totalCents(room), true) }}</p>
-                                                    <p class="text-xs text-gray-400">* IVA incluído</p>
-                                                </div>
-                                            </el-dropdown-menu>
-                                        </template>
-                                    </el-dropdown>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <el-button
-                                class="w-full nuve-btn"
-                                :loading="isLoading"
-                                @click="pendingRoom = room; goToCheckout(room); isPayingAtHotel = false;"
-                            >
-                                Pagar en línea
-                            </el-button>
-                            <el-button
-                                class="w-full"
-                                style="margin-left:0 !important;"
-                                type="default"
-                                :loading="isLoading"
-                                @click="pendingRoom = room; isPayingAtHotel = true; bookingInReception(room);"
-                            >
-                                Pagar en recepción
                             </el-button>
                         </div>
                     </div>
@@ -240,7 +133,7 @@
 
     </section>
 
-    <UserComplementaryData v-model:visible="showUserComplementaryData" @send-data="onReceiveData" :is-paying-at-hotel="isPayingAtHotel" />
+    <UserComplementaryData v-model:visible="showUserComplementaryData" @send-data="onReceiveData" :is-paying-at-hotel="false" />
     <Footer class="mt-14" />
 </template>
 
@@ -251,11 +144,10 @@ import WifiSvg from '@/Components/WifiSvg.vue';
 import ACSvg from '@/Components/ACSvg.vue';
 import Header from '@/Components/Header.vue';
 import axios from 'axios';
-import { ElNotification, FIRST_LAST_KEYS, uploadBaseProps, ElCarousel, ElCarouselItem, ElMessageBox, ElMessage } from 'element-plus';
+import { ElNotification } from 'element-plus';
 import TVSvg from '@/Components/TVSvg.vue';
 import ParkingSvg from '@/Components/ParkingSvg.vue';
 import UserComplementaryData from '@/Components/UserComplementaryData.vue';
-import { markRaw } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import Footer from '@/Components/Footer.vue';
 import WhatsappButton from '@/Components/WhatsappButton.vue';
@@ -332,7 +224,6 @@ export default {
 
             pendingRoom: null,
             pendingHotelCode: null,
-            isPayingAtHotel: false,
         }
     },
     mounted() {
@@ -502,129 +393,12 @@ export default {
                     this.isLoading = false
                 })
         },
-        async bookingInReception(room) {
-            room = room || this.pendingRoom
-            const hotelCode = room?.hotel_code || this.pendingHotelCode
-            this.pendingRoom = room
-            this.pendingHotelCode = hotelCode
-            
-            if (!this.isLogged && !this.userInfo) {
-                this.showUserComplementaryData = true
-                return
-            }
-
-            if(this.isLogged) {
-                this.userInfo = {
-                    name: this.infoUser.name,
-                    lastname: this.infoUser.lastname,
-                    email: this.infoUser.email,
-                    phone: this.infoUser.phone,
-                }
-
-                ElMessageBox.confirm(
-                    `<strong>Estos son los datos de la habitación:</strong><br><br>
-                    <strong>Hotel:</strong> ${room.hotel_name || this.hotelName(hotelCode)}<br>
-                    <strong>Habitación:</strong> ${room.name || this.typeHabs[room.code]}<br>
-                    <strong>Plan:</strong> ${room.plan || 'Plan no especificado'}<br>
-                    <strong>Check-in:</strong> ${this.data.dateIni}<br>
-                    <strong>Check-out:</strong> ${this.data.dateFin}<br>
-                    <strong>Adultos:</strong> ${this.data.adults}<br>
-                    <strong>Habitaciones:</strong> ${this.data.numHabs}<br><br>
-                    <small>Los datos de contacto son los datos de tu perfil</small>`,
-                    'Confirmar Reservación',
-                    {
-                        confirmButtonText: 'OK',
-                        cancelButtonText: 'Cancelar',
-                        type: 'warning',
-                        dangerouslyUseHTMLString: true, // <--- ESTA ES LA CLAVE
-                    }
-                )
-                    .then(() => {                        
-                        this.saveBookingInReception();
-                    })
-                    .catch(() => {
-                        ElMessage({
-                            type: 'info',
-                            message: 'Operación cancelada',
-                        })
-                    })
-                return;
-            }
-            this.saveBookingInReception();
-
-        },
         onReceiveData(data) {
             this.userInfo = data;
-            // if (!this.userInfo || typeof this.userInfo !== 'object') return;
-
-            // const hasAllFields = this.userInfoKeys.every((key) => {
-            //     const value = this.userInfo[key];
-            //     return value !== null && value !== undefined && String(value).trim() !== '';
-            // });
-
-            // if (!hasAllFields) {
-            //     console.warn('Faltan campos en userInfo, no se puede continuar');
-            //     return;
-            // }
-
-            // Si está todo bien, ahora sí vamos al checkout
-
-            !this.isPayingAtHotel ? this.goToCheckout() : this.bookingInReception();
+            this.goToCheckout();
         },
         onFinish() {
             window.location.reload();
-        },
-        saveBookingInReception() {
-            const amountCents = this.totalCents(this.pendingRoom);
-            const payload = {
-                hotel_code: this.pendingHotelCode || this.pendingRoom.hotel_code,
-                hotel_name: this.pendingRoom.hotel_name || this.hotelName(this.pendingHotelCode || this.pendingRoom.hotel_code),
-                room_code: this.pendingRoom.code,
-                room_name: this.pendingRoom.name,
-                plan: this.pendingRoom.plan,
-                check_in: this.data.dateIni,
-                check_out: this.data.dateFin,
-                adults: this.data.adults,
-                num_habs: this.data.numHabs,
-                user_info: {
-                    name: this.userInfo.name,
-                    lastname: this.userInfo.lastname,
-                    email: this.userInfo.email,
-                    phone: this.userInfo.phone,
-                },
-                amount_cents: amountCents,
-                amount: amountCents / 100,
-            };
-
-            axios.post('/create-booking-reception', payload)
-            .then((response) => {
-                if(response.status === 201) {
-                    ElNotification({
-                        title: 'Éxito',
-                        message: 'Reservación creada con éxito para pago en recepción. Serás redirigido a la página de inicio en unos segudos.',
-                        type: 'success'
-                    })
-                    this.showUserComplementaryData = false;
-                    setTimeout(() => {
-                        router.get('/checkout/success/reception', payload)
-                    }, 3000);
-                }
-            })
-            .catch(() => {
-                ElNotification({
-                    title: 'Error',
-                    message: 'Ocurrió un error al crear la reservación para pago en recepción.',
-                    type: 'error'
-                })
-            })
-        },
-        hotelName(hotelCode) {
-            const names = {
-                torreon: 'Nuve Torreón',
-                gomez: 'Nuve Gomez',
-            };
-
-            return names[hotelCode] || hotelCode || 'Hotel';
         },
         normalizeRoomImageCode(code) {
             return String(code || '')
@@ -637,12 +411,20 @@ export default {
             const normalizedCode = this.normalizeRoomImageCode(room?.code);
             const hotelImages = this.imagesRooms[hotelCode] || {};
 
-            if (normalizedCode === '1M' && hotelImages["1M"]) {
-                return hotelImages["1M"];
+            if (normalizedCode === '1M') {
+                return hotelImages["1M"] || hotelImages["S-"] || [];
             }
 
-            if (normalizedCode === '2M' && hotelImages["2M"]) {
-                return hotelImages["2M"];
+            if (normalizedCode === '2M') {
+                return hotelImages["2M"] || hotelImages["D-"] || [];
+            }
+
+            if (normalizedCode === 'S') {
+                return hotelImages["S-"] || hotelImages["1M"] || [];
+            }
+
+            if (normalizedCode === 'D') {
+                return hotelImages["D-"] || hotelImages["2M"] || [];
             }
 
             return hotelImages[room?.code]

@@ -679,6 +679,10 @@ class CheckoutController extends Controller
 
         $data['hotel_code'] = HotelConfig::normalize($data['hotel_code']);
         $data['hotel_name'] = HotelConfig::name($data['hotel_code']);
+        $bookingReceptionAdminTo = config(
+            "services.hotels.{$data['hotel_code']}.mail.booking_in_reception_admin_to",
+            'luis@enzomarketing.mx'
+        );
 
         Reservation::create([
             'hotel_code' => $data['hotel_code'],
@@ -707,7 +711,7 @@ class CheckoutController extends Controller
 
         Resend::emails()->send([
             'from' => 'Nuve Hotel <no-reply@nuvehotel.com>',
-            'to' => 'bedbedhoteles@gmail.com',
+            'to' => $bookingReceptionAdminTo,
             'subject' => 'Reserva con pago en recepción',
             'html' => (new BookingInReceptionAdminMail($data))->render(),
         ]);
