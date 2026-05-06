@@ -13,7 +13,9 @@ Hola **{{ $data['user_info']['name'] }}**, hemos recibido tu solicitud de reserv
 **Detalles adicionales:**
 * **Adultos:** {{ $data['adults'] }}
 * **Habitaciones:** {{ $data['num_habs'] }}
+{{--
 * **Plan:** Desayuno incluído por promoción
+--}}
 @endcomponent
 
 ### 💳 Información Importante

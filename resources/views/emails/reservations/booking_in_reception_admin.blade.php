@@ -16,7 +16,7 @@ Se ha recibido una solicitud de reserva a través del sistema. Estos son los det
 | :--- | :--- |
 | **Hotel** | {{ $data['hotel_name'] ?? $data['hotel_code'] ?? 'Nuve Hotel' }} |
 | **Habitación** | {{ $data['room_name'] }} |
-| **Plan** | Desayuno incluído por promoción |
+{{-- | **Plan** | Desayuno incluído por promoción | --}}
 | **Check-in** | {{ \Carbon\Carbon::parse($data['check_in'])->format('d/m/Y') }} |
 | **Check-out** | {{ \Carbon\Carbon::parse($data['check_out'])->format('d/m/Y') }} |
 | **Cantidad** | {{ $data['num_habs'] }} Hab. / {{ $data['adults'] }} Adultos |

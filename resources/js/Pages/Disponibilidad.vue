@@ -55,9 +55,9 @@
                             <h3 class="text-xl font-bold text-gray-900">
                                 {{ typeHabs[room.name] || room.name }}
                             </h3>
-                            <span class="inline-block mt-1 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-0.5">
+                            <!-- <span class="inline-block mt-1 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-0.5">
                                 Desayuno incluído por promoción
-                            </span>
+                            </span> -->
                         </div>
 
                         <div class="h-px bg-gray-100"></div>
