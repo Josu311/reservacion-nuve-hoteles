@@ -4,11 +4,6 @@
     Tu reservación quedó **confirmada**.
 
     @php
-        $roomTypes = [
-            "S-" => "Sencilla",
-            "D-" => "Doble"
-        ];
-
         $hotelName = $reservation->hotel_code ?: 'Hotel no especificado';
 
         try {
@@ -41,7 +36,7 @@
     **Folio:** {{ $reservation->provider_folio ?: 'No disponible' }}
     **Hotel:** {{ $hotelName }}
 
-    **Habitación:** {{ $roomTypes[$reservation->room_type_code] ?? ($reservation->room_type_code ?: 'No disponible') }}
+    **Habitación:** {{ \App\Services\RoomTypeCatalog::label($reservation->room_type_code) }}
 
     **Check-in:** {{ $formatDate($checkinValue) }}
     **Check-out:** {{ $formatDate($checkoutValue) }}

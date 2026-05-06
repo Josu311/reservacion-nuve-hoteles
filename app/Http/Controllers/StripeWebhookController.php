@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ReservationConfirmedAdminMail;
 use App\Mail\ReservationConfirmedMail;
 use App\Models\Reservation;
 use App\Services\HotelConfig;
@@ -260,25 +261,39 @@ public function handle(Request $request, ?string $hotel = null)
                         if (!empty($meta['email_sent_at'])) return;
 
                         $recipient = optional($r->user)->email ?? $r->guest_email;
-                        if (!$recipient) return;
+                        $adminRecipient = config(
+                            "services.hotels.{$reservationHotelCode}.mail.booking_in_reception_admin_to",
+                            'luis@enzomarketing.mx'
+                        );
+
+                        if (!$recipient && !$adminRecipient) return;
 
                         try {
-                            Resend::emails()->send([
-                                    'from' => 'Nuve Hotel <no-reply@nuvehotel.com>',
-                                    'to' => $recipient,
-                                    'subject' => 'Tu reserva #' . $reservation->provider_folio . ' está confirmada',
-                                    'html' => (new ReservationConfirmedMail($reservation))->render(),
-                            ]);
+                            if ($recipient) {
+                                Mail::mailer('resend')
+                                    ->to($recipient)
+                                    ->send(new ReservationConfirmedMail($reservation));
+                            }
+
+                            if ($adminRecipient) {
+                                Mail::mailer('resend')
+                                    ->to($adminRecipient)
+                                    ->send(new ReservationConfirmedAdminMail($reservation));
+                            }
 
                             $r->meta = array_merge($meta, [
                                 'email_sent_at' => now()->toISOString(),
                                 'email_to'      => $recipient,
+                                'email_admin_to' => $adminRecipient,
                             ]);
                             $r->save();
                         } catch (\Throwable $e) {
                             Log::error('Fallo envío de correo confirmación', [
                                 'reservation_id' => $r->id,
-                                'email' => $recipient,
+                                'email' => [
+                                    'guest' => $recipient,
+                                    'admin' => $adminRecipient,
+                                ],
                                 'error' => $e->getMessage(),
                             ]);
                             // NO throw: no queremos 500 por correo
