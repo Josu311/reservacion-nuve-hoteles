@@ -114,6 +114,100 @@
                             >
                                 Pagar en línea
                             </el-button>
+                            <el-button class="w-full mt-2" style="margin-left:0px !important;" type="default" :loading="isLoading"
+                                @click="pendingRoom = room; isPayingAtHotel = true; bookingInReception(room);">
+                                Pagar en recepción
+                            </el-button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Nuve Gómez -->
+            <div class="flex-1">
+                <div class="flex items-center gap-3 mb-4">
+                    <h2 class="text-xl font-bold text-gray-900">Nuve Gómez</h2>
+                    <div class="flex-1 h-px bg-gray-200"></div>
+                </div>
+
+                <article
+                    v-for="room in visibleRoomsGomez"
+                    :key="`${room.hotel_code}-${room.code}`"
+                    class="w-full md:max-w-[500px] bg-white rounded-2xl border border-gray-200 overflow-hidden mb-4"
+                >
+                    <div class="w-full h-[220px]">
+                        <el-carousel trigger="click" height="220px" :interval="6000">
+                            <template v-for="image in roomImages(room)" :key="image">
+                                <el-carousel-item>
+                                    <img :src="image" alt="" class="w-full h-full object-cover">
+                                </el-carousel-item>
+                            </template>
+                        </el-carousel>
+                    </div>
+
+                    <div class="p-5 flex flex-col gap-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">
+                                {{ typeHabs[room.name] || room.name }}
+                            </h3>
+                        </div>
+
+                        <div class="h-px bg-gray-100"></div>
+
+                        <div class="flex items-end justify-between gap-4">
+                            <div>
+                                <p class="text-xs text-gray-400 mb-0.5">Tarifa por noche desde</p>
+                                <p class="text-2xl font-bold text-gray-900">
+                                    {{ format_mxn(toCents(firstNightRate(room))) }}
+                                </p>
+                                <p class="text-xs text-gray-400 mt-0.5">
+                                    {{ gapDate() }} · {{ data.adults }} {{ Number(data.adults) === 1 ? 'adulto' : 'adultos' }}
+                                </p>
+                            </div>
+
+                            <div class="text-right">
+                                <div class="flex items-center gap-1 justify-end">
+                                    <span class="text-base font-bold text-gray-900">
+                                        Total: {{ format_mxn(totalCents(room), true) }}
+                                    </span>
+                                    <el-dropdown placement="top-start">
+                                        <InfoSvg :width="14" :height="14" class="text-gray-400 cursor-pointer" />
+                                        <template #dropdown>
+                                            <el-dropdown-menu>
+                                                <div class="flex flex-col px-3 py-1 min-w-[220px]">
+                                                    <p class="font-semibold text-center text-sm">Desglose de costos</p>
+                                                    <div class="h-px w-full bg-gray-200 my-2"></div>
+                                                    <div v-for="r in room.rates" :key="r.date" class="flex justify-between gap-2 text-sm">
+                                                        <span class="whitespace-nowrap">{{ new Date(r.date).toLocaleDateString('es-MX') }}</span>
+                                                        <span class="font-medium">{{ format_mxn(toCents(r.rate)) }}</span>
+                                                    </div>
+                                                    <div class="h-px w-full bg-gray-200 my-2"></div>
+                                                    <p class="flex justify-between text-sm">
+                                                        <span>Habitaciones</span>
+                                                        <span>x {{ data.numHabs }}</span>
+                                                    </p>
+                                                    <p class="text-right font-semibold text-sm mt-1">{{ format_mxn(totalCents(room), true) }}</p>
+                                                    <p class="text-xs text-gray-400">* IVA incluído</p>
+                                                </div>
+                                            </el-dropdown-menu>
+                                        </template>
+                                    </el-dropdown>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <el-button
+                                class="w-full nuve-btn"
+                                :loading="isLoading"
+                                @click="pendingRoom = room; goToCheckout(room);"
+                            >
+                                Pagar en línea
+                            </el-button>
+                            <el-button class="w-full mt-2" style="margin-left:0px !important;" type="default" :loading="isLoading"
+                                @click="pendingRoom = room; isPayingAtHotel = true; bookingInReception(room);">
+                                Pagar en recepción
+                            </el-button>
                         </div>
                     </div>
                 </article>
