@@ -212,13 +212,21 @@ class DashboardController extends Controller
         $credentials = $request->only('email', 'password');
         $user = User::where('email', $credentials['email'])->first();
 
+        if(!$user) return response()->json([
+            'message' => 'Credenciales inválidas'
+        ], 401);
+
+        if(!Hash::check($credentials['password'], $user->password)) {
+            return response()->json(['message' => 'Credenciales inválidas'], 401);
+        }
+
+        if(!$user->rol_id) return response()->json([
+            'message' => 'Tu cuenta no tiene un rol asignado, contacta al administrador'
+        ], 403);
+
         if($user->rol_id == 1) return response()->json([
             'message' => 'No tienes permiso para acceder a este recurso'
         ], 403);
-
-        if(!$credentials || !Hash::check($credentials['password'], $user->password)) {
-            return response()->json(['message' => 'Credenciales inválidas'], 401);
-        }
 
         Auth::login($user);
         $request->session()->regenerate();
