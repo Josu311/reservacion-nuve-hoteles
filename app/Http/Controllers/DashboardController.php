@@ -14,12 +14,44 @@ use function PHPSTORM_META\map;
 
 class DashboardController extends Controller
 {
-    public function dashboardData(Request $request) {
-        $filters = $request->validate([
-            'hotel_code' => ['nullable', 'string', 'in:' . implode(',', HotelConfig::codes())],
-        ]);
+    private function resolveDashboardHotelScope(Request $request): array
+    {
+        /** @var User|null $user */
+        $user = $request->user();
 
-        $hotelCode = $filters['hotel_code'] ?? null;
+        abort_unless($user && $user->isDashboardAdmin(), 403, 'No tienes permiso para acceder a este recurso');
+
+        $requestedHotelCode = $request->input('hotel_code');
+        if ($requestedHotelCode !== null) {
+            $request->validate([
+                'hotel_code' => ['string', 'in:' . implode(',', HotelConfig::codes())],
+            ]);
+            $requestedHotelCode = HotelConfig::normalize($requestedHotelCode);
+        }
+
+        if ($user->isSuperAdmin()) {
+            return [
+                'selected_hotel_code' => $requestedHotelCode,
+                'allowed_hotel_codes' => HotelConfig::codes(),
+            ];
+        }
+
+        $assignedHotelCode = $user->assignedHotelCode();
+        abort_unless($assignedHotelCode, 403, 'Tu cuenta no tiene un hotel asignado, contacta al administrador');
+
+        if ($requestedHotelCode !== null && !$user->canAccessHotel($requestedHotelCode)) {
+            abort(403, 'No tienes permiso para consultar este hotel');
+        }
+
+        return [
+            'selected_hotel_code' => $assignedHotelCode,
+            'allowed_hotel_codes' => [$assignedHotelCode],
+        ];
+    }
+
+    public function dashboardData(Request $request) {
+        $scope = $this->resolveDashboardHotelScope($request);
+        $hotelCode = $scope['selected_hotel_code'];
         $generalQuery = Reservation::query()
             ->when($hotelCode, fn ($query) => $query->where('hotel_code', $hotelCode));
 
@@ -104,6 +136,8 @@ class DashboardController extends Controller
             ->get();
 
         return response()->json([
+            'allowed_hotel_codes' => $scope['allowed_hotel_codes'],
+            'selected_hotel_code' => $hotelCode,
             'total_cents_per_month' => $totalCentsPerMonth,
             'total_amount_cents' => (int) $totalCents,
             'total_amount_cents_daily' => (int) $totalCentsDaily,
@@ -118,13 +152,9 @@ class DashboardController extends Controller
 
     public function paginateReservations(Request $request)
     {
+        $scope = $this->resolveDashboardHotelScope($request);
         $generalQuery = Reservation::query();
-        $hotelCode = $request->input('hotel_code');
-        if ($hotelCode !== null) {
-            $request->validate([
-                'hotel_code' => ['string', 'in:' . implode(',', HotelConfig::codes())],
-            ]);
-        }
+        $hotelCode = $scope['selected_hotel_code'];
         
         // Params desde el front (con defaults)
         $page    = (int) $request->input('page', 1);
@@ -166,6 +196,8 @@ class DashboardController extends Controller
         // Respuesta “amigable” para Vue/Element Plus
         return response()->json([
             'data' => $paginator->items(),
+            'allowed_hotel_codes' => $scope['allowed_hotel_codes'],
+            'selected_hotel_code' => $hotelCode,
             'meta' => [
                 'current_page' => $paginator->currentPage(),
                 'per_page'     => $paginator->perPage(),
@@ -227,6 +259,12 @@ class DashboardController extends Controller
         if($user->rol_id == 1) return response()->json([
             'message' => 'No tienes permiso para acceder a este recurso'
         ], 403);
+
+        if((int) $user->rol_id === 2 && !$user->assignedHotelCode()) {
+            return response()->json([
+                'message' => 'Tu cuenta no tiene un hotel asignado, contacta al administrador'
+            ], 403);
+        }
 
         Auth::login($user);
         $request->session()->regenerate();

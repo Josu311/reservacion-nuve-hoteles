@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\HotelConfig;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -26,6 +27,7 @@ class User extends Authenticatable
         'state',
         'city',
         'cp',
+        'hotel_code',
         'password',
     ];
 
@@ -50,5 +52,43 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return (int) $this->rol_id === 3;
+    }
+
+    public function isDashboardAdmin(): bool
+    {
+        return in_array((int) $this->rol_id, [2, 3], true);
+    }
+
+    public function assignedHotelCode(): ?string
+    {
+        if (!$this->hotel_code) {
+            return null;
+        }
+
+        try {
+            return HotelConfig::normalize($this->hotel_code);
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    public function canAccessHotel(?string $hotelCode): bool
+    {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        $assignedHotelCode = $this->assignedHotelCode();
+
+        if (!$assignedHotelCode || !$hotelCode) {
+            return false;
+        }
+
+        return $assignedHotelCode === HotelConfig::normalize($hotelCode);
     }
 }
