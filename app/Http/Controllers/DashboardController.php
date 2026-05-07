@@ -112,8 +112,9 @@ class DashboardController extends Controller
         ->map(fn ($d) => (int) ($rows[$d] ?? 0))
         ->all();
 
-        $usersReservations = (clone $generalQuery)
+        $usersReservations = Reservation::query()
             ->from('reservations as r')
+            ->when($hotelCode, fn ($query) => $query->where('r.hotel_code', $hotelCode))
             ->leftJoin('users as u', 'u.id', '=', 'r.user_id')
             ->whereIn('r.status', ['paid', 'booking_in_reception'])
             ->select([

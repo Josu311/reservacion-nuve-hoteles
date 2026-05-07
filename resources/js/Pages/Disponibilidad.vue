@@ -312,6 +312,9 @@ export default {
                     ],
                     "D-": [
                         "/img/nuve-gomez-habs/nuve-gomez-doble-1.webp",
+                        "/img/nuve-gomez-habs/nuve-gomez-doble-2.webp",
+                        "/img/nuve-gomez-habs/nuve-gomez-doble-3.webp",
+                        "/img/nuve-gomez-habs/nuve-gomez-doble-4.webp",
                     ],
                 },
             },
