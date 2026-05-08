@@ -251,7 +251,7 @@ public function handle(Request $request, ?string $hotel = null)
                     $reservation->save();
 
                     // --- 5) Email AFTER COMMIT (no provoca 500) ---
-                    DB::afterCommit(function () use ($reservation) {
+                    DB::afterCommit(function () use ($reservation, $reservationHotelCode) {
 
                         // reload fresco ya fuera del lock
                         $r = Reservation::find($reservation->id);
