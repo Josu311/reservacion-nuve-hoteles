@@ -31,6 +31,19 @@ Route::prefix('disponibilidad')->group(function () {
     Route::post('/', [ReservaController::class, 'validateDataUserHabs'])->name('disponibilidad.consultar');
 });
 
+Route::get('/parras/reservar', function () {
+    return Inertia::render('ParrasBooking');
+})->name('parras.booking');
+
+Route::prefix('parras/disponibilidad')->group(function () {
+    Route::get('/', [ReservaController::class, 'hotelIndex'])
+        ->defaults('hotel', 'parras')
+        ->name('parras.disponibilidad.index');
+    Route::post('/', [ReservaController::class, 'validateDataUserHabsForHotel'])
+        ->defaults('hotel', 'parras')
+        ->name('parras.disponibilidad.consultar');
+});
+
 Route::post('/create-booking-reception', [CheckoutController::class, 'bookingInReception']);
 
 Route::prefix('checkout')->group(function () {

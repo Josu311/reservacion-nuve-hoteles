@@ -17,52 +17,25 @@ class ReservaController extends Controller
      */
     public function index(Request $request)
     {
-        $data = [];
-        $rooms = [];
-        $roomsGomez = [];
+        return $this->renderAvailability($request, ['torreon', 'gomez'], [
+            'search_path' => route('disponibilidad.consultar'),
+            'page_title' => 'Disponibilidad de habitaciones',
+            'hero_title' => 'Reserva tu habitación',
+            'hero_badge' => 'Nuve Hoteles',
+            'hero_image' => '/img/home-1.webp',
+        ]);
+    }
 
-        if ($request->filled(['dateIni', 'dateFin', 'numHabs', 'adults'])) {
-            // 1) Normaliza/asegura filtros
-            $data = $request->only(['dateIni', 'dateFin', 'typeHab', 'numHabs', 'adults']);
+    public function hotelIndex(Request $request, string $hotel)
+    {
+        $hotelCode = HotelConfig::normalize($hotel);
 
-            // Defaults sensatos si llegan vacíos (evita errores en acceso directo)
-            $start = $data['dateIni'];
-            $end   = $data['dateFin'];
-
-            $data['dateIni'] = Carbon::parse($start)->format('Y-m-d');
-            $data['dateFin'] = Carbon::parse($end)->format('Y-m-d');
-            $data['adults']  = (int)($data['adults']);
-            $data['numHabs'] = (int)($data['numHabs']);
-
-            // 2) SOAP: tarifas por fecha por hotel.
-            try {
-                $tarifasXml = $this->callSoapTarifasFechas($data, 'torreon');
-                $rooms = $this->parseTarifasAll($tarifasXml, 'torreon');
-            } catch (\Throwable $e) {
-                Log::warning('SOAP tarifas fallo', [
-                    'hotel_code' => 'torreon',
-                    'msg' => $e->getMessage(),
-                ]);
-                $rooms = [];
-            }
-
-            try {
-                $tarifasXmlGomez = $this->callSoapTarifasFechas($data, 'gomez');
-                $roomsGomez = $this->parseTarifasAll($tarifasXmlGomez, 'gomez');
-            } catch (\Throwable $e) {
-                Log::warning('SOAP tarifas fallo', [
-                    'hotel_code' => 'gomez',
-                    'msg' => $e->getMessage(),
-                ]);
-                $roomsGomez = [];
-            }
-        }
-
-        // 3) Render: manda TODO al front
-        return Inertia::render('Disponibilidad', [
-            'data'  => $data,   // filtros normalizados
-            'rooms' => $rooms,  // arreglo de habitaciones con tarifas/imágenes/plan
-            'roomsGomez' => $roomsGomez,  // arreglo de habitaciones con tarifas/imágenes/plan
+        return $this->renderAvailability($request, [$hotelCode], [
+            'search_path' => route("{$hotelCode}.disponibilidad.consultar"),
+            'page_title' => 'Disponibilidad en ' . HotelConfig::name($hotelCode),
+            'hero_title' => HotelConfig::name($hotelCode),
+            'hero_badge' => 'Disponibilidad',
+            'hero_image' => $hotelCode === 'parras' ? '/img/hotels-38.webp' : '/img/home-1.webp',
         ]);
     }
 
@@ -72,24 +45,17 @@ class ReservaController extends Controller
      */
     public function validateDataUserHabs(Request $request)
     {
-        $data = $request->validate([
-            'dateIni'  => ['required', 'date'],
-            'dateFin'  => ['required', 'date', 'after_or_equal:dateIni'],
-            'numHabs'  => ['required', 'integer', 'min:1'],
-            'adults'   => ['required', 'integer', 'min:1'],
-        ], [
-            'dateIni.required' => 'La fecha inicial es obligatoria',
-            'dateFin.required' => 'La fecha final es obligatoria',
-            'numHabs.required' => 'El número de habitaciones es obligatorio',
-            'adults.required'  => 'La cantidad de adultos es obligatoria',
-        ]);
+        $data = $this->validateAvailabilityRequest($request);
 
-        // Normaliza a YYYY-MM-DD
-        $data['dateIni'] = Carbon::parse($data['dateIni'])->format('Y-m-d');
-        $data['dateFin'] = Carbon::parse($data['dateFin'])->format('Y-m-d');
-
-        // Redirige al GET con query string
         return to_route('disponibilidad.index', $data);
+    }
+
+    public function validateDataUserHabsForHotel(Request $request, string $hotel)
+    {
+        $data = $this->validateAvailabilityRequest($request);
+        $hotelCode = HotelConfig::normalize($hotel);
+
+        return to_route("{$hotelCode}.disponibilidad.index", $data);
     }
 
     /**
@@ -213,6 +179,80 @@ class ReservaController extends Controller
         }
 
         return $rooms;
+    }
+
+    private function renderAvailability(Request $request, array $hotelCodes, array $viewConfig)
+    {
+        $data = [];
+        $hotelGroups = [];
+
+        if ($request->filled(['dateIni', 'dateFin', 'numHabs', 'adults'])) {
+            $data = $request->only(['dateIni', 'dateFin', 'typeHab', 'numHabs', 'adults']);
+
+            $data['dateIni'] = Carbon::parse($data['dateIni'])->format('Y-m-d');
+            $data['dateFin'] = Carbon::parse($data['dateFin'])->format('Y-m-d');
+            $data['adults'] = (int) $data['adults'];
+            $data['numHabs'] = (int) $data['numHabs'];
+
+            foreach ($hotelCodes as $hotelCode) {
+                $rooms = [];
+
+                try {
+                    $tarifasXml = $this->callSoapTarifasFechas($data, $hotelCode);
+                    $rooms = $this->parseTarifasAll($tarifasXml, $hotelCode);
+                } catch (\Throwable $e) {
+                    Log::warning('SOAP tarifas fallo', [
+                        'hotel_code' => $hotelCode,
+                        'msg' => $e->getMessage(),
+                    ]);
+                }
+
+                $hotelGroups[] = [
+                    'code' => $hotelCode,
+                    'name' => HotelConfig::name($hotelCode),
+                    'rooms' => $rooms,
+                ];
+            }
+        } else {
+            $hotelGroups = array_map(function (string $hotelCode) {
+                return [
+                    'code' => $hotelCode,
+                    'name' => HotelConfig::name($hotelCode),
+                    'rooms' => [],
+                ];
+            }, $hotelCodes);
+        }
+
+        return Inertia::render('Disponibilidad', [
+            'data' => $data,
+            'hotelGroups' => $hotelGroups,
+            'searchPath' => $viewConfig['search_path'],
+            'pageTitle' => $viewConfig['page_title'],
+            'heroTitle' => $viewConfig['hero_title'],
+            'heroBadge' => $viewConfig['hero_badge'],
+            'heroImage' => $viewConfig['hero_image'] ?? '/img/home-1.webp',
+            'isSingleHotel' => count($hotelCodes) === 1,
+        ]);
+    }
+
+    private function validateAvailabilityRequest(Request $request): array
+    {
+        $data = $request->validate([
+            'dateIni'  => ['required', 'date'],
+            'dateFin'  => ['required', 'date', 'after_or_equal:dateIni'],
+            'numHabs'  => ['required', 'integer', 'min:1'],
+            'adults'   => ['required', 'integer', 'min:1'],
+        ], [
+            'dateIni.required' => 'La fecha inicial es obligatoria',
+            'dateFin.required' => 'La fecha final es obligatoria',
+            'numHabs.required' => 'El número de habitaciones es obligatorio',
+            'adults.required'  => 'La cantidad de adultos es obligatoria',
+        ]);
+
+        $data['dateIni'] = Carbon::parse($data['dateIni'])->format('Y-m-d');
+        $data['dateFin'] = Carbon::parse($data['dateFin'])->format('Y-m-d');
+
+        return $data;
     }
 
     private function xml($s): string

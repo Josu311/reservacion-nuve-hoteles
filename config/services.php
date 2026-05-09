@@ -55,6 +55,7 @@ return [
         'post_ids' => [
             'torreon' => (int) env('ENZO_TORREON_POST_ID', 1339),
             'gomez' => (int) env('ENZO_GOMEZ_POST_ID', 6405),
+            'parras' => (int) env('ENZO_PARRAS_POST_ID', 0),
         ],
     ],
 
@@ -97,6 +98,26 @@ return [
             ],
             'mail' => [
                 'booking_in_reception_admin_to' => env('HOTEL_GOMEZ_BOOKING_RECEPTION_ADMIN_TO', 'luis@enzomarketing.mx'),
+            ],
+        ],
+        'parras' => [
+            'name' => env('HOTEL_PARRAS_NAME', 'Nuve Parras'),
+            'fc' => [
+                'rate_name' => env('FC_RATE_NAME', 'WWW_CA'),
+                'soap_endpoint' => env('FC_SOAP_ENDPOINT', 'http://fcsistemas.ddns.net:8092/wsSAHM2011.asmx'),
+                'pass' => env('FC_SOAP_PASS'),
+                'cx' => env('FC_SOAP_CX_PARRAS'),
+                'soap_debug' => env('FC_SOAP_DEBUG', false),
+                'hold_ttl_minutes' => env('FC_HOLD_TTL_MINUTES', 30),
+                'dummy_cc' => env('FC_DUMMY_CC', '0000000000000000'),
+            ],
+            'stripe' => [
+                'secret' => env('STRIPE_PARRAS_SECRET_KEY'),
+                'public' => env('STRIPE_PARRAS_PUBLIC_KEY'),
+                'webhook_secret' => env('STRIPE_PARRAS_WEBHOOK_SECRET'),
+            ],
+            'mail' => [
+                'booking_in_reception_admin_to' => env('HOTEL_PARRAS_BOOKING_RECEPTION_ADMIN_TO', 'luis@enzomarketing.mx'),
             ],
         ],
     ],

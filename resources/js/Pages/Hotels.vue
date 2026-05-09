@@ -148,7 +148,7 @@
                                 <p>UMO Penthouse</p>
                             </li>
                         </ul>
-                        <a href="/#reservar" class="w-fit text-white bg-nuve-hoteles-blue font-semibold px-10 py-2">Reservar ahora</a>
+                        <a href="/parras/reservar" class="w-fit text-white bg-nuve-hoteles-blue font-semibold px-10 py-2">Reservar ahora</a>
                     </div>
                 </div>
                 <img class="w-full md:w-1/2 h-auto object-cover" src="/img/hotels-13.webp" alt="">
