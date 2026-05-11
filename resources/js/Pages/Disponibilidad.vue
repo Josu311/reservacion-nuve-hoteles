@@ -1,6 +1,7 @@
 <template>
     <Head :title="pageTitle" />
-    <Header />
+    <HeaderParras v-if="useParrasBranding" />
+    <Header v-else />
 
     <div
         class="relative h-[500px] w-full bg-cover bg-center md:bg-bottom bg-fixed overflow-hidden"
@@ -140,7 +141,10 @@
         @send-data="onReceiveData"
         :is-paying-at-hotel="isPayingAtHotel"
     />
-    <Footer class="mt-14" />
+    <Footer
+        class="mt-14"
+        :logo-src="useParrasBranding ? '/img/parras/hotel-parras-logo.webp' : '/img/logo-nuve-hoteles.webp'"
+    />
 </template>
 
 <script>
@@ -148,6 +152,7 @@ import BedSvg from '@/Components/BedSvg.vue';
 import Footer from '@/Components/Footer.vue';
 import Header from '@/Components/Header.vue';
 import InfoSvg from '@/Components/InfoSvg.vue';
+import HeaderParras from '@/Components/Parras/HeaderParras.vue';
 import UserComplementaryData from '@/Components/UserComplementaryData.vue';
 import axios from 'axios';
 import { ElNotification } from 'element-plus';
@@ -159,6 +164,7 @@ export default {
         Footer,
         Head,
         Header,
+        HeaderParras,
         InfoSvg,
         UserComplementaryData,
     },
@@ -171,6 +177,7 @@ export default {
         isSingleHotel: { type: Boolean, default: false },
         pageTitle: { type: String, default: 'Disponibilidad de habitaciones' },
         searchPath: { type: String, default: '/disponibilidad' },
+        useParrasBranding: { type: Boolean, default: false },
     },
     data() {
         return {

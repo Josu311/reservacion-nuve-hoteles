@@ -18,6 +18,7 @@ export default {
             colors: {
                 "nuve-express-orange": "#DE803F",
                 "nuve-hoteles-blue": "#1182ba",
+                "nuve-parras-beige": "#F3EFE6",
             },
         },
     },

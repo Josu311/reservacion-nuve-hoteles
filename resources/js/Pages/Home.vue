@@ -61,6 +61,9 @@
                                 size="large">Buscar</el-button>
                         </div>
                     </el-form>
+                    <div class="flex items-center justify-center pt-5">
+                        <a href="/parras/reservar" class="text-nuve-hoteles-blue font-semibold underline">Visitar Nuve Parras</a>
+                    </div>
                 </div>
             </section>
 

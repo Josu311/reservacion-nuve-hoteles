@@ -4,17 +4,17 @@
             <div class="grid gap-10 sm:grid-cols-1 lg:grid-cols-4 items-start">
                 <!-- Logo -->
                 <div class="w-full h-full grid place-content-center">
-                    <img src="/img/logo-nuve-hoteles.webp" alt="Nuve Hotel" class="h-24 w-auto" />
+                    <img :src="logoSrc" alt="Nuve Hotel" class="h-24 w-auto" />
                 </div>
 
                 <!-- Ubicaciones -->
                 <div>
-                    <h3 class="text-md font-semibold text-nuve-hoteles-blue tracking-wide">Hoteles</h3>
-                    <ul class="mt-4 space-y-5 [&>li:hover]:text-nuve-hoteles-blue [&>li]:transition-colors [&>li]:ease-in-out">
+                    <h3 class="text-md font-semibold text-gray-800 tracking-wide">Hoteles</h3>
+                    <ul class="mt-4 space-y-5 [&>li:hover]:text-gray-800 [&>li]:transition-colors [&>li]:ease-in-out">
                         <li>
                             <a href="https://goo.gl/maps/vTJhAKVWyufePM7x8" class="text-sm flex gap-2">
                                 <svg class="w-5 h-5 mt-[2px] shrink-0" viewBox="0 0 24 24" fill="none"
-                                    stroke="#64afdd">
+                                    stroke="#1f2937">
                                     <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                         d="M12 22s7-6.2 7-12a7 7 0 10-14 0c0 5.8 7 12 7 12z" />
                                     <circle cx="12" cy="10" r="3" stroke-width="2" />
@@ -25,7 +25,7 @@
                         <li>
                             <a href="https://goo.gl/maps/5854jz5UT9v6FrQr9" class="text-sm flex gap-2">
                                 <svg class="w-5 h-5 mt-[2px] shrink-0" viewBox="0 0 24 24" fill="none"
-                                    stroke="#64afdd">
+                                    stroke="#1f2937">
                                     <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                         d="M12 22s7-6.2 7-12a7 7 0 10-14 0c0 5.8 7 12 7 12z" />
                                     <circle cx="12" cy="10" r="3" stroke-width="2" />
@@ -36,7 +36,7 @@
                         <li>
                             <a href="https://maps.app.goo.gl/D4xyWQSQNU88XQmv5" class="text-sm flex gap-2">
                                 <svg class="w-5 h-5 mt-[2px] shrink-0" viewBox="0 0 24 24" fill="none"
-                                    stroke="#64afdd">
+                                    stroke="#1f2937">
                                     <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                         d="M12 22s7-6.2 7-12a7 7 0 10-14 0c0 5.8 7 12 7 12z" />
                                     <circle cx="12" cy="10" r="3" stroke-width="2" />
@@ -49,8 +49,8 @@
 
                 <!-- Menú -->
                 <div>
-                    <h3 class="text-md font-semibold text-nuve-hoteles-blue tracking-wide">Menú principal</h3>
-                    <ul class="mt-4 space-y-3 text-sm [&>li:hover]:text-nuve-hoteles-blue [&>li]:transition-colors [&>li]:ease-in-out">
+                    <h3 class="text-md font-semibold text-gray-800 tracking-wide">Menú principal</h3>
+                    <ul class="mt-4 space-y-3 text-sm [&>li:hover]:text-gray-800 [&>li]:transition-colors [&>li]:ease-in-out">
                         <li><a href="/quienes-somos">Quiénes somos</a></li>
                         <li><a href="/nuestros-hoteles">Nuestros hoteles</a></li>
                         <li><a href="/experiencias">Experiencias</a></li>
@@ -60,8 +60,8 @@
 
                 <!-- Contacto -->
                 <div>
-                    <h3 class="text-md font-semibold text-nuve-hoteles-blue tracking-wide">Información</h3>
-                    <ul class="mt-4 space-y-3 text-sm [&>li:hover]:text-nuve-hoteles-blue [&>li]:transition-colors [&>li]:ease-in-out">
+                    <h3 class="text-md font-semibold text-gray-800 tracking-wide">Información</h3>
+                    <ul class="mt-4 space-y-3 text-sm [&>li:hover]:text-gray-800 [&>li]:transition-colors [&>li]:ease-in-out">
                         <li><a href="/nosotros">Política de Cookies</a></li>
                         <li><a href="/ubicacion">Política de Privacidad</a></li>
                     </ul>
@@ -70,7 +70,7 @@
         </div>
 
         <!-- (opcional) sombra/gradiente inferior suave como en la imagen -->
-        <div class="flex items-center justify-center pointer-events-none h-6 w-full bg-nuve-hoteles-blue text-white text-xs font-semibold py-4">
+        <div class="flex items-center justify-center pointer-events-none h-6 w-full bg-nuvetext-gray-800 text-white text-xs font-semibold py-4">
             © 2026 GRUPO NUVE HOTELES SA DE CV. TODOS LOS DERECHOS RESERVADOS.
         </div>
     </footer>
@@ -80,6 +80,12 @@
 import WhatsappSvg from './WhatsappSvg.vue';
 
 export default {
+    props: {
+        logoSrc: {
+            type: String,
+            default: '/img/logo-nuve-hoteles.webp',
+        },
+    },
     components: {
         WhatsappSvg,
     }

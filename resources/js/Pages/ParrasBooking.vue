@@ -2,9 +2,10 @@
     <Head>
         <title>Reserva en Nuve Parras</title>
         <meta name="description" content="Consulta disponibilidad y reserva en Nuve Parras desde un buscador dedicado para este hotel." />
+        <link rel="icon" href="/favicon-parras.ico" />
     </Head>
 
-    <Header />
+    <HeaderParras />
 
     <section class="relative min-h-[680px] bg-[url(/img/hotels-38.webp)] bg-cover bg-center text-white flex items-center">
         <div class="absolute inset-0 bg-slate-950/55"></div>
@@ -56,12 +57,42 @@
         </div>
     </section>
 
-    <Footer />
+    <section class="flex justify-center items-center bg-nuve-express-beige pt-44 md:pt-32 pb-5">
+        <div class="max-w-[1440px] flex flex-col-reverse lg:flex-row items-center gap-5 mx-auto">
+            <img class="w-full lg:w-[50%] h-[500px] object-cover" src="/img/hotels-22.webp" alt="">
+            <div class="w-full lg:w-[50%] flex flex-col items-start justify-center gap-5 text-sm p-3">
+                <div class="w-full flex flex-col gap-1">
+                    <span class="text-nuve-express-blue text-lg font-semibold text-center lg:text-start">Nuve Parras</span>
+                    <h2 class="text-2xl md:text-5xl font-semibold uppercase text-center lg:text-start">Bienvenido a Nuve Parras
+                    </h2>
+                </div>
+
+                <p class="text-center lg:text-start">Contamos con habitaciones donde encontrarás los mejores espacios y nuestras excelentes servicios disponible spara ti.</p>
+                <p class="text-center lg:text-start">Disfruta de la mejor ubicación en habitacióon preferencial con una cama, amenidades y servicios orientados a tu descanso</p>
+                <a href="/nosotros" class="w-fit mx-auto lg:mx-0 px-6 py-2 bg-nuve-parras-beige text-gray-800 text-base font-semibold">Conoce más</a>
+            </div>
+        </div>
+    </section>
+
+    <ExperienciasNuve />
+
+    <section class="relative h-[600px] flex items-center justify-center bg-[url('/img/parras-paisaje.webp')] bg-no-repeat bg-cover bg-bottom">
+        <div class="absolute inset-0 bg-black/30"></div>
+        <div class="w-full max-w-[1440px] text-center z-[1] text-white">
+            <p class="text-lg font-semibold pb-4">Nuve Parras</p>
+            <h1 class="text-2xl md:text-5xl font-bold uppercase">Más que una estancia</h1>
+            <p class="pt-6 px-5 md:px-10">En Nuve Parras creemos que cada estancia debe sentirse especial. Nuestro hotel combina diseño contemporáneo, confort y la esencia de uno de los destinos más emblemáticos del norte de México. Ubicados cerca del corazón de Parras, ofrecemos un espacio pensado para descansar, explorar y disfrutar cada momento de tu visita.</p>
+            <a href="/nosotros" class="w-fit inline-block px-6 py-4 font-semibold bg-nuve-parras-beige text-gray-800 mt-4">Sobre nosotros</a>
+        </div>
+    </section>
+
+    <Footer logo-src="/img/parras/hotel-parras-logo.webp" />
 </template>
 
 <script>
 import Footer from '@/Components/Footer.vue';
-import Header from '@/Components/Header.vue';
+import ExperienciasNuve from '@/Components/Parras/ExperienciasNuve.vue';
+import HeaderParras from '@/Components/Parras/HeaderParras.vue';
 import { Head, router } from '@inertiajs/vue3';
 import { ElNotification } from 'element-plus';
 
@@ -69,7 +100,8 @@ export default {
     components: {
         Footer,
         Head,
-        Header,
+        HeaderParras,
+        ExperienciasNuve,
     },
     data() {
         return {
@@ -138,15 +170,17 @@ export default {
 
 <style scoped>
 .nuve-btn {
-    background-color: #1182ba;
-    border-color: #1182ba;
-    color: white;
+    background-color: #F3EFE6;
+    border-color: #F3EFE6;
+    color: #1f2937;
+    font-weight: 600;
 }
 
 .nuve-btn:hover,
 .nuve-btn:focus {
-    background-color: #0e6f9e;
-    border-color: #0e6f9e;
+    background-color: #e4ded2;
+    border-color: #e4ded2;
+    color: #1f2937;
 }
 
 .mi-input-custom :deep(.el-input__wrapper) {

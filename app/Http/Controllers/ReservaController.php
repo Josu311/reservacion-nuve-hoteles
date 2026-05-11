@@ -23,6 +23,7 @@ class ReservaController extends Controller
             'hero_title' => 'Reserva tu habitación',
             'hero_badge' => 'Nuve Hoteles',
             'hero_image' => '/img/home-1.webp',
+            'use_parras_branding' => false,
         ]);
     }
 
@@ -36,6 +37,7 @@ class ReservaController extends Controller
             'hero_title' => HotelConfig::name($hotelCode),
             'hero_badge' => 'Disponibilidad',
             'hero_image' => $hotelCode === 'parras' ? '/img/hotels-38.webp' : '/img/home-1.webp',
+            'use_parras_branding' => $hotelCode === 'parras',
         ]);
     }
 
@@ -231,6 +233,7 @@ class ReservaController extends Controller
             'heroTitle' => $viewConfig['hero_title'],
             'heroBadge' => $viewConfig['hero_badge'],
             'heroImage' => $viewConfig['hero_image'] ?? '/img/home-1.webp',
+            'useParrasBranding' => (bool) ($viewConfig['use_parras_branding'] ?? false),
             'isSingleHotel' => count($hotelCodes) === 1,
         ]);
     }
