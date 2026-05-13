@@ -96,6 +96,17 @@ export default {
     methods: {
         searchHabs() {
             this.isLoading = true;
+
+            if (this.isSameDaySearch(this.form.dateIni, this.form.dateFin)) {
+                this.isLoading = false;
+                ElNotification({
+                    title: 'Fecha inválida',
+                    message: 'No se pueden buscar habitaciones para entrada y salida dentro del mismo día.',
+                    type: 'warning'
+                })
+                return
+            }
+
             router.post('/disponibilidad', this.form, {
                 onError: (errors) => {
                     ElNotification({
@@ -118,6 +129,19 @@ export default {
             const start = this.form.dateIni ? new Date(this.form.dateIni) : t
             start.setHours(0, 0, 0, 0)
             return date < start
+        },
+        isSameDaySearch(dateIni, dateFin) {
+            if (!dateIni || !dateFin) return false
+
+            const start = new Date(dateIni)
+            const end = new Date(dateFin)
+
+            if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false
+
+            start.setHours(0, 0, 0, 0)
+            end.setHours(0, 0, 0, 0)
+
+            return start.getTime() === end.getTime()
         },
     }
 }

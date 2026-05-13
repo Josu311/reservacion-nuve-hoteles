@@ -151,6 +151,16 @@ export default {
                 this.form.dateFin = end;
             }
 
+            if (this.isSameDaySearch(this.form.dateIni, this.form.dateFin)) {
+                this.isLoading = false;
+                ElNotification({
+                    title: 'Fecha inválida',
+                    message: 'No se pueden buscar habitaciones para entrada y salida dentro del mismo día.',
+                    type: 'warning',
+                });
+                return;
+            }
+
             router.post('/parras/disponibilidad', this.form, {
                 onError: () => {
                     ElNotification({
@@ -163,6 +173,19 @@ export default {
                     this.isLoading = false;
                 },
             });
+        },
+        isSameDaySearch(dateIni, dateFin) {
+            if (!dateIni || !dateFin) return false;
+
+            const start = new Date(dateIni);
+            const end = new Date(dateFin);
+
+            if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false;
+
+            start.setHours(0, 0, 0, 0);
+            end.setHours(0, 0, 0, 0);
+
+            return start.getTime() === end.getTime();
         },
     },
 };

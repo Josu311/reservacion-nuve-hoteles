@@ -62,7 +62,7 @@
                         </div>
                     </el-form>
                     <div class="flex items-center justify-center pt-5">
-                        <a href="/parras/reservar" class="text-nuve-hoteles-blue font-semibold underline">Visitar Nuve Parras</a>
+                        <!-- <a href="/parras/reservar" class="text-nuve-hoteles-blue font-semibold underline">Visitar Nuve Parras</a> -->
                     </div>
                 </div>
             </section>
@@ -450,6 +450,16 @@ export default {
             this.form.dateFin = end;
         }
 
+        if (this.isSameDaySearch(this.form.dateIni, this.form.dateFin)) {
+            this.isLoading = false;
+            ElNotification({
+                title: 'Fecha inválida',
+                message: 'No se pueden buscar habitaciones para entrada y salida dentro del mismo día.',
+                type: 'warning'
+            })
+            return
+        }
+
 
         router.post('/disponibilidad', this.form, {
             onError: (errors) => {
@@ -473,6 +483,19 @@ export default {
             const start = this.form.dateIni ? new Date(this.form.dateIni) : t
             start.setHours(0, 0, 0, 0)
             return date < start
+        },
+        isSameDaySearch(dateIni, dateFin) {
+            if (!dateIni || !dateFin) return false
+
+            const start = new Date(dateIni)
+            const end = new Date(dateFin)
+
+            if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false
+
+            start.setHours(0, 0, 0, 0)
+            end.setHours(0, 0, 0, 0)
+
+            return start.getTime() === end.getTime()
         },
     }
 
