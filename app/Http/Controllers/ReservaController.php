@@ -98,12 +98,9 @@ class ReservaController extends Controller
         XML;
 
         $endpoint = $fc['soap_endpoint'];
-        $action   = 'https://fcsistemas.com/GetHabitacionTarifasFechasFotoDescrip_ES_EN';
-
-        $resp = Http::retry(2, 300)
-            ->timeout(20)
+        $resp = Http::timeout((int) ($fc['soap_timeout'] ?? 60))
             ->withHeaders([
-                'Content-Type' => 'application/soap+xml; charset=utf-8; action="' . $action . '"',
+                'Content-Type' => 'application/soap+xml; charset=utf-8',
             ])
             ->withBody($xml, 'application/soap+xml; charset=utf-8')
             ->post($endpoint);
@@ -187,6 +184,7 @@ class ReservaController extends Controller
     {
         $data = [];
         $hotelGroups = [];
+        $availabilityError = null;
 
         if ($request->filled(['dateIni', 'dateFin', 'numHabs', 'adults'])) {
             $data = $request->only(['dateIni', 'dateFin', 'typeHab', 'numHabs', 'adults']);
@@ -207,6 +205,8 @@ class ReservaController extends Controller
                         'hotel_code' => $hotelCode,
                         'msg' => $e->getMessage(),
                     ]);
+
+                    $availabilityError = 'Hubo un error al intentar traer las habitaciones disponibles. Por favor intenta de nuevo en unos minutos.';
                 }
 
                 $hotelGroups[] = [
@@ -235,6 +235,7 @@ class ReservaController extends Controller
             'heroImage' => $viewConfig['hero_image'] ?? '/img/home-1.webp',
             'useParrasBranding' => (bool) ($viewConfig['use_parras_branding'] ?? false),
             'isSingleHotel' => count($hotelCodes) === 1,
+            'availabilityError' => $availabilityError,
         ]);
     }
 

@@ -12,7 +12,6 @@ class FcSistemasClient
         $hotelCode = HotelConfig::normalize($hotelCode);
         $fc = HotelConfig::fc($hotelCode);
         $endpoint = $fc['soap_endpoint'] ?? null;
-        $action   = 'https://fcsistemas.com/fDisponibilidadTipo';
         $pass     = $fc['pass'] ?? null;
         $cx       = $fc['cx'] ?? null;
 
@@ -42,10 +41,9 @@ class FcSistemasClient
         </soap12:Envelope>
         XML;
 
-        $resp = Http::retry(2, 300)
-            ->timeout(20)
+        $resp = Http::timeout((int) ($fc['soap_timeout'] ?? 60))
             ->withHeaders([
-                'Content-Type' => 'application/soap+xml; charset=utf-8; action="' . $action . '"',
+                'Content-Type' => 'application/soap+xml; charset=utf-8',
             ])
             ->withBody($xml, 'application/soap+xml; charset=utf-8')
             ->post($endpoint);

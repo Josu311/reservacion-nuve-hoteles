@@ -253,7 +253,6 @@ class CheckoutController extends Controller
     {
         $fc         = HotelConfig::fc($data['hotel_code']);
         $endpoint   = $fc['soap_endpoint'] ?? null;
-        $action     = 'https://fcsistemas.com/fInsertaReservaNew';
         $rateName   = $fc['rate_name'] ?? 'WWW_CA';
         $pass       = $fc['pass'] ?? null;
         $cx         = $fc['cx'] ?? null;
@@ -337,10 +336,9 @@ class CheckoutController extends Controller
             'xml' => $xml,
         ]);
 
-        $resp = \Illuminate\Support\Facades\Http::retry(2, 300)
-            ->timeout(20)
+        $resp = \Illuminate\Support\Facades\Http::timeout((int) ($fc['soap_timeout'] ?? 60))
             ->withHeaders([
-                'Content-Type' => 'application/soap+xml; charset=utf-8; action="' . $action . '"',
+                'Content-Type' => 'application/soap+xml; charset=utf-8',
             ])
             ->withBody($xml, 'application/soap+xml; charset=utf-8')
             ->post($endpoint);
@@ -387,7 +385,6 @@ class CheckoutController extends Controller
     {
         $fc = HotelConfig::fc($hotelCode);
         $endpoint = $fc['soap_endpoint'] ?? null;
-        $action   = 'https://fcsistemas.com/fPagoConfirmado';
         $pass     = $fc['pass'] ?? null;
         $cx       = $fc['cx'] ?? null;
 
@@ -426,10 +423,9 @@ class CheckoutController extends Controller
             'xml' => $xml,
         ]);
 
-        $resp = Http::retry(2, 300)
-            ->timeout(20)
+        $resp = Http::timeout((int) ($fc['soap_timeout'] ?? 60))
             ->withHeaders([
-                'Content-Type' => 'application/soap+xml; charset=utf-8; action="' . $action . '"',
+                'Content-Type' => 'application/soap+xml; charset=utf-8',
             ])
             ->withBody($xml, 'application/soap+xml; charset=utf-8')
             ->post($endpoint);
@@ -457,7 +453,6 @@ class CheckoutController extends Controller
     {
         $fc = HotelConfig::fc($hotelCode);
         $endpoint = $fc['soap_endpoint'] ?? null;
-        $action   = 'https://fcsistemas.com/fCambioStatusReserva';
         $pass     = $fc['pass'] ?? null;
         $cx       = $fc['cx'] ?? null;
         $dummyCc  = $fc['dummy_cc'] ?? '0000000000000000';
@@ -496,10 +491,9 @@ class CheckoutController extends Controller
             'xml' => $xml,
         ]);
 
-        $resp = Http::retry(2, 300)
-            ->timeout(20)
+        $resp = Http::timeout((int) ($fc['soap_timeout'] ?? 60))
             ->withHeaders([
-                'Content-Type' => 'application/soap+xml; charset=utf-8; action="' . $action . '"',
+                'Content-Type' => 'application/soap+xml; charset=utf-8',
             ])
             ->withBody($xml, 'application/soap+xml; charset=utf-8')
             ->post($endpoint);

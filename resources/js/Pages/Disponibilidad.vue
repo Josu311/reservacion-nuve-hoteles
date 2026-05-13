@@ -127,11 +127,21 @@
         </div>
 
         <div v-else class="flex flex-col items-center justify-center py-24 text-center">
-            <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                <BedSvg :width="24" :height="24" class="text-gray-400" />
+            <div
+                class="w-14 h-14 rounded-full flex items-center justify-center mb-4"
+                :class="availabilityError ? 'bg-red-50' : 'bg-gray-100'"
+            >
+                <BedSvg
+                    :width="24"
+                    :height="24"
+                    :class="availabilityError ? 'text-red-400' : 'text-gray-400'"
+                />
             </div>
-            <p class="text-gray-500 text-sm max-w-xs">
-                Por favor, selecciona fechas válidas para ver las habitaciones disponibles.
+            <p
+                class="text-sm max-w-xs"
+                :class="availabilityError ? 'text-red-600' : 'text-gray-500'"
+            >
+                {{ availabilityError || 'Por favor, selecciona fechas válidas para ver las habitaciones disponibles.' }}
             </p>
         </div>
     </section>
@@ -170,6 +180,7 @@ export default {
     },
     props: {
         data: { type: Object, required: true },
+        availabilityError: { type: String, default: null },
         heroBadge: { type: String, default: 'Nuve Hoteles' },
         heroImage: { type: String, default: '/img/home-1.webp' },
         heroTitle: { type: String, default: 'Reserva tu habitación' },

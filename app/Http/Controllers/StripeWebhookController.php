@@ -366,7 +366,6 @@ public function handle(Request $request, ?string $hotel = null)
     {
         $fc = HotelConfig::fc($hotelCode);
         $endpoint = $fc['soap_endpoint'] ?? null;
-        $action   = 'https://fcsistemas.com/fDisponibilidadTipo';
         $pass     = $fc['pass'] ?? null;
         $cx       = $fc['cx'] ?? null;
 
@@ -403,10 +402,9 @@ public function handle(Request $request, ?string $hotel = null)
         XML;
 
         try {
-            $resp = Http::retry(2, 300)
-                ->timeout(20)
+            $resp = Http::timeout((int) ($fc['soap_timeout'] ?? 60))
                 ->withHeaders([
-                    'Content-Type' => 'application/soap+xml; charset=utf-8; action="' . $action . '"',
+                    'Content-Type' => 'application/soap+xml; charset=utf-8',
                     'Accept'       => 'application/soap+xml, text/xml, */*',
                 ])
                 ->withBody($xml, 'application/soap+xml; charset=utf-8')
@@ -499,7 +497,6 @@ public function handle(Request $request, ?string $hotel = null)
     {
         $fc = HotelConfig::fc($hotelCode);
         $endpoint = $fc['soap_endpoint'] ?? null;
-        $action   = 'https://fcsistemas.com/fPagoConfirmado';
         $pass     = $fc['pass'] ?? null;
         $cx       = $fc['cx'] ?? null;
 
@@ -526,10 +523,9 @@ public function handle(Request $request, ?string $hotel = null)
         </soap12:Envelope>
         XML;
 
-        $resp = Http::retry(2, 300)
-            ->timeout(20)
+        $resp = Http::timeout((int) ($fc['soap_timeout'] ?? 60))
             ->withHeaders([
-                'Content-Type' => 'application/soap+xml; charset=utf-8; action="' . $action . '"',
+                'Content-Type' => 'application/soap+xml; charset=utf-8',
             ])
             ->withBody($xml, 'application/soap+xml; charset=utf-8')
             ->post($endpoint);
@@ -543,7 +539,6 @@ public function handle(Request $request, ?string $hotel = null)
     {
         $fc = HotelConfig::fc($hotelCode);
         $endpoint = $fc['soap_endpoint'] ?? null;
-        $action   = 'https://fcsistemas.com/fCambioStatusReserva';
         $pass     = $fc['pass'] ?? null;
         $cx       = $fc['cx'] ?? null;
         $dummyCc  = $fc['dummy_cc'] ?? '0000000000000000';
@@ -573,10 +568,9 @@ public function handle(Request $request, ?string $hotel = null)
         </soap12:Envelope>
         XML;
 
-        $resp = Http::retry(2, 300)
-            ->timeout(20)
+        $resp = Http::timeout((int) ($fc['soap_timeout'] ?? 60))
             ->withHeaders([
-                'Content-Type' => 'application/soap+xml; charset=utf-8; action="' . $action . '"',
+                'Content-Type' => 'application/soap+xml; charset=utf-8',
             ])
             ->withBody($xml, 'application/soap+xml; charset=utf-8')
             ->post($endpoint);
