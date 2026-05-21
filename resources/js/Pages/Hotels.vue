@@ -31,7 +31,7 @@
             <div class="flex flex-col-reverse md:flex-row gap-10">
                 <img class="w-full md:w-1/2 h-auto" src="/img/hotels-1.webp" alt="">
                 <div class="w-full md:w-1/2 flex flex-col justify-around">
-                    <span class="text-xs text-nuve-hoteles-blue text-center md:text-start font-semibold">Desde $1,750/noche</span>
+                    <!-- <span class="text-xs text-nuve-hoteles-blue text-center md:text-start font-semibold">Desde $1,750/noche</span> -->
                     <div class="flex flex-col items-center md:items-start gap-3 mt-5">
                         <h2 class="uppercase font-bold text-2xl md:text-5xl">Torreón, Coah.</h2>
                         <ul class="flex flex-col gap-3 [&>li]:text-sm [&>li]:text-gray-800">
@@ -63,10 +63,10 @@
                                 <ParkingSvg2 :width="20" :height="20" :class="'text-nuve-hoteles-blue'" />
                                 <p>Estacionamiento Privado</p>
                             </li>
-                            <li class="flex items-center gap-3">
+                            <!-- <li class="flex items-center gap-3">
                                 <TransportSvg :width="20" :height="20" :class="'text-nuve-hoteles-blue'" />
                                 <p>Transporte Aeropuerto-Hotel</p>
-                            </li>
+                            </li> -->
                             <li class="flex items-center gap-3">
                                 <RestaurantSvg :width="20" :height="20" :class="'text-nuve-hoteles-blue'" />
                                 <p>Restaurante en el 5to. piso UMO Penthouse</p>
@@ -107,7 +107,7 @@
         <div class="flex flex-col gap-10">
             <div class="flex flex-col md:flex-row gap-10">
                 <div class="w-full md:w-1/2 flex flex-col items-center md:items-start justify-around">
-                    <span class="text-xs text-nuve-hoteles-blue font-semibold">Desde $1,750/noche</span>
+                    <!-- <span class="text-xs text-nuve-hoteles-blue font-semibold">Desde $1,750/noche</span> -->
                     <div class="flex flex-col gap-3 mt-5">
                         <h2 class="uppercase font-bold text-2xl md:text-5xl text-center md:text-start">Gómez Palacio, Dgo.</h2>
                         <ul class="flex flex-col gap-4 [&>li]:text-sm [&>li]:text-gray-800">
@@ -176,7 +176,7 @@
             <div class="flex flex-col-reverse md:flex-row gap-10">
                 <img class="w-full md:w-1/2 h-auto object-cover" src="/img/hotels-38.webp" alt="">
                 <div class="w-full md:w-1/2 flex flex-col items-center md:items-start justify-around">
-                    <span class="text-xs text-nuve-hoteles-blue font-semibold">Desde $1,750/noche</span>
+                    <!-- <span class="text-xs text-nuve-hoteles-blue font-semibold">Desde $1,750/noche</span> -->
                     <div class="flex flex-col gap-3 mt-5">
                         <h2 class="uppercase font-bold text-2xl md:text-5xl text-center md:text-start">NUVE Parras</h2>
                         <ul class="flex flex-col gap-4 [&>li]:text-sm [&>li]:text-gray-800">
