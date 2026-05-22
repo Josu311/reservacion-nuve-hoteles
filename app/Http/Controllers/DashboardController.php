@@ -282,4 +282,27 @@ class DashboardController extends Controller
 
         return response()->json(['message' => 'Cierre de sesión exitoso'], 200);
     }
+
+    public function markReservationAsCancelled(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|int',
+        ]);
+
+        $scope = $this->resolveDashboardHotelScope($request);
+        $hotelCode = $scope['selected_hotel_code'];
+
+        $reservation = Reservation::query()
+            ->when($hotelCode, fn ($query) => $query->where('hotel_code', $hotelCode))
+            ->findOrFail($request->input('id'));
+
+        $reservation->update([
+            'is_confirmed' => Reservation::CONFIRMATION_CANCELLED,
+        ]);
+
+        return response()->json([
+            'message' => 'Se marcó la reservación como cancelada',
+            'reservation' => $reservation->fresh(),
+        ], 200);
+    }
 }

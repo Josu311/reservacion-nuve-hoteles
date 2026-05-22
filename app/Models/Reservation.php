@@ -9,6 +9,10 @@ class Reservation extends Model
 {
     use HasFactory;
 
+    public const CONFIRMATION_PENDING = 0;
+    public const CONFIRMATION_CONFIRMED = 1;
+    public const CONFIRMATION_CANCELLED = 2;
+
     protected $fillable = [
         'user_id',
         'hotel_code',

@@ -22,6 +22,7 @@ Route::get('/paginate-reservations', [DashboardController::class, 'paginateReser
 Route::prefix('/reservation')->group(function() {
     Route::post('/add-description', [DashboardController::class, 'addDescription'])->name('add.description');
     Route::patch('/change-is-confirmed', [DashboardController::class, 'changeIsConfirmed']);
+    Route::patch('/mark-as-cancelled', [DashboardController::class, 'markReservationAsCancelled'])->name('reservation.mark-as-cancelled');
 })->middleware('auth:sanctum');
 
 Route::get('datos-enzo', function() {
