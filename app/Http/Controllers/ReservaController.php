@@ -64,7 +64,7 @@ class ReservaController extends Controller
      * Llama al método SOAP GetHabitacionTarifasFechasFotoDescrip_ES_EN (todas las habitaciones).
      * Devuelve el XML de la respuesta o lanza excepción en error.
      */
-    private function callSoapTarifasFechas(array $p, string $hotelCode): string
+    private function callSoapTarifasFechas(array $p, string $hotelCode, bool $multipleHotels = false): string
     {
         $fc = HotelConfig::fc($hotelCode);
 
@@ -98,7 +98,10 @@ class ReservaController extends Controller
         XML;
 
         $endpoint = $fc['soap_endpoint'];
-        $resp = Http::timeout((int) ($fc['soap_timeout'] ?? 60))
+        $timeout = $this->availabilitySoapTimeout($fc, $multipleHotels);
+
+        $resp = Http::connectTimeout(min(5, $timeout))
+            ->timeout($timeout)
             ->withHeaders([
                 'Content-Type' => 'application/soap+xml; charset=utf-8',
             ])
@@ -198,7 +201,7 @@ class ReservaController extends Controller
                 $rooms = [];
 
                 try {
-                    $tarifasXml = $this->callSoapTarifasFechas($data, $hotelCode);
+                    $tarifasXml = $this->callSoapTarifasFechas($data, $hotelCode, count($hotelCodes) > 1);
                     $rooms = $this->parseTarifasAll($tarifasXml, $hotelCode);
                 } catch (\Throwable $e) {
                     Log::warning('SOAP tarifas fallo', [
@@ -262,5 +265,13 @@ class ReservaController extends Controller
     private function xml($s): string
     {
         return htmlspecialchars((string) $s, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+    }
+
+    private function availabilitySoapTimeout(array $fc, bool $multipleHotels): int
+    {
+        $configured = (int) ($fc['availability_soap_timeout'] ?? $fc['soap_timeout'] ?? 10);
+        $maxForSearch = $multipleHotels ? 10 : 20;
+
+        return max(1, min($configured, $maxForSearch));
     }
 }

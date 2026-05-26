@@ -18,4 +18,13 @@ class SendDataToEnzo extends Model
         'status',
         'post_id'
     ];
+
+    protected $casts = [
+        'reservations_count' => 'integer',
+        'reservations_mount' => 'integer',
+        'pending_reservations_count' => 'integer',
+        'pending_reservations_mount' => 'integer',
+        'status' => 'integer',
+        'post_id' => 'integer',
+    ];
 }

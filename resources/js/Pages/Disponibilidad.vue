@@ -213,6 +213,7 @@ export default {
             },
             roomFilters: {
                 gomez: ['S-', 'D-'],
+                parras: ['1Q', '2M'],
             },
             imagesRooms: {
                 torreon: {
