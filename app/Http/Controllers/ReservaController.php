@@ -98,7 +98,19 @@ class ReservaController extends Controller
         XML;
 
         $endpoint = $fc['soap_endpoint'];
-        $timeout = $this->availabilitySoapTimeout($fc, $multipleHotels);
+        $timeout = $this->availabilitySoapTimeout($fc, $multipleHotels, $hotelCode);
+
+        if (filter_var($fc['soap_debug'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+            Log::info('SOAP tarifas consulta', [
+                'hotel_code' => $hotelCode,
+                'endpoint' => $endpoint,
+                'timeout' => $timeout,
+                'dateIni' => $p['dateIni'] ?? null,
+                'dateFin' => $p['dateFin'] ?? null,
+                'adults' => $p['adults'] ?? null,
+                'numHabs' => $p['numHabs'] ?? null,
+            ]);
+        }
 
         $resp = Http::connectTimeout(min(5, $timeout))
             ->timeout($timeout)
@@ -190,6 +202,8 @@ class ReservaController extends Controller
         $availabilityError = null;
 
         if ($request->filled(['dateIni', 'dateFin', 'numHabs', 'adults'])) {
+            $this->extendAvailabilityTimeLimit($hotelCodes);
+
             $data = $request->only(['dateIni', 'dateFin', 'typeHab', 'numHabs', 'adults']);
 
             $data['dateIni'] = Carbon::parse($data['dateIni'])->format('Y-m-d');
@@ -203,6 +217,18 @@ class ReservaController extends Controller
                 try {
                     $tarifasXml = $this->callSoapTarifasFechas($data, $hotelCode, count($hotelCodes) > 1);
                     $rooms = $this->parseTarifasAll($tarifasXml, $hotelCode);
+
+                    $fc = HotelConfig::fc($hotelCode);
+                    if (filter_var($fc['soap_debug'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+                        Log::info('SOAP tarifas OK', [
+                            'hotel_code' => $hotelCode,
+                            'room_count' => count($rooms),
+                            'rooms' => array_map(fn ($room) => [
+                                'code' => $room['code'] ?? null,
+                                'name' => $room['name'] ?? null,
+                            ], $rooms),
+                        ]);
+                    }
                 } catch (\Throwable $e) {
                     Log::warning('SOAP tarifas fallo', [
                         'hotel_code' => $hotelCode,
@@ -267,11 +293,25 @@ class ReservaController extends Controller
         return htmlspecialchars((string) $s, ENT_XML1 | ENT_QUOTES, 'UTF-8');
     }
 
-    private function availabilitySoapTimeout(array $fc, bool $multipleHotels): int
+    private function availabilitySoapTimeout(array $fc, bool $multipleHotels, ?string $hotelCode = null): int
     {
         $configured = (int) ($fc['availability_soap_timeout'] ?? $fc['soap_timeout'] ?? 10);
-        $maxForSearch = $multipleHotels ? 10 : 20;
+        $maxForSearch = $multipleHotels ? 10 : ($hotelCode === 'parras' ? 60 : 20);
 
         return max(1, min($configured, $maxForSearch));
+    }
+
+    private function extendAvailabilityTimeLimit(array $hotelCodes): void
+    {
+        $limit = 30;
+
+        foreach ($hotelCodes as $hotelCode) {
+            $fc = HotelConfig::fc($hotelCode);
+            $limit = max($limit, (int) ($fc['availability_request_time_limit'] ?? 90));
+        }
+
+        if (function_exists('set_time_limit')) {
+            @set_time_limit($limit);
+        }
     }
 }

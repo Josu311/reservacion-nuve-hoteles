@@ -55,7 +55,7 @@
                     <div class="p-5 flex flex-col gap-4">
                         <div>
                             <h3 class="text-xl font-bold text-gray-900">
-                                {{ typeHabs[room.code] || typeHabs[room.name] || room.name }}
+                                {{ room.name || room.code }}
                             </h3>
                         </div>
 
@@ -213,7 +213,7 @@ export default {
             },
             roomFilters: {
                 gomez: ['S-', 'D-'],
-                parras: ['1Q', '2M'],
+                parras: ['1Q', '2Q'],
             },
             imagesRooms: {
                 torreon: {
