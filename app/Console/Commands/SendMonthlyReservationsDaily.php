@@ -67,8 +67,17 @@ class SendMonthlyReservationsDaily extends Command
                 ->where('status', 'booking_in_reception')
                 ->sum('amount_cents');
 
+            $currentMonthlyReservationsCanceled = (clone $baseQuery)
+                ->where('is_confirmed', Reservation::CONFIRMATION_CANCELLED)
+                ->count();
+
+            $currentMonthlyReservationsCanceledMount = (clone $baseQuery)
+                ->where('is_confirmed', Reservation::CONFIRMATION_CANCELLED)
+                ->sum('amount_cents');
+
             $amountMx = number_format($currentMonthlyReservationsPaidMount / 100, 2, '.', '');
             $pendingAmountMx = number_format($currentMonthlyReservationsPendingMount / 100, 2, '.', '');
+            $canceledAmountMx = number_format($currentMonthlyReservationsCanceledMount / 100, 2, '.', '');
 
             $payload = [
                 'api_key' => $enzoApiKey,
@@ -78,6 +87,8 @@ class SendMonthlyReservationsDaily extends Command
                 'metric_revenue' => $amountMx,
                 'pending_reservation_count' => $currentMonthlyReservationsPending,
                 'pending_reservation_revenue' => $pendingAmountMx,
+                'canceled_reservation_count' => $currentMonthlyReservationsCanceled,
+                'canceled_reservation_revenue' => $canceledAmountMx,
                 'source' => 'Sistema Reservas Nuve Hotel',
             ];
 
@@ -86,10 +97,13 @@ class SendMonthlyReservationsDaily extends Command
                 ->post($enzoMetricsUrl, $payload);
 
             $saveSendDataToEnzo = SendDataToEnzo::create([
+                'hotel_code' => $hotelCode,
                 'reservations_count' => $currentMonthlyReservationsPaid,
                 'reservations_mount' => $currentMonthlyReservationsPaidMount,
                 'pending_reservations_count' => $currentMonthlyReservationsPending,
                 'pending_reservations_mount' => $currentMonthlyReservationsPendingMount,
+                'canceled_reservations_count' => $currentMonthlyReservationsCanceled,
+                'canceled_reservations_mount' => $currentMonthlyReservationsCanceledMount,
                 'payload' => json_encode($payload),
                 'post_id' => $postId,
             ]);
