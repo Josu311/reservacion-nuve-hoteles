@@ -124,9 +124,9 @@ return [
                 'dummy_cc' => env('FC_DUMMY_CC', '0000000000000000'),
             ],
             'stripe' => [
-                'secret' => env('STRIPE_PARRAS_SECRET_KEY'),
-                'public' => env('STRIPE_PARRAS_PUBLIC_KEY'),
-                'webhook_secret' => env('STRIPE_PARRAS_WEBHOOK_SECRET'),
+                'secret' => env('STRIPE_PARRAS_SECRET_KEY', env('STRIPE_SECRET_KEY')),
+                'public' => env('STRIPE_PARRAS_PUBLIC_KEY', env('STRIPE_PUBLIC_KEY')),
+                'webhook_secret' => env('STRIPE_PARRAS_WEBHOOK_SECRET', env('STRIPE_WEBHOOK_SECRET')),
             ],
             'mail' => [
                 'booking_in_reception_admin_to' => env('HOTEL_PARRAS_BOOKING_RECEPTION_ADMIN_TO', 'luis@enzomarketing.mx'),
