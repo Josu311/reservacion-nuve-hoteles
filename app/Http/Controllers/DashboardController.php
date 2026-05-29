@@ -5,12 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Reservation;
 use App\Services\HotelConfig;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-
-use function PHPSTORM_META\map;
 
 class DashboardController extends Controller
 {
@@ -49,17 +48,55 @@ class DashboardController extends Controller
         ];
     }
 
+    private function resolveDashboardDateFilter(Request $request): array
+    {
+        $request->validate([
+            'start_date' => ['nullable', 'date_format:Y-m-d'],
+            'end_date' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:start_date'],
+        ]);
+
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        return [
+            'has_date_filter' => $startDate !== null || $endDate !== null,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'start_at' => $startDate ? Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay() : null,
+            'end_at' => $endDate ? Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay() : null,
+        ];
+    }
+
+    private function applyDashboardDateFilter($query, array $dateFilter, string $column = 'created_at')
+    {
+        return $query
+            ->when($dateFilter['start_at'], fn ($query, $startAt) => $query->where($column, '>=', $startAt))
+            ->when($dateFilter['end_at'], fn ($query, $endAt) => $query->where($column, '<=', $endAt));
+    }
+
+    private function dashboardFiltersPayload(?string $hotelCode, array $dateFilter): array
+    {
+        return [
+            'hotel_code' => $hotelCode,
+            'has_date_filter' => $dateFilter['has_date_filter'],
+            'start_date' => $dateFilter['start_date'],
+            'end_date' => $dateFilter['end_date'],
+        ];
+    }
+
     public function dashboardData(Request $request) {
         $scope = $this->resolveDashboardHotelScope($request);
         $hotelCode = $scope['selected_hotel_code'];
+        $dateFilter = $this->resolveDashboardDateFilter($request);
         $generalQuery = Reservation::query()
             ->when($hotelCode, fn ($query) => $query->where('hotel_code', $hotelCode));
+        $this->applyDashboardDateFilter($generalQuery, $dateFilter);
 
         $year = now()->year;
 
         $rows = (clone $generalQuery)
             ->whereIn('status', ['paid', 'booking_in_reception'])
-            ->whereYear('created_at', $year)
+            ->when(!$dateFilter['has_date_filter'], fn ($query) => $query->whereYear('created_at', $year))
             ->selectRaw('MONTH(created_at) as month, SUM(amount_cents) as total_cents')
             ->groupBy('month')
             ->pluck('total_cents', 'month'); // [1 => 120000, 3 => 45000, ...]
@@ -112,11 +149,14 @@ class DashboardController extends Controller
         ->map(fn ($d) => (int) ($rows[$d] ?? 0))
         ->all();
 
-        $usersReservations = Reservation::query()
+        $usersReservationsQuery = Reservation::query()
             ->from('reservations as r')
             ->when($hotelCode, fn ($query) => $query->where('r.hotel_code', $hotelCode))
             ->leftJoin('users as u', 'u.id', '=', 'r.user_id')
-            ->whereIn('r.status', ['paid', 'booking_in_reception'])
+            ->whereIn('r.status', ['paid', 'booking_in_reception']);
+        $this->applyDashboardDateFilter($usersReservationsQuery, $dateFilter, 'r.created_at');
+
+        $usersReservations = $usersReservationsQuery
             ->select([
                 'r.id',
                 'r.status',
@@ -149,6 +189,7 @@ class DashboardController extends Controller
             'total_reservations_weekly' => (int) $totalReservationsWeekly,
             'reservations_weekly' => $reservations_weekly,
             'user_reservations' => $usersReservations,
+            'filters' => $this->dashboardFiltersPayload($hotelCode, $dateFilter),
         ], 200);
     }
 
@@ -157,6 +198,7 @@ class DashboardController extends Controller
         $scope = $this->resolveDashboardHotelScope($request);
         $generalQuery = Reservation::query();
         $hotelCode = $scope['selected_hotel_code'];
+        $dateFilter = $this->resolveDashboardDateFilter($request);
         
         // Params desde el front (con defaults)
         $page    = (int) $request->input('page', 1);
@@ -169,7 +211,10 @@ class DashboardController extends Controller
             ->from('reservations as r')
             ->leftJoin('users as u', 'u.id', '=', 'r.user_id')
             ->when($hotelCode, fn ($query) => $query->where('r.hotel_code', $hotelCode))
-            ->whereIn('r.status', ['paid', 'booking_in_reception'])
+            ->whereIn('r.status', ['paid', 'booking_in_reception']);
+        $this->applyDashboardDateFilter($query, $dateFilter, 'r.created_at');
+
+        $query = $query
             ->select([
                 'r.id',
                 'r.status',
@@ -201,6 +246,7 @@ class DashboardController extends Controller
             'data' => $paginator->items(),
             'allowed_hotel_codes' => $scope['allowed_hotel_codes'],
             'selected_hotel_code' => $hotelCode,
+            'filters' => $this->dashboardFiltersPayload($hotelCode, $dateFilter),
             'meta' => [
                 'current_page' => $paginator->currentPage(),
                 'per_page'     => $paginator->perPage(),
