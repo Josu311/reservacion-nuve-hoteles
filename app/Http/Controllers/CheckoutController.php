@@ -102,6 +102,7 @@ class CheckoutController extends Controller
             'guest_name'               => $isLoggedIn ? null : $customerName,
             'guest_email'              => $isLoggedIn ? null : $customerEmail,
             'guest_phone'              => $isLoggedIn ? null : $customerPhone,
+            'origin_page'              => $this->originPage($request),
 
             'room_type_code'             => strtoupper($data['room_type_code']),
             'checkin'                    => $data['checkin'],
@@ -689,6 +690,7 @@ class CheckoutController extends Controller
             'guest_name' => $data['user_info']['name'] . ' ' . $data['user_info']['lastname'],
             'guest_email' => $data['user_info']['email'],
             'guest_phone' => $data['user_info']['phone'],
+            'origin_page' => $this->originPage($request),
             'amount_cents' => $data['amount_cents'],
             'provider_folio' => 'RECEPCION-' . strtoupper(uniqid()),
             'provider_hold_expires_at' => now()->addHours(2),
@@ -711,5 +713,10 @@ class CheckoutController extends Controller
         ]);
 
         return response()->json(['message' => 'Reserva creada con éxito para pago en recepción.'], 201);
+    }
+
+    private function originPage(Request $request): string
+    {
+        return (string) ($request->headers->get('referer') ?: $request->fullUrl());
     }
 }

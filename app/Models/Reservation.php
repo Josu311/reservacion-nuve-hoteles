@@ -19,6 +19,7 @@ class Reservation extends Model
         'guest_name',
         'guest_email',
         'guest_phone',
+        'origin_page',
 
         'room_type_code',
         'checkin',
