@@ -6,7 +6,9 @@ use App\Mail\BookingInReceptionAdminMail;
 use App\Mail\BookingInReceptionCustomerMail;
 use App\Mail\ReservationConfirmedMail;
 use App\Models\Reservation;
+use App\Services\CuponService;
 use App\Services\HotelConfig;
+use App\Services\PricingService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -32,6 +34,7 @@ class CheckoutController extends Controller
             'checkout'       => ['required', 'string'],                 // 'YYYY-MM-DD'
             'rooms'          => ['required', 'integer', 'min:1'],
             'adults'         => ['required', 'integer', 'min:1'],
+            'coupon_code'    => ['nullable', 'string', 'max:100'],
             'userInfo'       => ['nullable', 'array'],
             // 'userInfo.email' => ['nullable', 'email'],
         ]);
@@ -56,6 +59,11 @@ class CheckoutController extends Controller
             ], 422);
         }
 
+        $pricing = app(PricingService::class)->buildPricingData($data);
+        $pricedData = array_merge($data, [
+            'amount' => (int) $pricing['final_cents'],
+        ]);
+
         // Construir datos del cliente (para el hold)
         $customer = [
             'email'     => $customerEmail,
@@ -77,7 +85,7 @@ class CheckoutController extends Controller
 
         // 1) Crear HOLD con el proveedor
         try {
-            $hold = $this->createProviderHold($data, $customer);
+            $hold = $this->createProviderHold($pricedData, $customer);
         } catch (Throwable $e) {
             // Log opcional: \Log::error('Hold error', ['e' => $e->getMessage()]);
             return response()->json([
@@ -111,7 +119,7 @@ class CheckoutController extends Controller
             'rooms'                      => (int) $data['rooms'],
             'adults'                     => (int) $data['adults'],
 
-            'amount_cents'               => (int) $data['amount'],
+            'amount_cents'               => (int) $pricing['final_cents'],
             'currency'                   => strtoupper($data['currency']),
 
             'provider_folio'             => (string) $hold['folio'],
@@ -120,7 +128,7 @@ class CheckoutController extends Controller
             'status'                     => 'awaiting_payment',
 
             'client_order_key'           => (string) Str::uuid(),
-            'meta'                       => null, // puedes guardar aquí algo extra si quieres
+            'meta'                       => $pricing['meta'],
         ]);
 
         // 3) Crear sesión de Stripe
@@ -140,7 +148,7 @@ class CheckoutController extends Controller
                 'price_data'  => [
                     'currency'     => strtolower($data['currency']),
                     'product_data' => ['name' => 'Reserva de habitación'],
-                    'unit_amount'  => (int) $data['amount'],
+                    'unit_amount'  => (int) $pricing['final_cents'],
                 ],
                 'quantity'    => 1,
             ]],
@@ -153,6 +161,7 @@ class CheckoutController extends Controller
                 'checkout'          => (string) $reservation->checkout,
                 'rooms'             => (string) $reservation->rooms,
                 'adults'            => (string) $reservation->adults,
+                'coupon_code'       => (string) ($pricing['coupon']['code'] ?? ''),
                 'user_id'           => auth()->id() ?: '',
             ],
             'customer_email' => $customerEmail,
@@ -664,7 +673,9 @@ class CheckoutController extends Controller
             'adults' => ['required', 'integer', 'min:1'],
             'num_habs' => ['required', 'integer', 'min:1'],
             'amount_cents' => ['required', 'integer', 'min:100'],
+            'subtotal_cents' => ['nullable', 'integer', 'min:100'],
             'amount' => ['nullable', 'numeric'],
+            'coupon_code' => ['nullable', 'string', 'max:100'],
             'user_info' => ['required', 'array'],
             'user_info.name' => ['required', 'string'],
             'user_info.lastname' => ['required', 'string'],
@@ -674,12 +685,20 @@ class CheckoutController extends Controller
 
         $data['hotel_code'] = HotelConfig::normalize($data['hotel_code']);
         $data['hotel_name'] = HotelConfig::name($data['hotel_code']);
+        $pricing = app(PricingService::class)->buildPricingData([
+            'amount' => (int) ($data['subtotal_cents'] ?? $data['amount_cents']),
+            'hotel_code' => $data['hotel_code'],
+            'room_type_code' => $data['room_code'],
+            'checkin' => $data['check_in'],
+            'checkout' => $data['check_out'],
+            'coupon_code' => $data['coupon_code'] ?? null,
+        ]);
         $bookingReceptionAdminTo = config(
             "services.hotels.{$data['hotel_code']}.mail.booking_in_reception_admin_to",
             'luis@enzomarketing.mx'
         );
 
-        Reservation::create([
+        $reservation = Reservation::create([
             'hotel_code' => $data['hotel_code'],
             'room_type_code' => $data['room_code'],
             'checkin' => $data['check_in'],
@@ -691,12 +710,20 @@ class CheckoutController extends Controller
             'guest_email' => $data['user_info']['email'],
             'guest_phone' => $data['user_info']['phone'],
             'origin_page' => $this->originPage($request),
-            'amount_cents' => $data['amount_cents'],
+            'amount_cents' => (int) $pricing['final_cents'],
             'provider_folio' => 'RECEPCION-' . strtoupper(uniqid()),
             'provider_hold_expires_at' => now()->addHours(2),
             'status' => 'booking_in_reception',
             'client_order_key' => (string) Str::uuid(),
+            'meta' => $pricing['meta'],
         ]);
+
+        if (!empty($pricing['coupon']['code'])) {
+            app(CuponService::class)->consumeCoupon($pricing['coupon']['code']);
+            $meta = $reservation->meta ?? [];
+            $meta['coupon']['consumed_at'] = now()->toISOString();
+            $reservation->update(['meta' => $meta]);
+        }
 
         Resend::emails()->send([
             'from' => 'Nuve Hotel <no-reply@nuvehotel.com>',
@@ -712,7 +739,11 @@ class CheckoutController extends Controller
             'html' => (new BookingInReceptionAdminMail($data))->render(),
         ]);
 
-        return response()->json(['message' => 'Reserva creada con éxito para pago en recepción.'], 201);
+        return response()->json([
+            'message' => 'Reserva creada con exito para pago en recepcion.',
+            'amount_cents' => (int) $pricing['final_cents'],
+            'coupon' => $pricing['coupon'],
+        ], 201);
     }
 
     private function originPage(Request $request): string
@@ -720,3 +751,5 @@ class CheckoutController extends Controller
         return (string) ($request->headers->get('referer') ?: $request->fullUrl());
     }
 }
+
+

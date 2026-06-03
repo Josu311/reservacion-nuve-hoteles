@@ -26,6 +26,39 @@
             />
         </div>
 
+        <div v-if="hasResults" class="mb-8 grid gap-4 lg:grid-cols-[1fr_380px]">
+            <div
+                v-if="automaticPromotion"
+                class="border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
+            >
+                <p class="font-semibold">Promocion automatica</p>
+                <p>{{ automaticPromotion.name }} - {{ discountLabel(automaticPromotion) }}</p>
+            </div>
+            <div v-else></div>
+
+            <form class="border border-gray-200 bg-white px-4 py-3" @submit.prevent="applyCoupon">
+                <label class="text-xs font-semibold uppercase text-gray-500">Codigo de descuento</label>
+                <div class="mt-2 flex gap-2">
+                    <el-input
+                        v-model="couponForm.code"
+                        placeholder="PRUEBA10"
+                        :disabled="couponForm.loading"
+                        @keyup.enter="applyCoupon"
+                    />
+                    <el-button type="primary" :loading="couponForm.loading" @click="applyCoupon">
+                        Aplicar
+                    </el-button>
+                </div>
+                <div class="mt-2 min-h-[20px] text-xs">
+                    <p v-if="activeCoupon" class="text-emerald-700">
+                        Cupon {{ activeCoupon.code }} aplicado: {{ discountLabel(activeCoupon) }}
+                        <button type="button" class="ml-2 font-semibold text-gray-500" @click="clearCoupon">Quitar</button>
+                    </p>
+                    <p v-else-if="couponError" class="text-red-600">{{ couponError }}</p>
+                </div>
+            </form>
+        </div>
+
         <div
             v-if="hasResults"
             class="grid gap-10"
@@ -73,11 +106,18 @@
                             </div>
 
                             <div class="text-right">
-                                <div class="flex items-center gap-1 justify-end">
-                                    <span class="text-base font-bold text-gray-900">
-                                        Total: {{ formatMxn(totalCents(room), true) }}
+                                <div class="flex flex-col items-end gap-1">
+                                    <span
+                                        v-if="hasDiscount(room)"
+                                        class="text-sm text-gray-400 line-through"
+                                    >
+                                        {{ formatMxn(totalCents(room), true) }}
                                     </span>
-                                    <el-dropdown placement="top-start">
+                                    <div class="flex items-center gap-1 justify-end">
+                                        <span class="text-base font-bold text-gray-900">
+                                            Total: {{ formatMxn(finalTotalCents(room), true) }}
+                                        </span>
+                                        <el-dropdown placement="top-start">
                                         <InfoSvg :width="14" :height="14" class="text-gray-400 cursor-pointer" />
                                         <template #dropdown>
                                             <el-dropdown-menu>
@@ -93,12 +133,25 @@
                                                         <span>Habitaciones</span>
                                                         <span>x {{ data.numHabs }}</span>
                                                     </p>
-                                                    <p class="text-right font-semibold text-sm mt-1">{{ formatMxn(totalCents(room), true) }}</p>
+                                                    <p class="flex justify-between text-sm">
+                                                        <span>Subtotal</span>
+                                                        <span>{{ formatMxn(totalCents(room), true) }}</span>
+                                                    </p>
+                                                    <p v-if="automaticPromotionDiscountCents(room)" class="flex justify-between text-sm text-emerald-700">
+                                                        <span>Promocion</span>
+                                                        <span>-{{ formatMxn(automaticPromotionDiscountCents(room), true) }}</span>
+                                                    </p>
+                                                    <p v-if="discountCents(room)" class="flex justify-between text-sm text-emerald-700">
+                                                        <span>Cupon</span>
+                                                        <span>-{{ formatMxn(discountCents(room), true) }}</span>
+                                                    </p>
+                                                    <p class="text-right font-semibold text-sm mt-1">{{ formatMxn(finalTotalCents(room), true) }}</p>
                                                     <p class="text-xs text-gray-400">* IVA incluído</p>
                                                 </div>
                                             </el-dropdown-menu>
                                         </template>
-                                    </el-dropdown>
+                                        </el-dropdown>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -179,6 +232,7 @@ export default {
         UserComplementaryData,
     },
     props: {
+        automaticPromotion: { type: Object, default: null },
         data: { type: Object, required: true },
         availabilityError: { type: String, default: null },
         heroBadge: { type: String, default: 'Nuve Hoteles' },
@@ -193,6 +247,12 @@ export default {
     data() {
         return {
             countDown: Date.now() + 300 * 1000,
+            activeCoupon: null,
+            couponError: null,
+            couponForm: {
+                code: '',
+                loading: false,
+            },
             isLoading: false,
             isPayingAtHotel: false,
             pendingRoom: null,
@@ -274,6 +334,99 @@ export default {
         },
     },
     methods: {
+        applyCoupon() {
+            const code = String(this.couponForm.code || '').trim();
+
+            if (!code) {
+                this.activeCoupon = null;
+                this.couponError = 'Ingresa un codigo de descuento';
+                return;
+            }
+
+            this.couponForm.loading = true;
+            this.couponError = null;
+
+            axios.post(this.route('disponibilidad.coupon.validate'), {
+                coupon_code: code,
+            })
+                .then((response) => {
+                    this.activeCoupon = response.data;
+                    this.couponForm.code = response.data?.code || code.toUpperCase();
+                })
+                .catch((error) => {
+                    this.activeCoupon = null;
+                    this.couponError = error?.response?.data?.message
+                        || error?.response?.data?.errors?.coupon_code?.[0]
+                        || 'El codigo de descuento no es valido';
+                })
+                .finally(() => {
+                    this.couponForm.loading = false;
+                });
+        },
+        automaticPromotionAppliesToRoom(room) {
+            if (!this.automaticPromotion) {
+                return false;
+            }
+
+            const promoHotel = this.automaticPromotion.hotel_code;
+            const promoRoom = this.automaticPromotion.room_type_code;
+
+            if (promoHotel && promoHotel !== room?.hotel_code) {
+                return false;
+            }
+
+            if (promoRoom && String(promoRoom).toUpperCase() !== String(room?.code || '').toUpperCase()) {
+                return false;
+            }
+
+            return true;
+        },
+        automaticPromotionDiscountCents(room) {
+            if (!this.automaticPromotionAppliesToRoom(room)) {
+                return 0;
+            }
+
+            return this.calculateDiscountCents(this.automaticPromotion, this.totalCents(room));
+        },
+        calculateDiscountCents(discount, subtotalCents) {
+            const subtotal = Math.max(0, Number(subtotalCents || 0));
+            const value = Number(discount?.discount_value || 0);
+
+            if (!discount || !subtotal || value <= 0) {
+                return 0;
+            }
+
+            const rawDiscount = discount.discount_type === 'percentage'
+                ? Math.round(subtotal * (value / 100))
+                : Math.round(value * 100);
+
+            return Math.max(0, Math.min(subtotal, rawDiscount));
+        },
+        clearCoupon() {
+            this.activeCoupon = null;
+            this.couponError = null;
+            this.couponForm.code = '';
+        },
+        discountCents(room) {
+            if (!this.activeCoupon) {
+                return 0;
+            }
+
+            return this.calculateDiscountCents(this.activeCoupon, this.subtotalAfterAutomaticPromotionCents(room));
+        },
+        discountLabel(discount) {
+            if (!discount) {
+                return '';
+            }
+
+            const value = Number(discount.discount_value || 0);
+
+            if (discount.discount_type === 'percentage') {
+                return `${value}% de descuento`;
+            }
+
+            return `${this.formatMxn(Math.round(value * 100), true)} de descuento`;
+        },
         filterRooms(hotelCode, rooms) {
             const allowedCodes = this.roomFilters[hotelCode];
 
@@ -285,6 +438,12 @@ export default {
         },
         firstNightRate(room) {
             return Number(room?.rates?.[0]?.rate ?? 0);
+        },
+        finalTotalCents(room) {
+            return Math.max(0, this.subtotalAfterAutomaticPromotionCents(room) - this.discountCents(room));
+        },
+        hasDiscount(room) {
+            return this.totalDiscountCents(room) > 0 && this.finalTotalCents(room) < this.totalCents(room);
         },
         formatMxn(cents, withCode = false) {
             const amount = (cents || 0) / 100;
@@ -427,6 +586,7 @@ export default {
                 checkout: this.data.dateFin,
                 rooms: roomsCount,
                 adults: Number(this.data.adults),
+                coupon_code: this.activeCoupon?.code || null,
                 userInfo: this.isLogged ? null : this.userInfo,
             };
 
@@ -475,8 +635,10 @@ export default {
                 check_out: this.data.dateFin,
                 adults: Number(this.data.adults),
                 num_habs: Number(this.data.numHabs),
-                amount_cents: this.totalCents(room),
-                amount: this.totalCents(room) / 100,
+                subtotal_cents: this.totalCents(room),
+                amount_cents: this.finalTotalCents(room),
+                amount: this.finalTotalCents(room) / 100,
+                coupon_code: this.activeCoupon?.code || null,
                 user_info: this.userInfo,
             })
                 .then(() => {
@@ -500,6 +662,12 @@ export default {
             const nightsSum = (room?.rates || []).reduce((carry, rate) => carry + Number(rate.rate || 0), 0);
             const total = nightsSum * Number(this.data.numHabs || 1);
             return this.toCents(total);
+        },
+        subtotalAfterAutomaticPromotionCents(room) {
+            return Math.max(0, this.totalCents(room) - this.automaticPromotionDiscountCents(room));
+        },
+        totalDiscountCents(room) {
+            return this.automaticPromotionDiscountCents(room) + this.discountCents(room);
         },
     },
 };

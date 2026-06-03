@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\ReservationConfirmedAdminMail;
 use App\Mail\ReservationConfirmedMail;
 use App\Models\Reservation;
+use App\Services\CuponService;
 use App\Services\HotelConfig;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -246,6 +247,8 @@ public function handle(Request $request, ?string $hotel = null)
                         $reservation->save();
                     }
 
+                    $this->consumeReservationCoupon($reservation);
+
                     // --- 4) Finalizar ---
                     $reservation->status = 'paid';
                     $reservation->save();
@@ -485,6 +488,22 @@ public function handle(Request $request, ?string $hotel = null)
             'http_status'=> $resp->status(),
             'error'      => null,
         ];
+    }
+
+    private function consumeReservationCoupon(Reservation $reservation): void
+    {
+        $meta = $reservation->meta ?? [];
+        $coupon = $meta['coupon'] ?? null;
+        $code = $coupon['code'] ?? null;
+
+        if (!$code || !empty($coupon['consumed_at'])) {
+            return;
+        }
+
+        app(CuponService::class)->consumeCoupon($code);
+
+        $meta['coupon']['consumed_at'] = now()->toISOString();
+        $reservation->meta = $meta;
     }
 
 

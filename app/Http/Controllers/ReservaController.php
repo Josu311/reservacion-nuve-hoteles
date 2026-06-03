@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CuponService;
 use App\Services\HotelConfig;
+use App\Services\PricingService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -58,6 +60,21 @@ class ReservaController extends Controller
         $hotelCode = HotelConfig::normalize($hotel);
 
         return to_route("{$hotelCode}.disponibilidad.index", $data);
+    }
+
+    public function validateCoupon(Request $request, CuponService $coupons)
+    {
+        $data = $request->validate([
+            'coupon_code' => ['required', 'string', 'max:100'],
+        ]);
+
+        $discount = $coupons->buildDiscountData($data['coupon_code'], 0);
+
+        return response()->json([
+            'code' => $discount['code'],
+            'discount_type' => $discount['discount_type'],
+            'discount_value' => $discount['discount_value'],
+        ]);
     }
 
     /**
@@ -254,9 +271,17 @@ class ReservaController extends Controller
             }, $hotelCodes);
         }
 
+        $automaticPromotion = null;
+        if (!empty($data['dateIni']) && !empty($data['dateFin'])) {
+            $previewHotelCode = count($hotelCodes) === 1 ? $hotelCodes[0] : null;
+            $automaticPromotion = app(PricingService::class)
+                ->activePromotionPreview($data['dateIni'], $data['dateFin'], null, $previewHotelCode);
+        }
+
         return Inertia::render('Disponibilidad', [
             'data' => $data,
             'hotelGroups' => $hotelGroups,
+            'automaticPromotion' => $automaticPromotion,
             'searchPath' => $viewConfig['search_path'],
             'pageTitle' => $viewConfig['page_title'],
             'heroTitle' => $viewConfig['hero_title'],

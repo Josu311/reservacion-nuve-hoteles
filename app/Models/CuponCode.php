@@ -10,12 +10,21 @@ class CuponCode extends Model
 
     protected $fillable = [
         'code',
+        'discount_type',
         'discount_value',
-        'discount_percentage',
         'usage_limit',
         'times_used',
         'status',
         'starts_at',
         'expires_at',
+    ];
+
+    protected $casts = [
+        'discount_value' => 'decimal:2',
+        'usage_limit' => 'integer',
+        'times_used' => 'integer',
+        'status' => 'boolean',
+        'starts_at' => 'datetime',
+        'expires_at' => 'datetime',
     ];
 }

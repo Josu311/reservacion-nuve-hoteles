@@ -29,6 +29,7 @@ Route::get('/experiencias', function () {
 Route::prefix('disponibilidad')->group(function () {
     Route::get('/', [ReservaController::class, 'index'])->name('disponibilidad.index');
     Route::post('/', [ReservaController::class, 'validateDataUserHabs'])->name('disponibilidad.consultar');
+    Route::post('/cupon/validate', [ReservaController::class, 'validateCoupon'])->name('disponibilidad.coupon.validate');
 });
 
 Route::get('/parras/reservar', function () {
