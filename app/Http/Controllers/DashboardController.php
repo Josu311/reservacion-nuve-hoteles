@@ -84,6 +84,26 @@ class DashboardController extends Controller
         ];
     }
 
+    private function whereDashboardSale($query)
+    {
+        return $query
+            ->whereIn('status', ['paid', 'booking_in_reception'])
+            ->where(function ($query) {
+                $query
+                    ->whereNull('is_confirmed')
+                    ->orWhere('is_confirmed', '!=', Reservation::CONFIRMATION_CANCELLED);
+            });
+    }
+
+    private function whereDashboardTotal($query)
+    {
+        return $query->where(function ($query) {
+            $query
+                ->whereIn('status', ['paid', 'booking_in_reception'])
+                ->orWhere('is_confirmed', Reservation::CONFIRMATION_CANCELLED);
+        });
+    }
+
     public function dashboardData(Request $request) {
         $scope = $this->resolveDashboardHotelScope($request);
         $hotelCode = $scope['selected_hotel_code'];
@@ -95,7 +115,7 @@ class DashboardController extends Controller
         $year = now()->year;
 
         $rows = (clone $generalQuery)
-            ->whereIn('status', ['paid', 'booking_in_reception'])
+            ->tap(fn ($query) => $this->whereDashboardSale($query))
             ->when(!$dateFilter['has_date_filter'], fn ($query) => $query->whereYear('created_at', $year))
             ->selectRaw('MONTH(created_at) as month, SUM(amount_cents) as total_cents')
             ->groupBy('month')
@@ -113,33 +133,37 @@ class DashboardController extends Controller
             return 0;
         }, $rowCollect);
 
-        $totalCents = (clone $generalQuery)->whereIn('status', ['paid', 'booking_in_reception'])->sum('amount_cents');
+        $totalCents = (clone $generalQuery)
+            ->tap(fn ($query) => $this->whereDashboardTotal($query))
+            ->sum('amount_cents');
 
         $totalCentsWeekly = (clone $generalQuery)
             ->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])
-            ->whereIn('status', ['paid', 'booking_in_reception'])
+            ->tap(fn ($query) => $this->whereDashboardSale($query))
             ->sum('amount_cents');
 
         $totalCentsMonthly = (clone $generalQuery)
-            ->whereIn('status', ['paid', 'booking_in_reception'])
+            ->tap(fn ($query) => $this->whereDashboardSale($query))
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->sum('amount_cents');
 
         $totalCentsDaily = (clone $generalQuery)
-            ->whereIn('status', ['paid', 'booking_in_reception'])
+            ->tap(fn ($query) => $this->whereDashboardSale($query))
             ->whereDate('created_at', now()->toDateString())
             ->sum('amount_cents');
 
-        $totalReservations = (clone $generalQuery)->whereIn('status', ['paid', 'booking_in_reception'])->count();
+        $totalReservations = (clone $generalQuery)
+            ->tap(fn ($query) => $this->whereDashboardTotal($query))
+            ->count();
 
         $totalReservationsWeekly = (clone $generalQuery)
             ->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])
-            ->whereIn('status', ['paid', 'booking_in_reception'])
+            ->tap(fn ($query) => $this->whereDashboardSale($query))
             ->count();
 
         $rows = (clone $generalQuery)
-        ->whereIn('status', ['paid', 'booking_in_reception'])
+        ->tap(fn ($query) => $this->whereDashboardSale($query))
         ->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])
         ->selectRaw('WEEKDAY(created_at) as weekday, COUNT(*) as total')
         ->groupBy('weekday')

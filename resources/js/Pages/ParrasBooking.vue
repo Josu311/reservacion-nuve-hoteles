@@ -15,10 +15,10 @@
                     <span class="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-1 text-xs uppercase tracking-[0.25em]">
                         Nuve Parras
                     </span>
-                    <h1 class="mt-6 text-4xl md:text-6xl font-bold leading-tight">Tu buscador exclusivo para reservar en Parras</h1>
-                    <p class="mt-5 text-base md:text-lg text-white/80 max-w-xl">
+                    <h1 class="mt-6 text-4xl md:text-6xl font-bold leading-tight uppercase">Bienvenido a Nuve Parras</h1>
+                    <!-- <p class="mt-5 text-base md:text-lg text-white/80 max-w-xl">
                         Este flujo consulta únicamente la disponibilidad de Nuve Parras y te lleva a una página separada para completar la reserva.
-                    </p>
+                    </p> -->
                 </div>
 
                 <div class="rounded-[28px] border border-white/15 bg-white/12 backdrop-blur-md p-6 md:p-8 shadow-2xl">
