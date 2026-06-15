@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Http;
 
 class SendMonthlyReservationsDaily extends Command
 {
-    private const HOTEL_CODES = ['torreon', 'gomez'];
+    private const HOTEL_CODES = ['torreon', 'gomez', 'parras'];
 
     /**
      * The name and signature of the console command.

@@ -88,7 +88,7 @@
                     <div class="p-5 flex flex-col gap-4">
                         <div>
                             <h3 class="text-xl font-bold text-gray-900">
-                                {{ room.name || room.code }}
+                                {{ displayRoomName(room) }}
                             </h3>
                         </div>
 
@@ -165,6 +165,7 @@
                                 Pagar en línea
                             </el-button>
                             <el-button
+                                v-if="!useParrasBranding"
                                 class="w-full mt-2"
                                 style="margin-left:0px !important;"
                                 type="default"
@@ -204,6 +205,56 @@
         @send-data="onReceiveData"
         :is-paying-at-hotel="isPayingAtHotel"
     />
+
+    <!-- Sección de "¿Buscas una opción más accesible?" -->
+    <section
+        class="relative isolate flex min-h-[440px] w-full items-center justify-center overflow-hidden bg-cover bg-center px-4 py-12 font-sans text-white sm:min-h-[500px] sm:px-6 lg:min-h-[560px]"
+        style="background-image: url('/img/buscas-una-opcion-mas-accesible.webp')"
+    >
+        <div class="absolute inset-0 -z-10 bg-black/65"></div>
+        <div class="absolute inset-y-0 left-0 -z-10 w-1/3 bg-gradient-to-r from-black/55 to-transparent"></div>
+        <div class="absolute inset-y-0 right-0 -z-10 w-1/3 bg-gradient-to-l from-black/45 to-transparent"></div>
+
+        <div class="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
+            <img
+                src="/img/Logo-Nuve-Express-01-1.png"
+                alt="Nuve Express"
+                class="mb-6 h-20 w-auto brightness-0 invert sm:h-24"
+            >
+
+            <h2 class="max-w-4xl text-4xl font-black uppercase leading-[0.95] tracking-normal sm:text-5xl lg:text-6xl">
+                ¿Buscas una opción<br class="hidden sm:block">
+                <span class="block">más accesible?</span>
+            </h2>
+
+            <p class="mt-6 text-xl font-medium uppercase leading-tight tracking-normal sm:text-2xl">
+                Reserva en
+                <span class="font-extrabold italic text-nuve-express-orange">Hotel Nuve Express</span>
+            </p>
+
+            <div class="mt-4 uppercase italic leading-none">
+                <p class="text-lg font-semibold sm:text-xl">Desde:</p>
+                <div class="mt-1 flex flex-wrap items-end justify-center gap-x-3 gap-y-1">
+                    <span class="text-5xl font-black leading-none sm:text-6xl lg:text-7xl">$ 950</span>
+                    <div class="pb-1 text-left">
+                        <span class="block text-3xl font-black sm:text-4xl">MXN</span>
+                        <span class="block text-base font-medium sm:text-lg">por noche</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex w-full max-w-lg flex-col justify-center gap-4 sm:flex-row">
+                <a
+                    href="https://nuveexpress.com.mx/"
+                    class="inline-flex min-h-[56px] flex-1 items-center justify-center gap-3 bg-nuve-express-orange px-8 text-base font-bold text-white transition hover:bg-nuve-express-orange/90 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
+                >
+                    Reservar Ahora
+                    <span aria-hidden="true">→</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <Footer
         class="mt-14"
         :logo-src="useParrasBranding ? '/img/parras/hotel-parras-logo.webp' : '/img/logo-nuve-hoteles.webp'"
@@ -435,6 +486,21 @@ export default {
             }
 
             return rooms.filter((room) => allowedCodes.includes(room?.code));
+        },
+        displayRoomName(room) {
+            const hotelCode = room?.hotel_code || '';
+            const roomCode = String(room?.code || '').toUpperCase();
+
+            if (hotelCode === 'torreon') {
+                const torreonRoomNames = {
+                    '1M': 'SENCILLA',
+                    '2M': 'DOBLE',
+                };
+
+                return torreonRoomNames[roomCode] || room?.name || room?.code;
+            }
+
+            return room?.name || room?.code;
         },
         firstNightRate(room) {
             return Number(room?.rates?.[0]?.rate ?? 0);

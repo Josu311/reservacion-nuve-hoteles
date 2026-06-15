@@ -58,7 +58,7 @@ return [
         'post_ids' => [
             'torreon' => (int) env('ENZO_TORREON_POST_ID', 1339),
             'gomez' => (int) env('ENZO_GOMEZ_POST_ID', 6405),
-            'parras' => (int) env('ENZO_PARRAS_POST_ID', 0),
+            'parras' => (int) env('ENZO_PARRAS_POST_ID', 1340),
         ],
     ],
 

@@ -30,6 +30,7 @@
                 </div>
                 <div class="w-full max-w-6xl bg-transparent p-5 rounded-2xl shadow-md backdrop-blur-sm backdrop-brightness-[0.65] z-[1]">
                     <h4 class="text-3xl text-center text-nuve-hoteles-blue font-semibold">Reservar ahora</h4>
+                    <h6 class="text-sm text-center text-gray-400 font-semibold">Consulta disponibilidad en Nuve Torreón y Nuve Gómez ingresando tus fechas de estancia.</h6>
                     <el-form class="mt-4" :model="form" v-if="isInProduction">
                         <div class="w-full grid grid-cols-1 grid-rows-4 md:grid-cols-4 md:grid-rows-1 gap-2">
                             <el-form-item class="w-full mi-input-custom" style="margin-bottom: 0px;">
@@ -62,7 +63,7 @@
                         </div>
                     </el-form>
                     <div class="flex items-center justify-center pt-5">
-                        <!-- <a href="/parras/reservar" class="text-nuve-hoteles-blue font-semibold underline">Visitar Nuve Parras</a> -->
+                        <a href="/parras/reservar" class="text-nuve-hoteles-blue font-semibold underline">Visitar Nuve Parras</a>
                     </div>
                 </div>
             </section>
