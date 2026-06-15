@@ -88,7 +88,7 @@
                     <div class="p-5 flex flex-col gap-4">
                         <div>
                             <h3 class="text-xl font-bold text-gray-900">
-                                {{ displayRoomName(room) }}
+                                {{ displayRoomName(group.code, room) }}
                             </h3>
                         </div>
 
@@ -691,11 +691,12 @@ export default {
             }
 
             this.isLoading = true;
+            const roomDisplayName = this.displayRoomName(room.hotel_code, room);
 
             axios.post('/create-booking-reception', {
                 hotel_code: room.hotel_code,
                 room_code: room.code,
-                room_name: room.name,
+                room_name: roomDisplayName,
                 plan: room.plan,
                 check_in: this.data.dateIni,
                 check_out: this.data.dateFin,
@@ -708,7 +709,7 @@ export default {
                 user_info: this.userInfo,
             })
                 .then(() => {
-                    window.location.href = `/checkout/success/reception?hotel_code=${encodeURIComponent(room.hotel_code)}&hotel_name=${encodeURIComponent(room.hotel_name || '')}&room_name=${encodeURIComponent(room.name || '')}&check_in=${encodeURIComponent(this.data.dateIni)}&check_out=${encodeURIComponent(this.data.dateFin)}&adults=${encodeURIComponent(this.data.adults)}&num_habs=${encodeURIComponent(this.data.numHabs)}`;
+                    window.location.href = `/checkout/success/reception?hotel_code=${encodeURIComponent(room.hotel_code)}&hotel_name=${encodeURIComponent(room.hotel_name || '')}&room_name=${encodeURIComponent(roomDisplayName || '')}&check_in=${encodeURIComponent(this.data.dateIni)}&check_out=${encodeURIComponent(this.data.dateFin)}&adults=${encodeURIComponent(this.data.adults)}&num_habs=${encodeURIComponent(this.data.numHabs)}`;
                 })
                 .catch(() => {
                     ElNotification({
