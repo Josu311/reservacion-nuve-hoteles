@@ -487,8 +487,9 @@ export default {
 
             return rooms.filter((room) => allowedCodes.includes(room?.code));
         },
-        displayRoomName(room) {
-            const hotelCode = room?.hotel_code || '';
+        displayRoomName(hotelCodeOrRoom, maybeRoom = null) {
+            const room = maybeRoom || hotelCodeOrRoom;
+            const hotelCode = maybeRoom ? hotelCodeOrRoom : room?.hotel_code || '';
             const roomCode = String(room?.code || '').toUpperCase();
 
             if (hotelCode === 'torreon') {
@@ -500,7 +501,7 @@ export default {
                 return torreonRoomNames[roomCode] || room?.name || room?.code;
             }
 
-            return room?.name || room?.code;
+            return room?.name || this.typeHabs[roomCode] || room?.code;
         },
         firstNightRate(room) {
             return Number(room?.rates?.[0]?.rate ?? 0);

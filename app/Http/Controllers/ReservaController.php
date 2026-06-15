@@ -19,7 +19,13 @@ class ReservaController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->renderAvailability($request, ['torreon', 'gomez'], [
+        $hotelCodes = ['torreon', 'gomez'];
+
+        if ($request->filled('hotel_code') && in_array($request->input('hotel_code'), $hotelCodes, true)) {
+            $hotelCodes = [HotelConfig::normalize($request->input('hotel_code'))];
+        }
+
+        return $this->renderAvailability($request, $hotelCodes, [
             'search_path' => route('disponibilidad.consultar'),
             'page_title' => 'Disponibilidad de habitaciones',
             'hero_title' => 'Reserva tu habitación',
@@ -221,7 +227,7 @@ class ReservaController extends Controller
         if ($request->filled(['dateIni', 'dateFin', 'numHabs', 'adults'])) {
             $this->extendAvailabilityTimeLimit($hotelCodes);
 
-            $data = $request->only(['dateIni', 'dateFin', 'typeHab', 'numHabs', 'adults']);
+            $data = $request->only(['hotel_code', 'dateIni', 'dateFin', 'typeHab', 'numHabs', 'adults']);
 
             $data['dateIni'] = Carbon::parse($data['dateIni'])->format('Y-m-d');
             $data['dateFin'] = Carbon::parse($data['dateFin'])->format('Y-m-d');
@@ -296,6 +302,7 @@ class ReservaController extends Controller
     private function validateAvailabilityRequest(Request $request): array
     {
         $data = $request->validate([
+            'hotel_code' => ['nullable', 'string', 'in:torreon,gomez'],
             'dateIni'  => ['required', 'date'],
             'dateFin'  => ['required', 'date', 'after_or_equal:dateIni'],
             'numHabs'  => ['required', 'integer', 'min:1'],

@@ -22,7 +22,11 @@
 
 
         <main class="flex-1">
-            <section class="relative h-[700px] bg-[url(/img/home-1.webp)] bg-cover bg-center md:bg-bottom bg-fixed flex flex-col items-center justify-center gap-5 text-white px-2" id="reservar">
+            <section
+                class="relative h-[700px] bg-cover bg-center md:bg-bottom bg-fixed flex flex-col items-center justify-center gap-5 text-white px-2"
+                :style="{ backgroundImage: `url(${heroBackgroundImage})` }"
+                id="reservar"
+            >
                 <div class="absolute inset-0 bg-[#172a3a]/50"></div>
                 <div class="max-w-xl mx-auto flex flex-col items-center justify-center text-center md:pt-32 z-[1]">
                     <h2 class="uppercase font-bold text-2xl md:text-5xl">Bienvenido a <br>Nuve Hotel</h2>
@@ -30,9 +34,19 @@
                 </div>
                 <div class="w-full max-w-6xl bg-transparent p-5 rounded-2xl shadow-md backdrop-blur-sm backdrop-brightness-[0.65] z-[1]">
                     <h4 class="text-3xl text-center text-nuve-hoteles-blue font-semibold">Reservar ahora</h4>
-                    <h6 class="text-sm text-center text-gray-400 font-semibold">Consulta disponibilidad en Nuve Torreón y Nuve Gómez ingresando tus fechas de estancia.</h6>
+                    <h6 class="text-sm text-center text-gray-400 font-semibold">Consulta disponibilidad ingresando tus fechas de estancia.</h6>
                     <el-form class="mt-4" :model="form" v-if="isInProduction">
-                        <div class="w-full grid grid-cols-1 grid-rows-4 md:grid-cols-4 md:grid-rows-1 gap-2">
+                        <div class="w-full grid grid-cols-1 grid-rows-5 md:grid-cols-5 md:grid-rows-1 gap-2">
+                            <el-form-item class="w-full mi-input-custom" style="margin-bottom: 0px;">
+                                <el-select v-model="form.hotel_code" placeholder="Hotel" style="width: 100%;">
+                                    <el-option
+                                        v-for="hotel in hotelOptions"
+                                        :key="hotel.value"
+                                        :label="hotel.label"
+                                        :value="hotel.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
                             <el-form-item class="w-full mi-input-custom" style="margin-bottom: 0px;">
                                 <el-date-picker
                                 v-model="fullDate" 
@@ -57,7 +71,7 @@
                                 <el-input-number v-model="form.adults" :min="1" placeholder="Adultos"
                                     style="width: 100%;" />
                             </el-form-item>
-                            <el-button class="col-span-1 nuve-btn" :disabled="enabledButton"
+                            <el-button class="col-span-1 nuve-btn" :disabled="isSearchDisabled"
                                 :loading="isLoading" type="warning" @click="searchHabs()"
                                 size="large">Buscar</el-button>
                         </div>
@@ -375,9 +389,9 @@ export default {
         return {
             isLoading: false,
             isInProduction: true,
-            enabledButton: false,
             fullDate: null,
             form: {
+                hotel_code: "torreon",
                 dateIni: "",
                 dateFin: "",
                 // typeHab: "",
@@ -421,6 +435,37 @@ export default {
         }
     },
 
+    computed: {
+        heroBackgroundImage() {
+            return this.form.hotel_code === 'gomez'
+                ? '/img/hotels-13.webp'
+                : '/img/home-1.webp'
+        },
+        hotelOptions() {
+            return [
+                {
+                    value: 'torreon',
+                    label: 'Nuve Torreon',
+                },
+                {
+                    value: 'gomez',
+                    label: 'Nuve Gomez',
+                },
+            ]
+        },
+        isSearchDisabled() {
+            const hasDateRange = Array.isArray(this.fullDate) && this.fullDate.length === 2 && this.fullDate[0] && this.fullDate[1]
+
+            return !this.form.hotel_code
+                || !hasDateRange
+                || !this.form.numHabs
+                || Number(this.form.numHabs) < 1
+                || !this.form.adults
+                || Number(this.form.adults) < 1
+                || this.isLoading
+        },
+    },
+
     mounted() {
         // Mantener isMobile actualizado (resize/orientation)
         this._onResize = () => {
@@ -440,6 +485,10 @@ export default {
 
     methods: {
         searchHabs() {
+        if (this.isSearchDisabled) {
+            return
+        }
+
         this.isLoading = true;
 
         // Normaliza daterange: [inicio, fin] -> dateIni=inicio, dateFin=fin
