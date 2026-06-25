@@ -9,7 +9,7 @@
         <!-- ICONO + TÍTULO SEGÚN ESTADO -->
         <div
           class="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full"
-          :class="isFinal && reservationStatus === 'paid' ? 'bg-green-100' : (reservationStatus === 'failed' || reservationStatus === 'expired' ? 'bg-red-100' : 'bg-yellow-100')"
+          :class="isFinal && reservationStatus === 'paid' ? 'bg-green-100' : (['failed', 'expired', 'cancelled'].includes(reservationStatus) ? 'bg-red-100' : 'bg-yellow-100')"
         >
           <!-- check -->
           <svg v-if="isFinal && reservationStatus === 'paid'" xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-green-600" fill="none"
@@ -33,6 +33,7 @@
         <h1 class="text-2xl font-bold">
           <span v-if="reservationStatus === 'paid'">¡Reserva confirmada!</span>
           <span v-else-if="reservationStatus === 'failed'">No se pudo confirmar la reserva</span>
+          <span v-else-if="reservationStatus === 'cancelled'">Reservación cancelada</span>
           <span v-else-if="reservationStatus === 'expired'">La reservación expiró</span>
           <span v-else>Estamos confirmando tu reservación…</span>
         </h1>
@@ -50,6 +51,10 @@
             Ocurrió un problema al procesar tu pago o confirmar con el proveedor.
           </span>
 
+          <span v-else-if="reservationStatus === 'cancelled'">
+            El proceso de pago fue cancelado y no se generó una confirmación de reserva.
+          </span>
+
           <span v-else-if="reservationStatus === 'expired'">
             El tiempo de espera para completar la compra terminó.
           </span>
@@ -60,7 +65,7 @@
         </p>
 
         <!-- RESUMEN (solo si ya existe currentReservation) -->
-        <div v-if="currentReservation" class="mt-6 grid grid-cols-1 gap-3 text-sm text-left">
+        <div v-if="showReservationDetails" class="mt-6 grid grid-cols-1 gap-3 text-sm text-left">
           <div class="flex justify-between">
             <span class="text-gray-500">Folio proveedor:</span>
             <span class="font-semibold">{{ currentReservation.provider_folio }}</span>
@@ -116,6 +121,7 @@
 
         <p class="mt-6 p-0 text-xs text-gray-500">
           <span v-if="reservationStatus === 'paid'">Los datos de tu reservación fueron enviados por correo.</span>
+          <span v-else-if="['failed', 'expired', 'cancelled'].includes(reservationStatus)">No se generó una confirmación de reserva.</span>
           <span v-else>Te avisaremos por correo cuando esté confirmada.</span>
         </p>
 
@@ -184,6 +190,10 @@ export default {
     // Si quieres usarlo en el template para decidir mensaje
     isFinal() {
       return ['paid', 'failed', 'expired', 'cancelled'].includes(this.reservationStatus)
+    },
+
+    showReservationDetails() {
+      return this.currentReservation && this.reservationStatus === 'paid'
     },
   },
 

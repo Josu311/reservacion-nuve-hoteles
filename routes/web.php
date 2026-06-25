@@ -32,6 +32,10 @@ Route::prefix('disponibilidad')->group(function () {
     Route::post('/cupon/validate', [ReservaController::class, 'validateCoupon'])->name('disponibilidad.coupon.validate');
 });
 
+Route::get('/parras', function() {
+    return redirect('/parras/reservar', 302);
+});
+
 Route::get('/parras/reservar', function () {
     return Inertia::render('ParrasBooking');
 })->name('parras.booking');

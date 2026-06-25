@@ -165,7 +165,6 @@
                                 Pagar en línea
                             </el-button>
                             <el-button
-                                v-if="!useParrasBranding"
                                 class="w-full mt-2"
                                 style="margin-left:0px !important;"
                                 type="default"
