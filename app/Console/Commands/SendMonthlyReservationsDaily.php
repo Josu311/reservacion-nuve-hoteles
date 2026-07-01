@@ -25,6 +25,29 @@ class SendMonthlyReservationsDaily extends Command
      */
     protected $description = 'Command description';
 
+    private function whereNotCancelledByConfirmation($query)
+    {
+        return $query->where(function ($query) {
+            $query
+                ->whereNull('is_confirmed')
+                ->orWhere('is_confirmed', '!=', Reservation::CONFIRMATION_CANCELLED);
+        });
+    }
+
+    private function whereMetricTotal($query)
+    {
+        return $query->where(function ($query) {
+            $query
+                ->where('status', 'paid')
+                ->orWhere(function ($query) {
+                    $query
+                        ->where('status', 'booking_in_reception')
+                        ->tap(fn ($query) => $this->whereNotCancelledByConfirmation($query));
+                })
+                ->orWhere('is_confirmed', Reservation::CONFIRMATION_CANCELLED);
+        });
+    }
+
     /**
      * Execute the console command.
      */
@@ -51,20 +74,22 @@ class SendMonthlyReservationsDaily extends Command
                 ->whereYear('created_at', now()->year)
                 ->where('hotel_code', $hotelCode);
 
-            $currentMonthlyReservationsPaid = (clone $baseQuery)
-                ->where('status', 'paid')
+            $currentMonthlyReservationsMetric = (clone $baseQuery)
+                ->tap(fn ($query) => $this->whereMetricTotal($query))
                 ->count();
 
-            $currentMonthlyReservationsPaidMount = (clone $baseQuery)
-                ->where('status', 'paid')
+            $currentMonthlyReservationsMetricMount = (clone $baseQuery)
+                ->tap(fn ($query) => $this->whereMetricTotal($query))
                 ->sum('amount_cents');
 
             $currentMonthlyReservationsPending = (clone $baseQuery)
                 ->where('status', 'booking_in_reception')
+                ->tap(fn ($query) => $this->whereNotCancelledByConfirmation($query))
                 ->count();
 
             $currentMonthlyReservationsPendingMount = (clone $baseQuery)
                 ->where('status', 'booking_in_reception')
+                ->tap(fn ($query) => $this->whereNotCancelledByConfirmation($query))
                 ->sum('amount_cents');
 
             $currentMonthlyReservationsCanceled = (clone $baseQuery)
@@ -75,7 +100,7 @@ class SendMonthlyReservationsDaily extends Command
                 ->where('is_confirmed', Reservation::CONFIRMATION_CANCELLED)
                 ->sum('amount_cents');
 
-            $amountMx = number_format($currentMonthlyReservationsPaidMount / 100, 2, '.', '');
+            $amountMx = number_format($currentMonthlyReservationsMetricMount / 100, 2, '.', '');
             $pendingAmountMx = number_format($currentMonthlyReservationsPendingMount / 100, 2, '.', '');
             $canceledAmountMx = number_format($currentMonthlyReservationsCanceledMount / 100, 2, '.', '');
 
@@ -83,7 +108,7 @@ class SendMonthlyReservationsDaily extends Command
                 'api_key' => $enzoApiKey,
                 'post_id' => $postId,
                 'date' => $currentDate,
-                'metric_count' => $currentMonthlyReservationsPaid,
+                'metric_count' => $currentMonthlyReservationsMetric,
                 'metric_revenue' => $amountMx,
                 'pending_reservation_count' => $currentMonthlyReservationsPending,
                 'pending_reservation_revenue' => $pendingAmountMx,
@@ -98,8 +123,8 @@ class SendMonthlyReservationsDaily extends Command
 
             $saveSendDataToEnzo = SendDataToEnzo::create([
                 'hotel_code' => $hotelCode,
-                'reservations_count' => $currentMonthlyReservationsPaid,
-                'reservations_mount' => $currentMonthlyReservationsPaidMount,
+                'reservations_count' => $currentMonthlyReservationsMetric,
+                'reservations_mount' => $currentMonthlyReservationsMetricMount,
                 'pending_reservations_count' => $currentMonthlyReservationsPending,
                 'pending_reservations_mount' => $currentMonthlyReservationsPendingMount,
                 'canceled_reservations_count' => $currentMonthlyReservationsCanceled,
